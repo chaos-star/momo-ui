@@ -1,4 +1,10 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, {
+  useState,
+  useMemo,
+  useRef,
+  useEffect,
+  useCallback,
+} from 'react';
 import { Switch, Route, Redirect, useHistory } from 'react-router-dom';
 import { Layout, Menu, Breadcrumb, Spin } from '@arco-design/web-react';
 import cs from 'classnames';
@@ -155,10 +161,10 @@ function PageLayout() {
     };
   }
 
-  function updateMenuStatus() {
+  const updateMenuStatus = useCallback(() => {
     const pathKeys = pathname.split('/');
     const newSelectedKeys: string[] = [];
-    const newOpenKeys: string[] = [...openKeys];
+    const keysToOpen: string[] = [];
     while (pathKeys.length > 0) {
       const currentRouteKey = pathKeys.join('/');
       const menuKey = currentRouteKey.replace(/^\//, '');
@@ -166,20 +172,28 @@ function PageLayout() {
       if (menuType && menuType.menuItem) {
         newSelectedKeys.push(menuKey);
       }
-      if (menuType && menuType.subMenu && !openKeys.includes(menuKey)) {
-        newOpenKeys.push(menuKey);
+      if (menuType && menuType.subMenu) {
+        keysToOpen.push(menuKey);
       }
       pathKeys.pop();
     }
     setSelectedKeys(newSelectedKeys);
-    setOpenKeys(newOpenKeys);
-  }
+    setOpenKeys((prevOpenKeys) => {
+      const mergedKeys = [...prevOpenKeys];
+      keysToOpen.forEach((key) => {
+        if (!mergedKeys.includes(key)) {
+          mergedKeys.push(key);
+        }
+      });
+      return mergedKeys;
+    });
+  }, [pathname]);
 
   useEffect(() => {
     const routeConfig = routeMap.current.get(pathname);
     setBreadCrumb(routeConfig || []);
     updateMenuStatus();
-  }, [pathname]);
+  }, [pathname, updateMenuStatus]);
   return (
     <Layout className={styles.layout}>
       <div

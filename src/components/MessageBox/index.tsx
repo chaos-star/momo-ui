@@ -1,19 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import groupBy from 'lodash/groupBy';
-import {
-  Trigger,
-  Badge,
-  Tabs,
-  Avatar,
-  Spin,
-  Button,
-} from '@arco-design/web-react';
+import { Trigger, Badge, Tabs, Spin, Button } from '@arco-design/web-react';
 import {
   IconMessage,
   IconCustomerService,
   IconFile,
-  IconDesktop,
 } from '@arco-design/web-react/icon';
 import useLocale from '../../utils/useLocale';
 import MessageList, { MessageListType } from './list';
@@ -77,11 +69,6 @@ function DropContent() {
       key: 'todo',
       title: t['message.tab.title.todo'],
       titleIcon: <IconFile />,
-      avatar: (
-        <Avatar style={{ backgroundColor: '#0FC6C2' }}>
-          <IconDesktop />
-        </Avatar>
-      ),
     },
   ];
 
@@ -100,7 +87,7 @@ function DropContent() {
           }
         >
           {tabList.map((item) => {
-            const { key, title, avatar } = item;
+            const { key, title } = item;
             const data = groupData[key] || [];
             const unReadData = data.filter((item) => !item.status);
             return (

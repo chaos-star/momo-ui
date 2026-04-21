@@ -9,7 +9,7 @@ function OverviewAreaLine({
   name = '总内容量',
   color = '#4080FF',
 }: {
-  data: any[];
+  data: { count?: number | string; date?: string }[];
   loading: boolean;
   name?: string;
   color?: string;

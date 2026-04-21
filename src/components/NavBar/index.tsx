@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 import {
   Tooltip,
   Input,
@@ -20,7 +20,6 @@ import {
   IconPoweroff,
   IconExperiment,
   IconDashboard,
-  IconInteraction,
   IconTag,
 } from '@arco-design/web-react/icon';
 import { useSelector, useDispatch } from 'react-redux';
@@ -41,7 +40,7 @@ function Navbar({ show }: { show: boolean }) {
   const userInfo = useSelector((state: GlobalState) => state.userInfo);
   const dispatch = useDispatch();
 
-  const [_, setUserStatus] = useStorage('userStatus');
+  const [, setUserStatus] = useStorage('userStatus');
   const [role, setRole] = useStorage('userRole', 'admin');
 
   const { setLang, lang, theme, setTheme } = useContext(GlobalContext);
@@ -59,17 +58,25 @@ function Navbar({ show }: { show: boolean }) {
     }
   }
 
+  const permissions = useMemo(() => generatePermission(role), [role]);
+
   useEffect(() => {
+    if (
+      JSON.stringify(userInfo?.permissions || {}) ===
+      JSON.stringify(permissions)
+    ) {
+      return;
+    }
     dispatch({
       type: 'update-userInfo',
       payload: {
         userInfo: {
           ...userInfo,
-          permissions: generatePermission(role),
+          permissions,
         },
       },
     });
-  }, [role]);
+  }, [dispatch, permissions, userInfo]);
 
   if (!show) {
     return (

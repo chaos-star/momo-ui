@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 import { IconCaretUp } from '@arco-design/web-react/icon';
 import OverviewAreaLine from '@/components/Chart/overview-area-line';
 import axios from 'axios';
+import { GlobalState } from '@/store';
 import locale from './locale';
 import useLocale from '@/utils/useLocale';
 import styles from './style/overview.module.less';
@@ -61,7 +62,7 @@ function Overview() {
   const [loading, setLoading] = useState(true);
   const t = useLocale(locale);
 
-  const userInfo = useSelector((state: any) => state.userInfo || {});
+  const userInfo = useSelector((state: GlobalState) => state.userInfo || {});
 
   const fetchData = () => {
     setLoading(true);

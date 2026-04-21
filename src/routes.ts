@@ -52,41 +52,54 @@ export const generatePermission = (role: string) => {
   return result;
 };
 
+const filterRoutesByPermission = (
+  targetRoutes: IRoute[],
+  userPermission,
+  arr = []
+): IRoute[] => {
+  if (!targetRoutes.length) {
+    return [];
+  }
+  for (const route of targetRoutes) {
+    const { requiredPermissions, oneOfPerm } = route;
+    let visible = true;
+    if (requiredPermissions) {
+      visible = auth({ requiredPermissions, oneOfPerm }, userPermission);
+    }
+
+    if (!visible) {
+      continue;
+    }
+    if (route.children && route.children.length) {
+      const newRoute = { ...route, children: [] };
+      filterRoutesByPermission(
+        route.children,
+        userPermission,
+        newRoute.children
+      );
+      if (newRoute.children.length) {
+        arr.push(newRoute);
+      }
+    } else {
+      arr.push({ ...route });
+    }
+  }
+
+  return arr;
+};
+
 const useRoute = (userPermission): [IRoute[], string] => {
-  const filterRoute = (routes: IRoute[], arr = []): IRoute[] => {
-    if (!routes.length) {
-      return [];
-    }
-    for (const route of routes) {
-      const { requiredPermissions, oneOfPerm } = route;
-      let visible = true;
-      if (requiredPermissions) {
-        visible = auth({ requiredPermissions, oneOfPerm }, userPermission);
-      }
-
-      if (!visible) {
-        continue;
-      }
-      if (route.children && route.children.length) {
-        const newRoute = { ...route, children: [] };
-        filterRoute(route.children, newRoute.children);
-        if (newRoute.children.length) {
-          arr.push(newRoute);
-        }
-      } else {
-        arr.push({ ...route });
-      }
-    }
-
-    return arr;
-  };
-
   const [permissionRoute, setPermissionRoute] = useState(routes);
 
+  const permissionKey = useMemo(
+    () => JSON.stringify(userPermission || {}),
+    [userPermission]
+  );
+
   useEffect(() => {
-    const newRoutes = filterRoute(routes);
+    const newRoutes = filterRoutesByPermission(routes, userPermission);
     setPermissionRoute(newRoutes);
-  }, [JSON.stringify(userPermission)]);
+  }, [permissionKey, userPermission]);
 
   const defaultRoute = useMemo(() => {
     const first = permissionRoute[0];
