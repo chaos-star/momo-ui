@@ -1,2 +1,2 @@
 # momo-ui
-arco vue
+arco react
