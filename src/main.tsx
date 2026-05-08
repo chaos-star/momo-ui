@@ -2,11 +2,12 @@ import './style/global.less';
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { createStore } from 'redux';
-import { Provider } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import { ConfigProvider } from '@arco-design/web-react';
 import zhCN from '@arco-design/web-react/es/locale/zh-CN';
 import enUS from '@arco-design/web-react/es/locale/en-US';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { AliveScope } from 'react-activation';
 import axios from 'axios';
 import rootReducer from './store';
 import PageLayout from './layout';
@@ -19,7 +20,8 @@ import './mock';
 
 const store = createStore(rootReducer);
 
-function Index() {
+function AppContent() {
+  const dispatch = useDispatch();
   const [lang, setLang] = useStorage('arco-lang', 'en-US');
   const [theme, setTheme] = useStorage('arco-theme', 'light');
 
@@ -57,7 +59,11 @@ function Index() {
 
   useEffect(() => {
     changeTheme(theme);
-  }, [theme]);
+    dispatch({
+      type: 'update-theme',
+      payload: { theme },
+    });
+  }, [dispatch, theme]);
 
   const contextValue = {
     lang,
@@ -82,16 +88,24 @@ function Index() {
           },
         }}
       >
-        <Provider store={store}>
-          <GlobalContext.Provider value={contextValue}>
+        <GlobalContext.Provider value={contextValue}>
+          <AliveScope>
             <Switch>
               <Route path="/login" component={Login} />
               <Route path="/" component={PageLayout} />
             </Switch>
-          </GlobalContext.Provider>
-        </Provider>
+          </AliveScope>
+        </GlobalContext.Provider>
       </ConfigProvider>
     </BrowserRouter>
+  );
+}
+
+function Index() {
+  return (
+    <Provider store={store}>
+      <AppContent />
+    </Provider>
   );
 }
 

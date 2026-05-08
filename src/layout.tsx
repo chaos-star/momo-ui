@@ -5,7 +5,14 @@ import React, {
   useEffect,
   useCallback,
 } from 'react';
-import { Switch, Route, Redirect, useHistory } from 'react-router-dom';
+import {
+  Switch,
+  Route,
+  Redirect,
+  useHistory,
+  useLocation,
+} from 'react-router-dom';
+import { useAliveController } from 'react-activation';
 import { Layout, Menu, Breadcrumb, Spin } from '@arco-design/web-react';
 import cs from 'classnames';
 import {
@@ -19,11 +26,20 @@ import qs from 'query-string';
 import NProgress from 'nprogress';
 import Navbar from './components/NavBar';
 import Footer from './components/Footer';
+import TabBar, { formatTab } from './components/TabBar';
+import KeepAliveRoute from './components/KeepAliveRoute';
 import useRoute, { IRoute } from '@/routes';
 import { isArray } from './utils/is';
 import useLocale from './utils/useLocale';
 import getUrlParams from './utils/getUrlParams';
 import lazyload from './utils/lazyload';
+import {
+  RouteTab,
+  getTabCacheKey,
+  getTabIdentity,
+  readTabsFromStorage,
+  saveTabsToStorage,
+} from './utils/tabStorage';
 import { GlobalState } from './store';
 import styles from './style/layout.module.less';
 
@@ -64,13 +80,20 @@ function getFlattenRoutes(routes) {
 function PageLayout() {
   const urlParams = getUrlParams();
   const history = useHistory();
-  const pathname = history.location.pathname;
+  const location = useLocation();
+  const { dropScope, refreshScope } = useAliveController();
+  const pathname = location.pathname;
   const currentComponent = qs.parseUrl(pathname).url.slice(1);
   const locale = useLocale();
   const { settings, userLoading, userInfo } = useSelector(
     (state: GlobalState) => state
   );
 
+  const tabIdentity = useMemo(() => getTabIdentity(userInfo), [userInfo]);
+  const identityKey = useMemo(
+    () => tabIdentity.tenantCode || 'unknown',
+    [tabIdentity.tenantCode]
+  );
   const [routes, defaultRoute] = useRoute(userInfo?.permissions);
   const defaultSelectedKeys = [currentComponent || defaultRoute];
   const paths = (currentComponent || defaultRoute).split('/');
@@ -81,6 +104,7 @@ function PageLayout() {
   const [selectedKeys, setSelectedKeys] =
     useState<string[]>(defaultSelectedKeys);
   const [openKeys, setOpenKeys] = useState<string[]>(defaultOpenKeys);
+  const [tabList, setTabList] = useState<RouteTab[]>([]);
 
   const routeMap = useRef<Map<string, React.ReactNode[]>>(new Map());
   const menuMap = useRef<
@@ -92,9 +116,80 @@ function PageLayout() {
 
   const showNavbar = settings.navbar && urlParams.navbar !== false;
   const showMenu = settings.menu && urlParams.menu !== false;
+  const showTopMenu = showMenu && settings.topMenu;
+  const showSiderMenu = showMenu && !showTopMenu;
+  const showTabBar = settings.tabBar && urlParams.tabBar !== false;
   const showFooter = settings.footer && urlParams.footer !== false;
 
   const flattenRoutes = useMemo(() => getFlattenRoutes(routes) || [], [routes]);
+  const defaultTab = useMemo(() => {
+    const defaultPath = `/${defaultRoute}`;
+    return (
+      formatTab(defaultPath, '', flattenRoutes) || {
+        title: defaultRoute,
+        name: defaultRoute,
+        path: defaultPath,
+        fullPath: defaultPath,
+      }
+    );
+  }, [defaultRoute, flattenRoutes]);
+
+  useEffect(() => {
+    if (!defaultRoute) {
+      return;
+    }
+
+    const storedTabs = readTabsFromStorage(tabIdentity);
+    setTabList(storedTabs?.length ? storedTabs : [defaultTab]);
+  }, [defaultRoute, defaultTab, identityKey, tabIdentity]);
+
+  useEffect(() => {
+    const currentTab = formatTab(
+      location.pathname,
+      location.search,
+      flattenRoutes
+    );
+    if (!currentTab) {
+      return;
+    }
+
+    setTabList((list) => {
+      const nextList = list.length ? list : [defaultTab];
+      if (nextList.some((tab) => tab.fullPath === currentTab.fullPath)) {
+        return nextList;
+      }
+      return [...nextList, currentTab];
+    });
+  }, [defaultTab, flattenRoutes, location.pathname, location.search]);
+
+  useEffect(() => {
+    if (tabList.length) {
+      saveTabsToStorage(tabIdentity, tabList);
+    }
+  }, [identityKey, tabIdentity, tabList]);
+
+  const handleTabsChange = useCallback(
+    (tabs: RouteTab[]) => {
+      setTabList(tabs.length ? tabs : [defaultTab]);
+    },
+    [defaultTab]
+  );
+
+  const handleCloseTabs = useCallback(
+    (tabs: RouteTab[]) => {
+      tabs.forEach((tab) => {
+        dropScope(getTabCacheKey(tabIdentity, tab.fullPath));
+      });
+    },
+    [dropScope, tabIdentity]
+  );
+
+  const handleReloadTab = useCallback(
+    (tab: RouteTab) => {
+      refreshScope(getTabCacheKey(tabIdentity, tab.fullPath));
+    },
+    [refreshScope, tabIdentity]
+  );
 
   function onClickMenuItem(key) {
     const currentRoute = flattenRoutes.find((r) => r.key === key);
@@ -111,9 +206,26 @@ function PageLayout() {
     setCollapsed((collapsed) => !collapsed);
   }
 
-  const paddingLeft = showMenu ? { paddingLeft: menuWidth } : {};
+  const paddingLeft = showSiderMenu ? { paddingLeft: menuWidth } : {};
   const paddingTop = showNavbar ? { paddingTop: navbarHeight } : {};
   const paddingStyle = { ...paddingLeft, ...paddingTop };
+
+  const menuElement = (
+    <Menu
+      mode={showTopMenu ? 'horizontal' : 'vertical'}
+      collapse={!showTopMenu && collapsed}
+      onClickMenuItem={onClickMenuItem}
+      selectedKeys={selectedKeys}
+      openKeys={showTopMenu ? undefined : openKeys}
+      onClickSubMenu={(_, openKeys) => {
+        if (!showTopMenu) {
+          setOpenKeys(openKeys);
+        }
+      }}
+    >
+      {renderRoutes(locale)(routes, 1)}
+    </Menu>
+  );
 
   function renderRoutes(locale) {
     routeMap.current.clear();
@@ -201,13 +313,13 @@ function PageLayout() {
           [styles['layout-navbar-hidden']]: !showNavbar,
         })}
       >
-        <Navbar show={showNavbar} />
+        <Navbar show={showNavbar} menu={showTopMenu} topMenu={menuElement} />
       </div>
       {userLoading ? (
         <Spin className={styles['spin']} />
       ) : (
         <Layout>
-          {showMenu && (
+          {showSiderMenu && (
             <Sider
               className={styles['layout-sider']}
               width={menuWidth}
@@ -218,26 +330,30 @@ function PageLayout() {
               breakpoint="xl"
               style={paddingTop}
             >
-              <div className={styles['menu-wrapper']}>
-                <Menu
-                  collapse={collapsed}
-                  onClickMenuItem={onClickMenuItem}
-                  selectedKeys={selectedKeys}
-                  openKeys={openKeys}
-                  onClickSubMenu={(_, openKeys) => {
-                    setOpenKeys(openKeys);
-                  }}
-                >
-                  {renderRoutes(locale)(routes, 1)}
-                </Menu>
-              </div>
+              <div className={styles['menu-wrapper']}>{menuElement}</div>
               <div className={styles['collapse-btn']} onClick={toggleCollapse}>
                 {collapsed ? <IconMenuUnfold /> : <IconMenuFold />}
               </div>
             </Sider>
           )}
           <Layout className={styles['layout-content']} style={paddingStyle}>
-            <div className={styles['layout-content-wrapper']}>
+            {showTabBar && (
+              <TabBar
+                routes={flattenRoutes}
+                defaultRoute={defaultRoute}
+                defaultTab={defaultTab}
+                tabList={tabList.length ? tabList : [defaultTab]}
+                offsetTop={showNavbar ? navbarHeight : 0}
+                onTabsChange={handleTabsChange}
+                onCloseTabs={handleCloseTabs}
+                onReload={handleReloadTab}
+              />
+            )}
+            <div
+              className={cs(styles['layout-content-wrapper'], {
+                [styles['layout-content-wrapper-with-tab']]: showTabBar,
+              })}
+            >
               {!!breadcrumb.length && (
                 <div className={styles['layout-breadcrumb']}>
                   <Breadcrumb>
@@ -253,10 +369,11 @@ function PageLayout() {
                 <Switch>
                   {flattenRoutes.map((route, index) => {
                     return (
-                      <Route
+                      <KeepAliveRoute
                         key={index}
                         path={`/${route.key}`}
                         component={route.component}
+                        identity={tabIdentity}
                       />
                     );
                   })}

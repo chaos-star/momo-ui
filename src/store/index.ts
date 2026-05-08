@@ -1,6 +1,7 @@
 import defaultSettings from '../settings.json';
 export interface GlobalState {
   settings?: typeof defaultSettings;
+  theme?: string;
   userInfo?: {
     name?: string;
     avatar?: string;
@@ -15,6 +16,7 @@ export interface GlobalState {
 
 const initialState: GlobalState = {
   settings: defaultSettings,
+  theme: 'light',
   userInfo: {
     permissions: {},
   },
@@ -27,6 +29,13 @@ export default function store(state = initialState, action) {
       return {
         ...state,
         settings,
+      };
+    }
+    case 'update-theme': {
+      const { theme } = action.payload;
+      return {
+        ...state,
+        theme,
       };
     }
     case 'update-userInfo': {

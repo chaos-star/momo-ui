@@ -55,6 +55,8 @@ function Setting(props: SettingProps) {
           options={[
             { name: 'settings.navbar', value: 'navbar' },
             { name: 'settings.menu', value: 'menu' },
+            { name: 'settings.topMenu', value: 'topMenu' },
+            { name: 'settings.tabBar', value: 'tabBar' },
             { name: 'settings.footer', value: 'footer' },
             { name: 'settings.menuWidth', value: 'menuWidth', type: 'number' },
           ]}

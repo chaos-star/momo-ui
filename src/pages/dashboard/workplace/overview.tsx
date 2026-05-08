@@ -62,7 +62,13 @@ function Overview() {
   const [loading, setLoading] = useState(true);
   const t = useLocale(locale);
 
-  const userInfo = useSelector((state: GlobalState) => state.userInfo || {});
+  const userInfo = useSelector(
+    (state: GlobalState) =>
+      state.userInfo || {
+        name: '',
+        permissions: {} as Record<string, string[]>,
+      }
+  );
 
   const fetchData = () => {
     setLoading(true);

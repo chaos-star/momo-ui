@@ -13,6 +13,8 @@ declare module '*/settings.json' {
     colorWeek: boolean;
     navbar: boolean;
     menu: boolean;
+    topMenu: boolean;
+    tabBar: boolean;
     footer: boolean;
     themeColor: string;
     menuWidth: number;

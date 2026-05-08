@@ -35,7 +35,15 @@ import defaultLocale from '@/locale';
 import useStorage from '@/utils/useStorage';
 import { generatePermission } from '@/routes';
 
-function Navbar({ show }: { show: boolean }) {
+function Navbar({
+  show,
+  topMenu,
+  menu,
+}: {
+  show: boolean;
+  topMenu?: React.ReactNode;
+  menu?: boolean;
+}) {
   const t = useLocale();
   const userInfo = useSelector((state: GlobalState) => state.userInfo);
   const dispatch = useDispatch();
@@ -150,6 +158,7 @@ function Navbar({ show }: { show: boolean }) {
           <div className={styles['logo-name']}>Arco Pro</div>
         </div>
       </div>
+      <div className={styles.center}>{menu && topMenu}</div>
       <ul className={styles.right}>
         <li>
           <Input.Search
