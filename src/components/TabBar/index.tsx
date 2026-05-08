@@ -12,6 +12,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import cs from 'classnames';
 import { IRoute } from '@/routes';
 import { RouteTab } from '@/utils/tabStorage';
+import { getRouteIcon } from '@/utils/routeIcon';
 import useLocale from '@/utils/useLocale';
 import { stripTenantFromPathname } from '@/utils/tenant';
 import styles from './style.module.less';
@@ -74,10 +75,19 @@ function TabBar({
   const locale = useLocale();
   const currentFullPath = `${location.pathname}${location.search || ''}`;
 
+  function getTabRoute(tab: RouteTab) {
+    return findRoute(tab.path, routes);
+  }
+
   function getTabTitle(tab: RouteTab) {
-    const route = findRoute(tab.path, routes);
+    const route = getTabRoute(tab);
     const title = route?.name || tab.title;
     return locale[title] || title;
+  }
+
+  function getTabIcon(tab: RouteTab) {
+    const route = getTabRoute(tab);
+    return getRouteIcon(route?.key || tab.name, route?.icon);
   }
 
   function goto(tab: RouteTab) {
@@ -232,6 +242,7 @@ function TabBar({
                     onClick={() => goto(tab)}
                   >
                     <span className={styles['tag-link']}>
+                      {getTabIcon(tab)}
                       {getTabTitle(tab)}
                     </span>
                     {index !== 0 && (

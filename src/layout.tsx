@@ -15,12 +15,7 @@ import {
 import { useAliveController } from 'react-activation';
 import { Layout, Menu, Breadcrumb, Spin } from '@arco-design/web-react';
 import cs from 'classnames';
-import {
-  IconDashboard,
-  IconTag,
-  IconMenuFold,
-  IconMenuUnfold,
-} from '@arco-design/web-react/icon';
+import { IconMenuFold, IconMenuUnfold } from '@arco-design/web-react/icon';
 import { useSelector } from 'react-redux';
 import qs from 'query-string';
 import NProgress from 'nprogress';
@@ -33,6 +28,7 @@ import { isArray } from './utils/is';
 import useLocale from './utils/useLocale';
 import getUrlParams from './utils/getUrlParams';
 import lazyload from './utils/lazyload';
+import { getRouteIcon } from './utils/routeIcon';
 import {
   getTenantCodeFromPathname,
   stripTenantFromPathname,
@@ -52,18 +48,6 @@ const SubMenu = Menu.SubMenu;
 
 const Sider = Layout.Sider;
 const Content = Layout.Content;
-
-function getIconFromKey(key, icon?: string) {
-  switch (icon || key) {
-    case 'dashboard':
-      return <IconDashboard className={styles.icon} />;
-    case 'example':
-    case 'tag':
-      return <IconTag className={styles.icon} />;
-    default:
-      return <div className={styles['icon-empty']} />;
-  }
-}
 
 function getFlattenRoutes(routes) {
   const mod = import.meta.glob('./pages/**/[a-z[]*.tsx');
@@ -253,7 +237,7 @@ function PageLayout() {
     return function travel(_routes: IRoute[], level, parentNode = []) {
       return _routes.map((route) => {
         const { breadcrumb = true, ignore } = route;
-        const iconDom = getIconFromKey(route.key, route.icon);
+        const iconDom = getRouteIcon(route.key, route.icon);
         const titleDom = (
           <>
             {iconDom} {locale[route.name] || route.name}
