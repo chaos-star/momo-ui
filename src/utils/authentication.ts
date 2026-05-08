@@ -2,7 +2,7 @@
  * { data-analysis:  ['read', 'write'] }
  */
 
-export type UserPermission = Record<string, string[]>;
+export type UserPermission = Record<string, string[]> | string[];
 
 type Auth = {
   resource: string | RegExp;
@@ -28,6 +28,21 @@ const judge = (actions: string[], perm: string[]) => {
 
 const auth = (params: Auth, userPermission: UserPermission) => {
   const { resource, actions = [] } = params;
+
+  if (Array.isArray(userPermission)) {
+    if (resource instanceof RegExp) {
+      return userPermission.some((permission) => resource.test(permission));
+    }
+
+    if (!actions.length) {
+      return userPermission.includes(resource);
+    }
+
+    return actions.some((action) =>
+      userPermission.includes(`${resource}:${action}`)
+    );
+  }
+
   if (resource instanceof RegExp) {
     const permKeys = Object.keys(userPermission);
     const matchPermissions = permKeys.filter((item) => item.match(resource));

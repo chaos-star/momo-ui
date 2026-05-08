@@ -1,4 +1,4 @@
-import { publicRequest } from './request';
+import { authRequest, publicRequest } from './request';
 
 export interface LoginParams {
   account?: string;
@@ -20,11 +20,26 @@ export interface UserProfile {
   [key: string]: unknown;
 }
 
+export interface DefaultTenant {
+  id?: number;
+  tenantCode?: string;
+  tenantName?: string;
+  tenantType?: string;
+  tenantZone?: string;
+  activeStatus?: number;
+  config?: string;
+  expireAt?: number;
+  status?: number;
+  operator?: number;
+  createdAt?: number;
+  updatedAt?: number;
+}
+
 export interface LoginResult {
   profile: UserProfile;
   accessToken: string;
   expiresIn: number;
-  defaultTenant?: Record<string, unknown>;
+  defaultTenant?: DefaultTenant;
 }
 
 export function login(data: LoginParams) {
@@ -32,5 +47,12 @@ export function login(data: LoginParams) {
     url: '/api/system/users/login',
     method: 'POST',
     data,
+  });
+}
+
+export function logout() {
+  return authRequest<Record<string, never>>({
+    url: '/api/system/users/logout',
+    method: 'POST',
   });
 }

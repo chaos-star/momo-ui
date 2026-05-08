@@ -8,14 +8,16 @@ import zhCN from '@arco-design/web-react/es/locale/zh-CN';
 import enUS from '@arco-design/web-react/es/locale/en-US';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { AliveScope } from 'react-activation';
-import axios from 'axios';
 import rootReducer from './store';
 import PageLayout from './layout';
 import { GlobalContext } from './context';
 import Login from './pages/login';
+import Exception403 from './pages/exception/403';
 import checkLogin from './utils/checkLogin';
 import changeTheme from './utils/changeTheme';
 import useStorage from './utils/useStorage';
+import { readUserProfile, getTenantCodeFromPathname } from './utils/tenant';
+import { getAuthContextResource } from './api/auth';
 import './mock';
 
 const store = createStore(rootReducer);
@@ -36,23 +38,48 @@ function AppContent() {
     }
   }
 
-  function fetchUserInfo() {
+  async function fetchUserInfo() {
     store.dispatch({
       type: 'update-userInfo',
       payload: { userLoading: true },
     });
-    axios.get('/api/user/userInfo').then((res) => {
+
+    const tenantCode = getTenantCodeFromPathname();
+    try {
+      const resource = tenantCode
+        ? await getAuthContextResource(tenantCode)
+        : null;
       store.dispatch({
         type: 'update-userInfo',
-        payload: { userInfo: res.data, userLoading: false },
+        payload: {
+          userInfo: {
+            ...(readUserProfile() || {}),
+            ...(resource?.profile || {}),
+            permissions: resource?.permissions || [],
+            fieldPolicies: resource?.fieldPolicies || {},
+          },
+          userLoading: false,
+        },
       });
-    });
+    } catch {
+      store.dispatch({
+        type: 'update-userInfo',
+        payload: {
+          userInfo: readUserProfile() || { permissions: {} },
+          userLoading: false,
+        },
+      });
+    }
   }
 
   useEffect(() => {
+    const pathname = window.location.pathname;
+    const isLoginPage = pathname === '/login' || pathname.endsWith('/login');
+    const is403Page = pathname === '/403' || pathname.endsWith('/403');
+
     if (checkLogin()) {
       fetchUserInfo();
-    } else if (window.location.pathname.replace(/\//g, '') !== 'login') {
+    } else if (!isLoginPage && !is403Page) {
       window.location.pathname = '/login';
     }
   }, []);
@@ -92,6 +119,9 @@ function AppContent() {
           <AliveScope>
             <Switch>
               <Route path="/login" component={Login} />
+              <Route path="/:tenantCode/login" component={Login} />
+              <Route path="/403" component={Exception403} />
+              <Route path="/:tenantCode/403" component={Exception403} />
               <Route path="/" component={PageLayout} />
             </Switch>
           </AliveScope>

@@ -1,5 +1,11 @@
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, {
+  AxiosError,
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+} from 'axios';
 import { Message } from '@arco-design/web-react';
+import { getTenantCodeFromPathname } from '@/utils/tenant';
 
 export const ACCESS_TOKEN_KEY = 'X-Access-Token';
 export const ORGANIZATION_KEY = 'X-Organization';
@@ -50,6 +56,7 @@ function getAccessToken() {
 
 function getOrganization() {
   return (
+    getTenantCodeFromPathname() ||
     localStorage.getItem(ORGANIZATION_KEY) ||
     localStorage.getItem('organization') ||
     ''
@@ -64,28 +71,95 @@ function isApiSuccess(code: number) {
   return code === 200;
 }
 
+function getErrorMessage(response?: ApiResponse, fallback = '请求失败') {
+  return response?.message || fallback;
+}
+
+let isRedirectingToLogin = false;
+
+function isUnauthorizedResponse(response?: AxiosResponse<ApiResponse>) {
+  return response?.status === 401 || response?.data?.code === 401;
+}
+
+function redirectToLogin() {
+  if (isRedirectingToLogin) {
+    return;
+  }
+
+  isRedirectingToLogin = true;
+  localStorage.removeItem(ACCESS_TOKEN_KEY);
+  localStorage.setItem('userStatus', 'logout');
+
+  const { pathname } = window.location;
+  const isLoginPage = pathname === '/login' || pathname.endsWith('/login');
+
+  if (!isLoginPage) {
+    window.location.replace('/login');
+  } else {
+    isRedirectingToLogin = false;
+  }
+}
+
+function handleUnauthorized(config?: ApiRequestConfig) {
+  if (!config?.skipErrorMessage) {
+    Message.error('登录状态已失效，请重新登录');
+  }
+
+  redirectToLogin();
+}
+
+axios.interceptors.response.use(
+  (response: AxiosResponse<ApiResponse>) => {
+    if (isUnauthorizedResponse(response)) {
+      handleUnauthorized();
+    }
+
+    return response;
+  },
+  (error: AxiosError<ApiResponse>) => {
+    if (isUnauthorizedResponse(error.response)) {
+      handleUnauthorized();
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 function handleResponse<T>(
-  response: ApiResponse<T>,
+  response: AxiosResponse<ApiResponse<T>>,
   config?: ApiRequestConfig
 ): T | Promise<never> {
-  if (isApiSuccess(response.code)) {
-    return response.data;
+  if (isUnauthorizedResponse(response)) {
+    handleUnauthorized(config);
+    return Promise.reject(response.data);
+  }
+
+  if (response.status === 200 && isApiSuccess(response.data.code)) {
+    return response.data.data;
   }
 
   if (!config?.skipErrorMessage) {
-    Message.error(response.message || '请求失败');
+    Message.error(getErrorMessage(response.data));
   }
 
-  return Promise.reject(response);
+  return Promise.reject(response.data);
 }
 
 function handleError(
   error: AxiosError<ApiResponse>,
   config?: ApiRequestConfig
 ) {
+  if (isUnauthorizedResponse(error.response)) {
+    handleUnauthorized(config);
+    return Promise.reject(error);
+  }
+
   if (!config?.skipErrorMessage) {
     const message =
-      error.response?.data?.message || error.message || '网络异常，请稍后重试';
+      error.response?.data?.message ||
+      (error.response?.status
+        ? `请求失败，状态码：${error.response.status}`
+        : error.message || '网络异常，请稍后重试');
     Message.error(message);
   }
 
@@ -99,6 +173,7 @@ function createService(withAuth: boolean): AxiosInstance {
         ? import.meta.env.VITE_API_BASE_URL
         : '',
     timeout: 30000,
+    validateStatus: () => true,
   });
 
   service.interceptors.request.use((config: ApiRequestConfig) => {
@@ -132,7 +207,7 @@ function createRequester(service: AxiosInstance) {
   ) {
     try {
       const response = await service.request<ApiResponse<T>>(config);
-      return handleResponse<T>(response.data, config);
+      return handleResponse<T>(response, config);
     } catch (error) {
       return handleError(error as AxiosError<ApiResponse>, config);
     }

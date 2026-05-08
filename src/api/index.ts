@@ -9,7 +9,9 @@ export {
   default,
 } from './request';
 
-export { login } from './user';
+export { getAuthContext, getAuthContextResource } from './auth';
+export { getCaptcha } from './system';
+export { login, logout } from './user';
 
 export type {
   ApiRequestConfig,
@@ -21,4 +23,10 @@ export type {
   PageData,
 } from './request';
 
-export type { LoginParams, LoginResult, UserProfile } from './user';
+export type { AuthContextResult, AuthMenuNode } from './auth';
+export type {
+  DefaultTenant,
+  LoginParams,
+  LoginResult,
+  UserProfile,
+} from './user';

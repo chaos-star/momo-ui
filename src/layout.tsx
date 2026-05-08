@@ -34,6 +34,10 @@ import useLocale from './utils/useLocale';
 import getUrlParams from './utils/getUrlParams';
 import lazyload from './utils/lazyload';
 import {
+  getTenantCodeFromPathname,
+  stripTenantFromPathname,
+} from './utils/tenant';
+import {
   RouteTab,
   getTabCacheKey,
   getTabIdentity,
@@ -49,11 +53,12 @@ const SubMenu = Menu.SubMenu;
 const Sider = Layout.Sider;
 const Content = Layout.Content;
 
-function getIconFromKey(key) {
-  switch (key) {
+function getIconFromKey(key, icon?: string) {
+  switch (icon || key) {
     case 'dashboard':
       return <IconDashboard className={styles.icon} />;
     case 'example':
+    case 'tag':
       return <IconTag className={styles.icon} />;
     default:
       return <div className={styles['icon-empty']} />;
@@ -66,7 +71,10 @@ function getFlattenRoutes(routes) {
   function travel(_routes) {
     _routes.forEach((route) => {
       if (route.key && !route.children) {
-        route.component = lazyload(mod[`./pages/${route.key}/index.tsx`]);
+        const loader =
+          mod[`./pages/${route.key}/index.tsx`] ||
+          (() => import('./pages/exception/403'));
+        route.component = lazyload(loader);
         res.push(route);
       } else if (isArray(route.children) && route.children.length) {
         travel(route.children);
@@ -83,18 +91,27 @@ function PageLayout() {
   const location = useLocation();
   const { dropScope, refreshScope } = useAliveController();
   const pathname = location.pathname;
-  const currentComponent = qs.parseUrl(pathname).url.slice(1);
+  const tenantCode = getTenantCodeFromPathname(pathname);
+  const pathPrefix = tenantCode ? `/${tenantCode}` : '';
+  const routePathname = stripTenantFromPathname(pathname);
+  const currentComponent = qs.parseUrl(routePathname).url.slice(1);
   const locale = useLocale();
   const { settings, userLoading, userInfo } = useSelector(
     (state: GlobalState) => state
   );
 
-  const tabIdentity = useMemo(() => getTabIdentity(userInfo), [userInfo]);
+  const tabIdentity = useMemo(
+    () => ({ tenantCode: tenantCode || getTabIdentity(userInfo).tenantCode }),
+    [tenantCode, userInfo]
+  );
   const identityKey = useMemo(
     () => tabIdentity.tenantCode || 'unknown',
     [tabIdentity.tenantCode]
   );
-  const [routes, defaultRoute] = useRoute(userInfo?.permissions);
+  const [routes, defaultRoute, routeLoading] = useRoute(
+    userInfo?.permissions,
+    tenantCode
+  );
   const defaultSelectedKeys = [currentComponent || defaultRoute];
   const paths = (currentComponent || defaultRoute).split('/');
   const defaultOpenKeys = paths.slice(0, paths.length - 1);
@@ -123,7 +140,7 @@ function PageLayout() {
 
   const flattenRoutes = useMemo(() => getFlattenRoutes(routes) || [], [routes]);
   const defaultTab = useMemo(() => {
-    const defaultPath = `/${defaultRoute}`;
+    const defaultPath = `${pathPrefix}/${defaultRoute}`;
     return (
       formatTab(defaultPath, '', flattenRoutes) || {
         title: defaultRoute,
@@ -132,7 +149,7 @@ function PageLayout() {
         fullPath: defaultPath,
       }
     );
-  }, [defaultRoute, flattenRoutes]);
+  }, [defaultRoute, flattenRoutes, pathPrefix]);
 
   useEffect(() => {
     if (!defaultRoute) {
@@ -197,7 +214,11 @@ function PageLayout() {
     const preload = component.preload();
     NProgress.start();
     preload.then(() => {
-      history.push(currentRoute.path ? currentRoute.path : `/${key}`);
+      history.push(
+        currentRoute.path
+          ? `${pathPrefix}${currentRoute.path}`
+          : `${pathPrefix}/${key}`
+      );
       NProgress.done();
     });
   }
@@ -232,7 +253,7 @@ function PageLayout() {
     return function travel(_routes: IRoute[], level, parentNode = []) {
       return _routes.map((route) => {
         const { breadcrumb = true, ignore } = route;
-        const iconDom = getIconFromKey(route.key);
+        const iconDom = getIconFromKey(route.key, route.icon);
         const titleDom = (
           <>
             {iconDom} {locale[route.name] || route.name}
@@ -274,7 +295,7 @@ function PageLayout() {
   }
 
   const updateMenuStatus = useCallback(() => {
-    const pathKeys = pathname.split('/');
+    const pathKeys = routePathname.split('/');
     const newSelectedKeys: string[] = [];
     const keysToOpen: string[] = [];
     while (pathKeys.length > 0) {
@@ -299,13 +320,13 @@ function PageLayout() {
       });
       return mergedKeys;
     });
-  }, [pathname]);
+  }, [routePathname]);
 
   useEffect(() => {
-    const routeConfig = routeMap.current.get(pathname);
+    const routeConfig = routeMap.current.get(routePathname);
     setBreadCrumb(routeConfig || []);
     updateMenuStatus();
-  }, [pathname, updateMenuStatus]);
+  }, [routePathname, updateMenuStatus]);
   return (
     <Layout className={styles.layout}>
       <div
@@ -315,7 +336,7 @@ function PageLayout() {
       >
         <Navbar show={showNavbar} menu={showTopMenu} topMenu={menuElement} />
       </div>
-      {userLoading ? (
+      {userLoading || routeLoading ? (
         <Spin className={styles['spin']} />
       ) : (
         <Layout>
@@ -341,6 +362,7 @@ function PageLayout() {
               <TabBar
                 defaultTab={defaultTab}
                 tabList={tabList.length ? tabList : [defaultTab]}
+                routes={flattenRoutes}
                 offsetTop={showNavbar ? navbarHeight : 0}
                 onTabsChange={handleTabsChange}
                 onCloseTabs={handleCloseTabs}
@@ -369,14 +391,14 @@ function PageLayout() {
                     return (
                       <KeepAliveRoute
                         key={index}
-                        path={`/${route.key}`}
+                        path={`${pathPrefix}/${route.key}`}
                         component={route.component}
                         identity={tabIdentity}
                       />
                     );
                   })}
-                  <Route exact path="/">
-                    <Redirect to={`/${defaultRoute}`} />
+                  <Route exact path={pathPrefix || '/'}>
+                    <Redirect to={`${pathPrefix}/${defaultRoute}`} />
                   </Route>
                   <Route
                     path="*"

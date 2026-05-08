@@ -114,6 +114,32 @@
     justify-content: space-between;
   }
 
+  &-captcha-row {
+    display: flex;
+    gap: 12px;
+  }
+
+  &-captcha-input {
+    flex: 1;
+  }
+
+  &-captcha-btn {
+    padding: 0 8px !important;
+    width: 110px;
+    height: 32px !important;
+    background: var(--color-fill-2) !important;
+    border: 1px solid transparent !important;
+    overflow: hidden;
+  }
+
+  &-captcha-image {
+    display: block;
+    max-width: 100%;
+    height: 28px;
+    cursor: pointer;
+    mix-blend-mode: multiply;
+  }
+
   &-register-btn {
     color: var(--color-text-3) !important;
   }

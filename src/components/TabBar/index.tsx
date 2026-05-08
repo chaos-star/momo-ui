@@ -13,11 +13,13 @@ import cs from 'classnames';
 import { IRoute } from '@/routes';
 import { RouteTab } from '@/utils/tabStorage';
 import useLocale from '@/utils/useLocale';
+import { stripTenantFromPathname } from '@/utils/tenant';
 import styles from './style.module.less';
 
 interface TabBarProps {
   defaultTab: RouteTab;
   tabList: RouteTab[];
+  routes: IRoute[];
   offsetTop?: number;
   onTabsChange: (tabs: RouteTab[]) => void;
   onCloseTabs?: (tabs: RouteTab[]) => void;
@@ -34,7 +36,8 @@ const Action = {
 };
 
 export function findRoute(pathname: string, routes: IRoute[]) {
-  return routes.find((route) => pathname === `/${route.key}`);
+  const routePathname = stripTenantFromPathname(pathname);
+  return routes.find((route) => routePathname === `/${route.key}`);
 }
 
 export function formatTab(
@@ -47,9 +50,11 @@ export function formatTab(
     return null;
   }
 
+  const routePathname = stripTenantFromPathname(pathname);
+
   return {
     title: route.name,
-    name: route.key,
+    name: routePathname.replace(/^\//, ''),
     path: pathname,
     fullPath: `${pathname}${search || ''}`,
   };
@@ -58,6 +63,7 @@ export function formatTab(
 function TabBar({
   defaultTab,
   tabList,
+  routes,
   offsetTop = 0,
   onTabsChange,
   onCloseTabs,
@@ -67,6 +73,12 @@ function TabBar({
   const location = useLocation();
   const locale = useLocale();
   const currentFullPath = `${location.pathname}${location.search || ''}`;
+
+  function getTabTitle(tab: RouteTab) {
+    const route = findRoute(tab.path, routes);
+    const title = route?.name || tab.title;
+    return locale[title] || title;
+  }
 
   function goto(tab: RouteTab) {
     if (tab.fullPath !== currentFullPath) {
@@ -220,7 +232,7 @@ function TabBar({
                     onClick={() => goto(tab)}
                   >
                     <span className={styles['tag-link']}>
-                      {locale[tab.title] || tab.title}
+                      {getTabTitle(tab)}
                     </span>
                     {index !== 0 && (
                       <span

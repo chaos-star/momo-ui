@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useMemo } from 'react';
+import React, { useContext } from 'react';
 import {
   Tooltip,
-  Input,
   Avatar,
   Select,
   Dropdown,
@@ -22,7 +21,7 @@ import {
   IconDashboard,
   IconTag,
 } from '@arco-design/web-react/icon';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { GlobalState } from '@/store';
 import { GlobalContext } from '@/context';
 import useLocale from '@/utils/useLocale';
@@ -33,7 +32,10 @@ import Settings from '../Settings';
 import styles from './style/index.module.less';
 import defaultLocale from '@/locale';
 import useStorage from '@/utils/useStorage';
-import { generatePermission } from '@/routes';
+import { logout as userLogout } from '@/api/user';
+import { ACCESS_TOKEN_KEY, ORGANIZATION_KEY } from '@/api/request';
+import { USER_PROFILE_KEY, getTenantCodeFromPathname } from '@/utils/tenant';
+import { getAuthResourceCacheKey } from '@/api/auth';
 
 function Navbar({
   show,
@@ -46,45 +48,42 @@ function Navbar({
 }) {
   const t = useLocale();
   const userInfo = useSelector((state: GlobalState) => state.userInfo);
-  const dispatch = useDispatch();
 
   const [, setUserStatus] = useStorage('userStatus');
   const [role, setRole] = useStorage('userRole', 'admin');
 
   const { setLang, lang, theme, setTheme } = useContext(GlobalContext);
 
-  function logout() {
+  function clearLoginState() {
+    const tenantCode = getTenantCodeFromPathname();
+
     setUserStatus('logout');
-    window.location.href = '/login';
+    localStorage.removeItem(ACCESS_TOKEN_KEY);
+    localStorage.removeItem(ORGANIZATION_KEY);
+    localStorage.removeItem(USER_PROFILE_KEY);
+    if (tenantCode) {
+      localStorage.removeItem(getAuthResourceCacheKey(tenantCode));
+    }
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('organization');
   }
 
-  function onMenuItemClick(key) {
+  function logout() {
+    userLogout()
+      .catch(() => undefined)
+      .finally(() => {
+        clearLoginState();
+        window.location.href = '/login';
+      });
+  }
+
+  function onMenuItemClick(key: string) {
     if (key === 'logout') {
       logout();
     } else {
       Message.info(`You clicked ${key}`);
     }
   }
-
-  const permissions = useMemo(() => generatePermission(role), [role]);
-
-  useEffect(() => {
-    if (
-      JSON.stringify(userInfo?.permissions || {}) ===
-      JSON.stringify(permissions)
-    ) {
-      return;
-    }
-    dispatch({
-      type: 'update-userInfo',
-      payload: {
-        userInfo: {
-          ...userInfo,
-          permissions,
-        },
-      },
-    });
-  }, [dispatch, permissions, userInfo]);
 
   if (!show) {
     return (
@@ -161,16 +160,11 @@ function Navbar({
       <div className={styles.center}>{menu && topMenu}</div>
       <ul className={styles.right}>
         <li>
-          <Input.Search
-            className={styles.round}
-            placeholder={t['navbar.search.placeholder']}
-          />
-        </li>
-        <li>
           <Select
             triggerElement={<IconButton icon={<IconLanguage />} />}
             options={[
               { label: '中文', value: 'zh-CN' },
+              { label: 'España', value: 'es-ES' },
               { label: 'English', value: 'en-US' },
             ]}
             value={lang}

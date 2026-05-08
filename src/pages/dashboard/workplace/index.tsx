@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Space } from '@arco-design/web-react';
+import { Grid } from '@arco-design/web-react';
 import Overview from './overview';
 import PopularContents from './popular-contents';
 import ContentPercentage from './content-percentage';
@@ -16,25 +16,25 @@ const gutter = 16;
 
 function Workplace() {
   return (
-    <Space size={16} align="start">
-      <Space size={16} direction="vertical">
+    <div className={styles.workplace}>
+      <div className={styles.main}>
         <Overview />
-        <Row gutter={gutter}>
-          <Col span={12}>
+        <Row gutter={gutter} className={styles.charts}>
+          <Col xs={24} sm={24} md={24} lg={12} xl={12} xxl={12}>
             <PopularContents />
           </Col>
-          <Col span={12}>
+          <Col xs={24} sm={24} md={24} lg={12} xl={12} xxl={12}>
             <ContentPercentage />
           </Col>
         </Row>
-      </Space>
-      <Space className={styles.right} size={16} direction="vertical">
+      </div>
+      <div className={styles.right}>
         <Shortcuts />
         <Carousel />
         <Announcement />
         <Docs />
-      </Space>
-    </Space>
+      </div>
+    </div>
   );
 }
 

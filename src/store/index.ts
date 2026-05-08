@@ -9,7 +9,9 @@ export interface GlobalState {
     organization?: string;
     location?: string;
     email?: string;
-    permissions: Record<string, string[]>;
+    permissions: Record<string, string[]> | string[];
+    fieldPolicies?: Record<string, unknown>;
+    [key: string]: unknown;
   };
   userLoading?: boolean;
 }
