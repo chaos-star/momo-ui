@@ -16,8 +16,6 @@ import useLocale from '@/utils/useLocale';
 import styles from './style.module.less';
 
 interface TabBarProps {
-  routes: IRoute[];
-  defaultRoute: string;
   defaultTab: RouteTab;
   tabList: RouteTab[];
   offsetTop?: number;
@@ -58,8 +56,6 @@ export function formatTab(
 }
 
 function TabBar({
-  routes,
-  defaultRoute,
   defaultTab,
   tabList,
   offsetTop = 0,

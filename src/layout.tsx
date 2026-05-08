@@ -339,8 +339,6 @@ function PageLayout() {
           <Layout className={styles['layout-content']} style={paddingStyle}>
             {showTabBar && (
               <TabBar
-                routes={flattenRoutes}
-                defaultRoute={defaultRoute}
                 defaultTab={defaultTab}
                 tabList={tabList.length ? tabList : [defaultTab]}
                 offsetTop={showNavbar ? navbarHeight : 0}

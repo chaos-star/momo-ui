@@ -22,7 +22,9 @@ function KeepAliveRoute({
           routeProps.location.search || ''
         }`;
         const cacheKey = getTabCacheKey(identity, fullPath);
-        const Component = component as React.ComponentType<any> | undefined;
+        const Component = component as
+          | React.ComponentType<typeof routeProps>
+          | undefined;
 
         return (
           <KeepAlive id={cacheKey} name={cacheKey} saveScrollPosition="screen">
