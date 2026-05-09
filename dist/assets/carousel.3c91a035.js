@@ -1,4 +1,4 @@
-import { j as e, aj as c } from './vendor.aa22cee8.js';
+import { j as e, ak as c } from './vendor.c4f0d1e5.js';
 var i =
   '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/pages/dashboard/workplace/carousel.tsx';
 const r = [

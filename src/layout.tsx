@@ -135,39 +135,65 @@ function PageLayout() {
     );
   }, [defaultRoute, flattenRoutes, pathPrefix]);
 
+  const currentTab = useMemo(
+    () => formatTab(location.pathname, location.search, flattenRoutes),
+    [flattenRoutes, location.pathname, location.search]
+  );
+
   useEffect(() => {
-    if (!defaultRoute) {
+    if (!defaultRoute || !showTabBar) {
       return;
     }
 
     const storedTabs = readTabsFromStorage(tabIdentity);
     setTabList(storedTabs?.length ? storedTabs : [defaultTab]);
-  }, [defaultRoute, defaultTab, identityKey, tabIdentity]);
+  }, [defaultRoute, defaultTab, identityKey, showTabBar, tabIdentity]);
 
   useEffect(() => {
-    const currentTab = formatTab(
-      location.pathname,
-      location.search,
-      flattenRoutes
-    );
+    if (showTabBar || !tabList.length) {
+      return;
+    }
+
+    const currentFullPath = `${location.pathname}${location.search || ''}`;
+    tabList.forEach((tab) => {
+      if (tab.fullPath !== currentFullPath) {
+        dropScope(getTabCacheKey(tabIdentity, tab.fullPath));
+      }
+    });
+  }, [
+    dropScope,
+    location.pathname,
+    location.search,
+    showTabBar,
+    tabIdentity,
+    tabList,
+  ]);
+
+  useEffect(() => {
     if (!currentTab) {
       return;
     }
 
     setTabList((list) => {
+      if (!showTabBar) {
+        return [currentTab];
+      }
+
       const nextList = list.length ? list : [defaultTab];
       if (nextList.some((tab) => tab.fullPath === currentTab.fullPath)) {
         return nextList;
       }
       return [...nextList, currentTab];
     });
-  }, [defaultTab, flattenRoutes, location.pathname, location.search]);
+  }, [currentTab, defaultTab, showTabBar]);
 
   useEffect(() => {
-    if (tabList.length) {
-      saveTabsToStorage(tabIdentity, tabList);
+    if (!tabList.length) {
+      return;
     }
-  }, [identityKey, tabIdentity, tabList]);
+
+    saveTabsToStorage(tabIdentity, showTabBar ? tabList : tabList.slice(-1));
+  }, [identityKey, showTabBar, tabIdentity, tabList]);
 
   const handleTabsChange = useCallback(
     (tabs: RouteTab[]) => {

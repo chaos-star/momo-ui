@@ -1,13 +1,13 @@
 import {
   r,
   j as t,
-  as as f,
+  at as f,
   T as x,
-  f as b,
-  i as g,
-} from './vendor.aa22cee8.js';
-/* empty css              */ import { D as h } from './index.fbad3a32.js';
-import { u as N } from './index.7cc85f9b.js';
+  f as g,
+  i as h,
+} from './vendor.c4f0d1e5.js';
+/* empty css              */ import { D as b } from './index.91c0c8fa.js';
+import { u as N } from './index.1f1355a3.js';
 import { i as j } from './index.9464998a.js';
 var o =
   '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/pages/dashboard/workplace/content-percentage.tsx';
@@ -17,7 +17,7 @@ function S() {
     [l, a] = r.exports.useState(!0),
     c = () => {
       a(!0),
-        g
+        h
           .get('/api/workplace/content-percentage')
           .then((e) => {
             n(e.data);
@@ -43,12 +43,12 @@ function S() {
             this
           ),
           t.exports.jsxDEV(
-            b,
+            g,
             {
               loading: l,
               style: { display: 'block' },
               children: t.exports.jsxDEV(
-                h,
+                b,
                 {
                   autoFit: !0,
                   height: 340,

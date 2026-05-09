@@ -15,26 +15,26 @@ import {
   j as t,
   c as k,
   T as _,
-  f as b,
+  f as A,
   r as e,
-  u as A,
-  as as M,
+  u as b,
+  at as M,
   D as d,
-  aH as D,
-  ai as F,
-  aG as G,
-  at as O,
+  aI as D,
+  aj as F,
+  aH as G,
+  au as O,
   i as V,
-} from './vendor.aa22cee8.js';
+} from './vendor.c4f0d1e5.js';
 /* empty css               */ /* empty css              */ import {
   C as j,
   A as N,
   L as I,
   a as U,
   T as R,
-} from './index.fbad3a32.js';
+} from './index.91c0c8fa.js';
 import { i as L } from './index.9464998a.js';
-import { u as H } from './index.7cc85f9b.js';
+import { u as H } from './index.1f1355a3.js';
 var C = {
     'customer-tooltip-title': '_customer-tooltip-title_1c8i1_1',
     'customer-tooltip-item': '_customer-tooltip-item_1c8i1_4',
@@ -144,7 +144,7 @@ function T({
   color: n = '#4080FF',
 }) {
   return t.exports.jsxDEV(
-    b,
+    A,
     {
       loading: i,
       style: { width: '100%' },
@@ -1966,7 +1966,7 @@ function pe() {
   const [a, i] = e.exports.useState({}),
     [o, n] = e.exports.useState(!0),
     l = H(L),
-    c = A((E) => E.userInfo || { name: '', permissions: {} }),
+    c = b((E) => E.userInfo || { name: '', permissions: {} }),
     h = () => {
       n(!0),
         V.get('/api/workplace/overview-content')

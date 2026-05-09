@@ -1,5 +1,5 @@
-import { j as e, as as l, T as n, ai as a } from './vendor.aa22cee8.js';
-/* empty css              */ import { u as c } from './index.7cc85f9b.js';
+import { j as e, at as l, T as n, aj as a } from './vendor.c4f0d1e5.js';
+/* empty css              */ import { u as c } from './index.1f1355a3.js';
 import { i as m } from './index.9464998a.js';
 const d = '_docs_lmqvd_1',
   u = '_link_lmqvd_5';
@@ -12,7 +12,7 @@ const p = {
   designLab: 'https://arco.design/themes',
   materialMarket: 'https://arco.design/material/',
 };
-function f() {
+function b() {
   const i = c(m);
   return e.exports.jsxDEV(
     l,
@@ -79,4 +79,4 @@ function f() {
     this
   );
 }
-export { f as default };
+export { b as default };

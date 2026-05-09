@@ -1,111 +1,112 @@
-var ys = Object.defineProperty,
-  js = Object.defineProperties;
-var Vs = Object.getOwnPropertyDescriptors;
-var Ve = Object.getOwnPropertySymbols;
-var gt = Object.prototype.hasOwnProperty,
-  xt = Object.prototype.propertyIsEnumerable;
-var Et = (t, s, o) =>
-    s in t
-      ? ys(t, s, { enumerable: !0, configurable: !0, writable: !0, value: o })
-      : (t[s] = o),
-  C = (t, s) => {
-    for (var o in s || (s = {})) gt.call(s, o) && Et(t, o, s[o]);
-    if (Ve) for (var o of Ve(s)) xt.call(s, o) && Et(t, o, s[o]);
-    return t;
+var ws = Object.defineProperty,
+  Ss = Object.defineProperties;
+var ks = Object.getOwnPropertyDescriptors;
+var we = Object.getOwnPropertySymbols;
+var _t = Object.prototype.hasOwnProperty,
+  yt = Object.prototype.propertyIsEnumerable;
+var jt = (e, s, o) =>
+    s in e
+      ? ws(e, s, { enumerable: !0, configurable: !0, writable: !0, value: o })
+      : (e[s] = o),
+  F = (e, s) => {
+    for (var o in s || (s = {})) _t.call(s, o) && jt(e, o, s[o]);
+    if (we) for (var o of we(s)) yt.call(s, o) && jt(e, o, s[o]);
+    return e;
   },
-  $ = (t, s) => js(t, Vs(s));
-var Fe = (t, s) => {
+  $ = (e, s) => Ss(e, ks(s));
+var Se = (e, s) => {
   var o = {};
-  for (var n in t) gt.call(t, n) && s.indexOf(n) < 0 && (o[n] = t[n]);
-  if (t != null && Ve)
-    for (var n of Ve(t)) s.indexOf(n) < 0 && xt.call(t, n) && (o[n] = t[n]);
+  for (var n in e) _t.call(e, n) && s.indexOf(n) < 0 && (o[n] = e[n]);
+  if (e != null && we)
+    for (var n of we(e)) s.indexOf(n) < 0 && yt.call(e, n) && (o[n] = e[n]);
   return o;
 };
 import {
   r as l,
-  j as e,
-  L as Oe,
-  R as vt,
-  B as Y,
-  A as Dt,
-  S as _t,
-  T as Ce,
-  a as Fs,
-  b as yt,
-  c as Cs,
-  g as ws,
-  I as Ss,
-  d as ks,
-  e as As,
-  f as ze,
-  h as jt,
-  i as Ue,
-  k as pe,
-  u as he,
-  l as Ke,
-  m as Bs,
-  n as Is,
-  D as Vt,
-  o as Ft,
-  p as Ps,
-  q as Rs,
-  s as Ms,
-  t as we,
-  v as Ts,
-  w as Ls,
-  x as $s,
-  M as be,
-  y as A,
-  z as Ct,
-  C as wt,
-  E as Os,
-  F as St,
-  G as zs,
-  H as Us,
-  J as Ks,
-  K as Gs,
-  N as Ws,
-  O as qs,
-  P as Js,
-  Q as kt,
-  U as ce,
-  V as Ge,
-  W as At,
-  X as Hs,
-  Y as Xs,
-  Z as Bt,
-  _ as Ys,
-  $ as Zs,
-  a0 as Qs,
-  a1 as eo,
-  a2 as oe,
-  a3 as to,
-  a4 as It,
-  a5 as so,
-  a6 as Pt,
-  a7 as oo,
-  a8 as no,
-  a9 as Rt,
-  aa as Mt,
-  ab as ro,
-  ac as Tt,
-  ad as Ne,
-  ae as We,
-  af as io,
-  ag as ao,
-  ah as uo,
-  ai as lo,
-  aj as co,
-  ak as ne,
-  al as mo,
-  am as fo,
-  an as po,
-  ao as ho,
-  ap as bo,
-  aq as Lt,
-  ar as No,
-} from './vendor.aa22cee8.js';
-const go = function () {
+  j as t,
+  L as Je,
+  R as Vt,
+  B as ee,
+  A as Ft,
+  S as Ct,
+  T as ke,
+  a as As,
+  b as wt,
+  c as Bs,
+  g as Is,
+  I as Ps,
+  d as Rs,
+  e as Ms,
+  f as He,
+  h as St,
+  i as Ae,
+  k as ve,
+  u as De,
+  l as Xe,
+  m as Ts,
+  n as Ls,
+  D as kt,
+  o as At,
+  p as $s,
+  q as zs,
+  s as Os,
+  t as Be,
+  v as Us,
+  w as Ks,
+  x as Gs,
+  M as pe,
+  y as I,
+  z as Bt,
+  C as Ws,
+  E as qs,
+  F as Js,
+  G as Hs,
+  H as Xs,
+  J as Ys,
+  K as Zs,
+  N as Qs,
+  O as eo,
+  P as to,
+  Q as It,
+  U as he,
+  V as so,
+  W as Ye,
+  X as Pt,
+  Y as oo,
+  Z as no,
+  _ as Rt,
+  $ as ro,
+  a0 as io,
+  a1 as ao,
+  a2 as uo,
+  a3 as ne,
+  a4 as lo,
+  a5 as Mt,
+  a6 as co,
+  a7 as Tt,
+  a8 as mo,
+  a9 as fo,
+  aa as Lt,
+  ab as $t,
+  ac as po,
+  ad as zt,
+  ae as _e,
+  af as Ze,
+  ag as ho,
+  ah as bo,
+  ai as No,
+  aj as go,
+  ak as xo,
+  al as re,
+  am as Eo,
+  an as vo,
+  ao as Do,
+  ap as _o,
+  aq as yo,
+  ar as Ot,
+  as as jo,
+} from './vendor.c4f0d1e5.js';
+const Vo = function () {
   const s = document.createElement('link').relList;
   if (s && s.supports && s.supports('modulepreload')) return;
   for (const r of document.querySelectorAll('link[rel="modulepreload"]')) n(r);
@@ -135,73 +136,73 @@ const go = function () {
     fetch(r.href, a);
   }
 };
-go();
-const xo = !1,
-  Eo = !0,
-  vo = !0,
-  Do = !1,
-  _o = !0,
-  yo = !0,
-  jo = '#165DFF',
-  Vo = 220;
-var Fo = {
-  colorWeek: xo,
-  navbar: Eo,
-  menu: vo,
-  topMenu: Do,
-  tabBar: _o,
-  footer: yo,
-  themeColor: jo,
-  menuWidth: Vo,
+Vo();
+const Fo = !1,
+  Co = !0,
+  wo = !0,
+  So = !1,
+  ko = !0,
+  Ao = !0,
+  Bo = '#165DFF',
+  Io = 220;
+var Po = {
+  colorWeek: Fo,
+  navbar: Co,
+  menu: wo,
+  topMenu: So,
+  tabBar: ko,
+  footer: Ao,
+  themeColor: Bo,
+  menuWidth: Io,
 };
-const $t = { settings: Fo, theme: 'light', userInfo: { permissions: {} } };
-function Co(t = $t, s) {
+const Ut = { settings: Po, theme: 'light', userInfo: { permissions: {} } };
+function Ro(e = Ut, s) {
   switch (s.type) {
     case 'update-settings': {
       const { settings: o } = s.payload;
-      return $(C({}, t), { settings: o });
+      return $(F({}, e), { settings: o });
     }
     case 'update-theme': {
       const { theme: o } = s.payload;
-      return $(C({}, t), { theme: o });
+      return $(F({}, e), { theme: o });
     }
     case 'update-userInfo': {
-      const { userInfo: o = $t.userInfo, userLoading: n } = s.payload;
-      return $(C({}, t), { userLoading: n, userInfo: o });
+      const { userInfo: o = Ut.userInfo, userLoading: n } = s.payload;
+      return $(F({}, e), { userLoading: n, userInfo: o });
     }
     default:
-      return t;
+      return e;
   }
 }
-const wo = 'modulepreload',
-  Ot = {},
-  So = '/',
-  M = function (s, o) {
+const Mo = 'modulepreload',
+  Kt = {},
+  To = '/',
+  L = function (s, o) {
     return !o || o.length === 0
       ? s()
       : Promise.all(
           o.map((n) => {
-            if (((n = `${So}${n}`), n in Ot)) return;
-            Ot[n] = !0;
+            if (((n = `${To}${n}`), n in Kt)) return;
+            Kt[n] = !0;
             const r = n.endsWith('.css'),
               a = r ? '[rel="stylesheet"]' : '';
             if (document.querySelector(`link[href="${n}"]${a}`)) return;
             const i = document.createElement('link');
             if (
-              ((i.rel = r ? 'stylesheet' : wo),
+              ((i.rel = r ? 'stylesheet' : Mo),
               r || ((i.as = 'script'), (i.crossOrigin = '')),
               (i.href = n),
               document.head.appendChild(i),
               r)
             )
-              return new Promise((u, p) => {
-                i.addEventListener('load', u), i.addEventListener('error', p);
+              return new Promise((u, N) => {
+                i.addEventListener('load', u), i.addEventListener('error', N);
               });
           })
         ).then(() => s());
   },
-  qe = l.exports.createContext({}),
-  zt = {
+  Ie = l.exports.createContext({}),
+  Gt = {
     'en-US': {
       'menu.dashboard': 'Dashboard',
       'menu.dashboard.workplace': 'Workplace',
@@ -285,14 +286,14 @@ const wo = 'modulepreload',
       'navbar.search.placeholder': '\u8F93\u5165\u5185\u5BB9\u67E5\u8BE2',
     },
   };
-function J(t = null) {
-  const { lang: s } = l.exports.useContext(qe);
-  return (t || zt)[s] || {};
+function H(e = null) {
+  const { lang: s } = l.exports.useContext(Ie);
+  return (e || Gt)[s] || {};
 }
-const Ut = (t) =>
+const Wt = (e) =>
     l.exports.createElement(
       'svg',
-      C(
+      F(
         {
           width: 33,
           height: 33,
@@ -300,7 +301,7 @@ const Ut = (t) =>
           fill: 'none',
           xmlns: 'http://www.w3.org/2000/svg',
         },
-        t
+        e
       ),
       l.exports.createElement(
         'g',
@@ -339,46 +340,46 @@ const Ut = (t) =>
         )
       )
     ),
-  ko = '_footer_8a7h1_26';
-var ge = {
+  Lo = '_footer_8a7h1_26';
+var ye = {
     'message-box': '_message-box_8a7h1_1',
     'message-title': '_message-title_8a7h1_22',
-    footer: ko,
+    footer: Lo,
     'footer-item': '_footer-item_8a7h1_29',
   },
-  w =
+  S =
     '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/components/MessageBox/list.tsx';
-function Ao(t) {
-  const s = J(),
-    { data: o, unReadData: n } = t;
+function $o(e) {
+  const s = H(),
+    { data: o, unReadData: n } = e;
   function r(i, u) {
-    i.status || (t.onItemClick && t.onItemClick(i, u));
+    i.status || (e.onItemClick && e.onItemClick(i, u));
   }
   function a() {
-    t.onAllBtnClick && t.onAllBtnClick(n, o);
+    e.onAllBtnClick && e.onAllBtnClick(n, o);
   }
-  return e.exports.jsxDEV(
-    Oe,
+  return t.exports.jsxDEV(
+    Je,
     {
-      noDataElement: e.exports.jsxDEV(
-        vt,
+      noDataElement: t.exports.jsxDEV(
+        Vt,
         { status: '404', subTitle: s['message.empty.tips'] },
         void 0,
         !1,
-        { fileName: w, lineNumber: 55, columnNumber: 22 },
+        { fileName: S, lineNumber: 55, columnNumber: 22 },
         this
       ),
-      footer: e.exports.jsxDEV(
+      footer: t.exports.jsxDEV(
         'div',
         {
-          className: ge.footer,
+          className: ye.footer,
           children: [
-            e.exports.jsxDEV(
+            t.exports.jsxDEV(
               'div',
               {
-                className: ge['footer-item'],
-                children: e.exports.jsxDEV(
-                  Y,
+                className: ye['footer-item'],
+                children: t.exports.jsxDEV(
+                  ee,
                   {
                     type: 'text',
                     size: 'small',
@@ -387,21 +388,21 @@ function Ao(t) {
                   },
                   void 0,
                   !1,
-                  { fileName: w, lineNumber: 59, columnNumber: 13 },
+                  { fileName: S, lineNumber: 59, columnNumber: 13 },
                   this
                 ),
               },
               void 0,
               !1,
-              { fileName: w, lineNumber: 58, columnNumber: 11 },
+              { fileName: S, lineNumber: 58, columnNumber: 11 },
               this
             ),
-            e.exports.jsxDEV(
+            t.exports.jsxDEV(
               'div',
               {
-                className: ge['footer-item'],
-                children: e.exports.jsxDEV(
-                  Y,
+                className: ye['footer-item'],
+                children: t.exports.jsxDEV(
+                  ee,
                   {
                     type: 'text',
                     size: 'small',
@@ -409,88 +410,88 @@ function Ao(t) {
                   },
                   void 0,
                   !1,
-                  { fileName: w, lineNumber: 64, columnNumber: 13 },
+                  { fileName: S, lineNumber: 64, columnNumber: 13 },
                   this
                 ),
               },
               void 0,
               !1,
-              { fileName: w, lineNumber: 63, columnNumber: 11 },
+              { fileName: S, lineNumber: 63, columnNumber: 11 },
               this
             ),
           ],
         },
         void 0,
         !0,
-        { fileName: w, lineNumber: 57, columnNumber: 9 },
+        { fileName: S, lineNumber: 57, columnNumber: 9 },
         this
       ),
       children: o.map((i, u) =>
-        e.exports.jsxDEV(
-          Oe.Item,
+        t.exports.jsxDEV(
+          Je.Item,
           {
             actionLayout: 'vertical',
             style: { opacity: i.status ? 0.5 : 1 },
-            children: e.exports.jsxDEV(
+            children: t.exports.jsxDEV(
               'div',
               {
                 style: { cursor: 'pointer' },
                 onClick: () => {
                   r(i, u);
                 },
-                children: e.exports.jsxDEV(
-                  Oe.Item.Meta,
+                children: t.exports.jsxDEV(
+                  Je.Item.Meta,
                   {
                     avatar:
                       i.avatar &&
-                      e.exports.jsxDEV(
-                        Dt,
+                      t.exports.jsxDEV(
+                        Ft,
                         {
                           shape: 'circle',
                           size: 36,
-                          children: e.exports.jsxDEV(
+                          children: t.exports.jsxDEV(
                             'img',
                             { src: i.avatar },
                             void 0,
                             !1,
-                            { fileName: w, lineNumber: 91, columnNumber: 21 },
+                            { fileName: S, lineNumber: 91, columnNumber: 21 },
                             this
                           ),
                         },
                         void 0,
                         !1,
-                        { fileName: w, lineNumber: 90, columnNumber: 19 },
+                        { fileName: S, lineNumber: 90, columnNumber: 19 },
                         this
                       ),
-                    title: e.exports.jsxDEV(
+                    title: t.exports.jsxDEV(
                       'div',
                       {
-                        className: ge['message-title'],
+                        className: ye['message-title'],
                         children: [
-                          e.exports.jsxDEV(
-                            _t,
+                          t.exports.jsxDEV(
+                            Ct,
                             {
                               size: 4,
                               children: [
-                                e.exports.jsxDEV(
+                                t.exports.jsxDEV(
                                   'span',
                                   { children: i.title },
                                   void 0,
                                   !1,
                                   {
-                                    fileName: w,
+                                    fileName: S,
                                     lineNumber: 98,
                                     columnNumber: 21,
                                   },
                                   this
                                 ),
-                                e.exports.jsxDEV(
-                                  Ce.Text,
+                                t.exports.jsxDEV(
+                                  ke.Text,
                                   { type: 'secondary', children: i.subTitle },
                                   void 0,
                                   !1,
                                   {
-                                    fileName: w,
+                                    fileName: S,
                                     lineNumber: 99,
                                     columnNumber: 21,
                                   },
@@ -500,17 +501,17 @@ function Ao(t) {
                             },
                             void 0,
                             !0,
-                            { fileName: w, lineNumber: 97, columnNumber: 19 },
+                            { fileName: S, lineNumber: 97, columnNumber: 19 },
                             this
                           ),
                           i.tag && i.tag.text
-                            ? e.exports.jsxDEV(
-                                Fs,
+                            ? t.exports.jsxDEV(
+                                As,
                                 { color: i.tag.color, children: i.tag.text },
                                 void 0,
                                 !1,
                                 {
-                                  fileName: w,
+                                  fileName: S,
                                   lineNumber: 104,
                                   columnNumber: 21,
                                 },
@@ -521,15 +522,15 @@ function Ao(t) {
                       },
                       void 0,
                       !0,
-                      { fileName: w, lineNumber: 96, columnNumber: 17 },
+                      { fileName: S, lineNumber: 96, columnNumber: 17 },
                       this
                     ),
-                    description: e.exports.jsxDEV(
+                    description: t.exports.jsxDEV(
                       'div',
                       {
                         children: [
-                          e.exports.jsxDEV(
-                            Ce.Paragraph,
+                          t.exports.jsxDEV(
+                            ke.Paragraph,
                             {
                               style: { marginBottom: 0 },
                               ellipsis: !0,
@@ -537,11 +538,11 @@ function Ao(t) {
                             },
                             void 0,
                             !1,
-                            { fileName: w, lineNumber: 110, columnNumber: 19 },
+                            { fileName: S, lineNumber: 110, columnNumber: 19 },
                             this
                           ),
-                          e.exports.jsxDEV(
-                            Ce.Text,
+                          t.exports.jsxDEV(
+                            ke.Text,
                             {
                               type: 'secondary',
                               style: { fontSize: 12 },
@@ -549,62 +550,62 @@ function Ao(t) {
                             },
                             void 0,
                             !1,
-                            { fileName: w, lineNumber: 113, columnNumber: 19 },
+                            { fileName: S, lineNumber: 113, columnNumber: 19 },
                             this
                           ),
                         ],
                       },
                       void 0,
                       !0,
-                      { fileName: w, lineNumber: 109, columnNumber: 17 },
+                      { fileName: S, lineNumber: 109, columnNumber: 17 },
                       this
                     ),
                   },
                   void 0,
                   !1,
-                  { fileName: w, lineNumber: 87, columnNumber: 13 },
+                  { fileName: S, lineNumber: 87, columnNumber: 13 },
                   this
                 ),
               },
               void 0,
               !1,
-              { fileName: w, lineNumber: 79, columnNumber: 11 },
+              { fileName: S, lineNumber: 79, columnNumber: 11 },
               this
             ),
           },
           i.id,
           !1,
-          { fileName: w, lineNumber: 72, columnNumber: 9 },
+          { fileName: S, lineNumber: 72, columnNumber: 9 },
           this
         )
       ),
     },
     void 0,
     !1,
-    { fileName: w, lineNumber: 54, columnNumber: 5 },
+    { fileName: S, lineNumber: 54, columnNumber: 5 },
     this
   );
 }
-var K =
+var G =
   '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/components/MessageBox/index.tsx';
-function Bo() {
-  const t = J(),
+function zo() {
+  const e = H(),
     [s, o] = l.exports.useState(!1),
     [n, r] = l.exports.useState({}),
     [a, i] = l.exports.useState([]);
-  function u(h = !0) {
-    h && o(!0),
-      Ue.get('/api/message/list')
-        .then((v) => {
-          i(v.data);
+  function u(b = !0) {
+    b && o(!0),
+      Ae.get('/api/message/list')
+        .then((x) => {
+          i(x.data);
         })
         .finally(() => {
-          h && o(!1);
+          b && o(!1);
         });
   }
-  function p(h) {
-    const v = h.map((L) => L.id);
-    Ue.post('/api/message/read', { ids: v }).then(() => {
+  function N(b) {
+    const x = b.map((P) => P.id);
+    Ae.post('/api/message/read', { ids: x }).then(() => {
       u();
     });
   }
@@ -612,241 +613,241 @@ function Bo() {
     u();
   }, []),
     l.exports.useEffect(() => {
-      const h = ws(a, 'type');
-      r(h);
+      const b = Is(a, 'type');
+      r(b);
     }, [a]);
   const d = [
     {
       key: 'message',
-      title: t['message.tab.title.message'],
-      titleIcon: e.exports.jsxDEV(
-        Ss,
+      title: e['message.tab.title.message'],
+      titleIcon: t.exports.jsxDEV(
+        Ps,
         {},
         void 0,
         !1,
-        { fileName: K, lineNumber: 61, columnNumber: 18 },
+        { fileName: G, lineNumber: 61, columnNumber: 18 },
         this
       ),
     },
     {
       key: 'notice',
-      title: t['message.tab.title.notice'],
-      titleIcon: e.exports.jsxDEV(
-        ks,
+      title: e['message.tab.title.notice'],
+      titleIcon: t.exports.jsxDEV(
+        Rs,
         {},
         void 0,
         !1,
-        { fileName: K, lineNumber: 66, columnNumber: 18 },
+        { fileName: G, lineNumber: 66, columnNumber: 18 },
         this
       ),
     },
     {
       key: 'todo',
-      title: t['message.tab.title.todo'],
-      titleIcon: e.exports.jsxDEV(
-        As,
+      title: e['message.tab.title.todo'],
+      titleIcon: t.exports.jsxDEV(
+        Ms,
         {},
         void 0,
         !1,
-        { fileName: K, lineNumber: 71, columnNumber: 18 },
+        { fileName: G, lineNumber: 71, columnNumber: 18 },
         this
       ),
     },
   ];
-  return e.exports.jsxDEV(
+  return t.exports.jsxDEV(
     'div',
     {
-      className: ge['message-box'],
-      children: e.exports.jsxDEV(
-        ze,
+      className: ye['message-box'],
+      children: t.exports.jsxDEV(
+        He,
         {
           loading: s,
           style: { display: 'block' },
-          children: e.exports.jsxDEV(
-            jt,
+          children: t.exports.jsxDEV(
+            St,
             {
               overflow: 'dropdown',
               type: 'rounded',
               defaultActiveTab: 'message',
               destroyOnHide: !0,
-              extra: e.exports.jsxDEV(
-                Y,
+              extra: t.exports.jsxDEV(
+                ee,
                 {
                   type: 'text',
                   onClick: () => i([]),
-                  children: t['message.empty'],
+                  children: e['message.empty'],
                 },
                 void 0,
                 !1,
-                { fileName: K, lineNumber: 84, columnNumber: 13 },
+                { fileName: G, lineNumber: 84, columnNumber: 13 },
                 this
               ),
-              children: d.map((h) => {
-                const { key: v, title: L } = h,
-                  k = n[v] || [],
-                  N = k.filter((I) => !I.status);
-                return e.exports.jsxDEV(
-                  jt.TabPane,
+              children: d.map((b) => {
+                const { key: x, title: P } = b,
+                  B = n[x] || [],
+                  g = B.filter((R) => !R.status);
+                return t.exports.jsxDEV(
+                  St.TabPane,
                   {
-                    title: e.exports.jsxDEV(
+                    title: t.exports.jsxDEV(
                       'span',
-                      { children: [L, N.length ? `(${N.length})` : ''] },
+                      { children: [P, g.length ? `(${g.length})` : ''] },
                       void 0,
                       !0,
-                      { fileName: K, lineNumber: 97, columnNumber: 19 },
+                      { fileName: G, lineNumber: 97, columnNumber: 19 },
                       this
                     ),
-                    children: e.exports.jsxDEV(
-                      Ao,
+                    children: t.exports.jsxDEV(
+                      $o,
                       {
-                        data: k,
-                        unReadData: N,
-                        onItemClick: (I) => {
-                          p([I]);
+                        data: B,
+                        unReadData: g,
+                        onItemClick: (R) => {
+                          N([R]);
                         },
-                        onAllBtnClick: (I) => {
-                          p(I);
+                        onAllBtnClick: (R) => {
+                          N(R);
                         },
                       },
                       void 0,
                       !1,
-                      { fileName: K, lineNumber: 103, columnNumber: 17 },
+                      { fileName: G, lineNumber: 103, columnNumber: 17 },
                       this
                     ),
                   },
-                  v,
+                  x,
                   !1,
-                  { fileName: K, lineNumber: 94, columnNumber: 15 },
+                  { fileName: G, lineNumber: 94, columnNumber: 15 },
                   this
                 );
               }),
             },
             void 0,
             !1,
-            { fileName: K, lineNumber: 78, columnNumber: 9 },
+            { fileName: G, lineNumber: 78, columnNumber: 9 },
             this
           ),
         },
         void 0,
         !1,
-        { fileName: K, lineNumber: 77, columnNumber: 7 },
+        { fileName: G, lineNumber: 77, columnNumber: 7 },
         this
       ),
     },
     void 0,
     !1,
-    { fileName: K, lineNumber: 76, columnNumber: 5 },
+    { fileName: G, lineNumber: 76, columnNumber: 5 },
     this
   );
 }
-function Io({ children: t }) {
-  return e.exports.jsxDEV(
-    yt,
+function Oo({ children: e }) {
+  return t.exports.jsxDEV(
+    wt,
     {
       trigger: 'hover',
       popup: () =>
-        e.exports.jsxDEV(
-          Bo,
+        t.exports.jsxDEV(
+          zo,
           {},
           void 0,
           !1,
-          { fileName: K, lineNumber: 126, columnNumber: 20 },
+          { fileName: G, lineNumber: 126, columnNumber: 20 },
           this
         ),
       position: 'br',
       unmountOnExit: !1,
       popupAlign: { bottom: 4 },
-      children: e.exports.jsxDEV(
-        Cs,
-        { count: 9, dot: !0, children: t },
+      children: t.exports.jsxDEV(
+        Bs,
+        { count: 9, dot: !0, children: e },
         void 0,
         !1,
-        { fileName: K, lineNumber: 131, columnNumber: 7 },
+        { fileName: G, lineNumber: 131, columnNumber: 7 },
         this
       ),
     },
     void 0,
     !1,
-    { fileName: K, lineNumber: 124, columnNumber: 5 },
+    { fileName: G, lineNumber: 124, columnNumber: 5 },
     this
   );
 }
-var Po = { 'icon-button': '_icon-button_12azl_1' },
-  Ro =
+var Uo = { 'icon-button': '_icon-button_12azl_1' },
+  Ko =
     '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/components/NavBar/IconButton.tsx';
-function Mo(t, s) {
-  const a = t,
+function Go(e, s) {
+  const a = e,
     { icon: o, className: n } = a,
-    r = Fe(a, ['icon', 'className']);
-  return e.exports.jsxDEV(
-    Y,
-    C(
+    r = Se(a, ['icon', 'className']);
+  return t.exports.jsxDEV(
+    ee,
+    F(
       {
         ref: s,
         icon: o,
         shape: 'circle',
         type: 'secondary',
-        className: pe(Po['icon-button'], n),
+        className: ve(Uo['icon-button'], n),
       },
       r
     ),
     void 0,
     !1,
-    { fileName: Ro, lineNumber: 10, columnNumber: 5 },
+    { fileName: Ko, lineNumber: 10, columnNumber: 5 },
     this
   );
 }
-var Se = l.exports.forwardRef(Mo);
-const To = '_block_byc7u_1',
-  Lo = '_title_byc7u_4';
-var Je = { block: To, title: Lo, 'switch-wrapper': '_switch-wrapper_byc7u_9' },
-  ie =
+var Pe = l.exports.forwardRef(Go);
+const Wo = '_block_byc7u_1',
+  qo = '_title_byc7u_4';
+var Qe = { block: Wo, title: qo, 'switch-wrapper': '_switch-wrapper_byc7u_9' },
+  ce =
     '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/components/Settings/block.tsx';
-function He(t) {
-  const { title: s, options: o, children: n } = t,
-    r = J(),
-    a = he((u) => u.settings),
-    i = Ke();
-  return e.exports.jsxDEV(
+function et(e) {
+  const { title: s, options: o, children: n } = e,
+    r = H(),
+    a = De((u) => u.settings),
+    i = Xe();
+  return t.exports.jsxDEV(
     'div',
     {
-      className: Je.block,
+      className: Qe.block,
       children: [
-        e.exports.jsxDEV(
+        t.exports.jsxDEV(
           'h5',
-          { className: Je.title, children: s },
+          { className: Qe.title, children: s },
           void 0,
           !1,
-          { fileName: ie, lineNumber: 22, columnNumber: 7 },
+          { fileName: ce, lineNumber: 22, columnNumber: 7 },
           this
         ),
         o &&
           o.map((u) => {
-            const p = u.type || 'switch';
-            return e.exports.jsxDEV(
+            const N = u.type || 'switch';
+            return t.exports.jsxDEV(
               'div',
               {
-                className: Je['switch-wrapper'],
+                className: Qe['switch-wrapper'],
                 children: [
-                  e.exports.jsxDEV(
+                  t.exports.jsxDEV(
                     'span',
                     { children: r[u.name] },
                     void 0,
                     !1,
-                    { fileName: ie, lineNumber: 29, columnNumber: 15 },
+                    { fileName: ce, lineNumber: 29, columnNumber: 15 },
                     this
                   ),
-                  p === 'switch' &&
-                    e.exports.jsxDEV(
-                      Bs,
+                  N === 'switch' &&
+                    t.exports.jsxDEV(
+                      Ts,
                       {
                         size: 'small',
                         checked: !!a[u.value],
                         onChange: (d) => {
-                          const h = $(C({}, a), { [u.value]: d });
+                          const b = $(F({}, a), { [u.value]: d });
                           i({
                             type: 'update-settings',
-                            payload: { settings: h },
+                            payload: { settings: b },
                           }),
                             d &&
                               u.value === 'colorWeek' &&
@@ -858,95 +859,95 @@ function He(t) {
                       },
                       void 0,
                       !1,
-                      { fileName: ie, lineNumber: 31, columnNumber: 17 },
+                      { fileName: ce, lineNumber: 31, columnNumber: 17 },
                       this
                     ),
-                  p === 'number' &&
-                    e.exports.jsxDEV(
-                      Is,
+                  N === 'number' &&
+                    t.exports.jsxDEV(
+                      Ls,
                       {
                         style: { width: 80 },
                         size: 'small',
                         value: a.menuWidth,
                         onChange: (d) => {
-                          const h = $(C({}, a), { [u.value]: d });
+                          const b = $(F({}, a), { [u.value]: d });
                           i({
                             type: 'update-settings',
-                            payload: { settings: h },
+                            payload: { settings: b },
                           });
                         },
                       },
                       void 0,
                       !1,
-                      { fileName: ie, lineNumber: 54, columnNumber: 17 },
+                      { fileName: ce, lineNumber: 54, columnNumber: 17 },
                       this
                     ),
                 ],
               },
               u.value,
               !0,
-              { fileName: ie, lineNumber: 28, columnNumber: 13 },
+              { fileName: ce, lineNumber: 28, columnNumber: 13 },
               this
             );
           }),
         n,
-        e.exports.jsxDEV(
-          Vt,
+        t.exports.jsxDEV(
+          kt,
           {},
           void 0,
           !1,
-          { fileName: ie, lineNumber: 74, columnNumber: 7 },
+          { fileName: ce, lineNumber: 74, columnNumber: 7 },
           this
         ),
       ],
     },
     void 0,
     !0,
-    { fileName: ie, lineNumber: 21, columnNumber: 5 },
+    { fileName: ce, lineNumber: 21, columnNumber: 5 },
     this
   );
 }
-const $o = '_input_77wyg_1',
-  Oo = '_color_77wyg_9',
-  zo = '_ul_77wyg_14',
-  Uo = '_li_77wyg_19';
-var ke = { input: $o, color: Oo, ul: zo, li: Uo },
-  Z =
+const Jo = '_input_77wyg_1',
+  Ho = '_color_77wyg_9',
+  Xo = '_ul_77wyg_14',
+  Yo = '_li_77wyg_19';
+var Re = { input: Jo, color: Ho, ul: Xo, li: Yo },
+  te =
     '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/components/Settings/color.tsx';
-function Ko() {
-  const t =
+function Zo() {
+  const e =
       document.querySelector('body').getAttribute('arco-theme') || 'light',
-    s = he((i) => i.settings),
-    o = J(),
+    s = De((i) => i.settings),
+    o = H(),
     n = s.themeColor,
-    r = Ft(n, { list: !0 }),
-    a = Ke();
-  return e.exports.jsxDEV(
+    r = At(n, { list: !0 }),
+    a = Xe();
+  return t.exports.jsxDEV(
     'div',
     {
       children: [
-        e.exports.jsxDEV(
-          yt,
+        t.exports.jsxDEV(
+          wt,
           {
             trigger: 'hover',
             position: 'bl',
             popup: () =>
-              e.exports.jsxDEV(
-                Ps,
+              t.exports.jsxDEV(
+                $s,
                 {
                   color: n,
                   onChangeComplete: (i) => {
                     const u = i.hex;
                     a({
                       type: 'update-settings',
-                      payload: { settings: $(C({}, s), { themeColor: u }) },
+                      payload: { settings: $(F({}, s), { themeColor: u }) },
                     }),
-                      Ft(u, { list: !0, dark: t === 'dark' }).forEach(
-                        (d, h) => {
-                          const v = Rs(d);
+                      At(u, { list: !0, dark: e === 'dark' }).forEach(
+                        (d, b) => {
+                          const x = zs(d);
                           document.body.style.setProperty(
-                            `--arcoblue-${h + 1}`,
-                            v
+                            `--arcoblue-${b + 1}`,
+                            x
                           );
                         }
                       );
@@ -954,128 +955,128 @@ function Ko() {
                 },
                 void 0,
                 !1,
-                { fileName: Z, lineNumber: 25, columnNumber: 11 },
+                { fileName: te, lineNumber: 25, columnNumber: 11 },
                 this
               ),
-            children: e.exports.jsxDEV(
+            children: t.exports.jsxDEV(
               'div',
               {
-                className: ke.input,
+                className: Re.input,
                 children: [
-                  e.exports.jsxDEV(
+                  t.exports.jsxDEV(
                     'div',
-                    { className: ke.color, style: { backgroundColor: n } },
+                    { className: Re.color, style: { backgroundColor: n } },
                     void 0,
                     !1,
-                    { fileName: Z, lineNumber: 49, columnNumber: 11 },
+                    { fileName: te, lineNumber: 49, columnNumber: 11 },
                     this
                   ),
-                  e.exports.jsxDEV(
+                  t.exports.jsxDEV(
                     'span',
                     { children: n },
                     void 0,
                     !1,
-                    { fileName: Z, lineNumber: 53, columnNumber: 11 },
+                    { fileName: te, lineNumber: 53, columnNumber: 11 },
                     this
                   ),
                 ],
               },
               void 0,
               !0,
-              { fileName: Z, lineNumber: 48, columnNumber: 9 },
+              { fileName: te, lineNumber: 48, columnNumber: 9 },
               this
             ),
           },
           void 0,
           !1,
-          { fileName: Z, lineNumber: 21, columnNumber: 7 },
+          { fileName: te, lineNumber: 21, columnNumber: 7 },
           this
         ),
-        e.exports.jsxDEV(
+        t.exports.jsxDEV(
           'ul',
           {
-            className: ke.ul,
+            className: Re.ul,
             children: r.map((i, u) =>
-              e.exports.jsxDEV(
+              t.exports.jsxDEV(
                 'li',
-                { className: ke.li, style: { backgroundColor: i } },
+                { className: Re.li, style: { backgroundColor: i } },
                 u,
                 !1,
-                { fileName: Z, lineNumber: 58, columnNumber: 11 },
+                { fileName: te, lineNumber: 58, columnNumber: 11 },
                 this
               )
             ),
           },
           void 0,
           !1,
-          { fileName: Z, lineNumber: 56, columnNumber: 7 },
+          { fileName: te, lineNumber: 56, columnNumber: 7 },
           this
         ),
-        e.exports.jsxDEV(
-          Ce.Paragraph,
+        t.exports.jsxDEV(
+          ke.Paragraph,
           { style: { fontSize: 12 }, children: o['settings.color.tooltip'] },
           void 0,
           !1,
-          { fileName: Z, lineNumber: 65, columnNumber: 7 },
+          { fileName: te, lineNumber: 65, columnNumber: 7 },
           this
         ),
       ],
     },
     void 0,
     !0,
-    { fileName: Z, lineNumber: 20, columnNumber: 5 },
+    { fileName: te, lineNumber: 20, columnNumber: 5 },
     this
   );
 }
-var Q =
+var se =
   '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/components/Settings/index.tsx';
-function Kt(t) {
-  const { trigger: s } = t,
+function qt(e) {
+  const { trigger: s } = e,
     [o, n] = l.exports.useState(!1),
-    r = J(),
-    a = he((u) => u.settings);
+    r = H(),
+    a = De((u) => u.settings);
   function i() {
-    $s(JSON.stringify(a, null, 2)),
-      be.success(r['settings.copySettings.message']);
+    Gs(JSON.stringify(a, null, 2)),
+      pe.success(r['settings.copySettings.message']);
   }
-  return e.exports.jsxDEV(
-    e.exports.Fragment,
+  return t.exports.jsxDEV(
+    t.exports.Fragment,
     {
       children: [
         s
-          ? Ms.cloneElement(s, { onClick: () => n(!0) })
-          : e.exports.jsxDEV(
-              Se,
+          ? Os.cloneElement(s, { onClick: () => n(!0) })
+          : t.exports.jsxDEV(
+              Pe,
               {
-                icon: e.exports.jsxDEV(
-                  we,
+                icon: t.exports.jsxDEV(
+                  Be,
                   {},
                   void 0,
                   !1,
-                  { fileName: Q, lineNumber: 34, columnNumber: 27 },
+                  { fileName: se, lineNumber: 34, columnNumber: 27 },
                   this
                 ),
                 onClick: () => n(!0),
               },
               void 0,
               !1,
-              { fileName: Q, lineNumber: 34, columnNumber: 9 },
+              { fileName: se, lineNumber: 34, columnNumber: 9 },
               this
             ),
-        e.exports.jsxDEV(
-          Ts,
+        t.exports.jsxDEV(
+          Us,
           {
             width: 300,
-            title: e.exports.jsxDEV(
-              e.exports.Fragment,
+            title: t.exports.jsxDEV(
+              t.exports.Fragment,
               {
                 children: [
-                  e.exports.jsxDEV(
-                    we,
+                  t.exports.jsxDEV(
+                    Be,
                     {},
                     void 0,
                     !1,
-                    { fileName: Q, lineNumber: 40, columnNumber: 13 },
+                    { fileName: se, lineNumber: 40, columnNumber: 13 },
                     this
                   ),
                   r['settings.title'],
@@ -1090,26 +1091,26 @@ function Kt(t) {
             onOk: i,
             onCancel: () => n(!1),
             children: [
-              e.exports.jsxDEV(
-                He,
+              t.exports.jsxDEV(
+                et,
                 {
                   title: r['settings.themeColor'],
-                  children: e.exports.jsxDEV(
-                    Ko,
+                  children: t.exports.jsxDEV(
+                    Zo,
                     {},
                     void 0,
                     !1,
-                    { fileName: Q, lineNumber: 51, columnNumber: 11 },
+                    { fileName: se, lineNumber: 51, columnNumber: 11 },
                     this
                   ),
                 },
                 void 0,
                 !1,
-                { fileName: Q, lineNumber: 50, columnNumber: 9 },
+                { fileName: se, lineNumber: 50, columnNumber: 9 },
                 this
               ),
-              e.exports.jsxDEV(
-                He,
+              t.exports.jsxDEV(
+                et,
                 {
                   title: r['settings.content'],
                   options: [
@@ -1127,33 +1128,33 @@ function Kt(t) {
                 },
                 void 0,
                 !1,
-                { fileName: Q, lineNumber: 53, columnNumber: 9 },
+                { fileName: se, lineNumber: 53, columnNumber: 9 },
                 this
               ),
-              e.exports.jsxDEV(
-                He,
+              t.exports.jsxDEV(
+                et,
                 {
                   title: r['settings.otherSettings'],
                   options: [{ name: 'settings.colorWeek', value: 'colorWeek' }],
                 },
                 void 0,
                 !1,
-                { fileName: Q, lineNumber: 64, columnNumber: 9 },
+                { fileName: se, lineNumber: 64, columnNumber: 9 },
                 this
               ),
-              e.exports.jsxDEV(
-                Ls,
+              t.exports.jsxDEV(
+                Ks,
                 { content: r['settings.alertContent'] },
                 void 0,
                 !1,
-                { fileName: Q, lineNumber: 68, columnNumber: 9 },
+                { fileName: se, lineNumber: 68, columnNumber: 9 },
                 this
               ),
             ],
           },
           void 0,
           !0,
-          { fileName: Q, lineNumber: 36, columnNumber: 7 },
+          { fileName: se, lineNumber: 36, columnNumber: 7 },
           this
         ),
       ],
@@ -1162,225 +1163,255 @@ function Kt(t) {
     !0
   );
 }
-const Go = '_navbar_158hh_1',
-  Wo = '_left_158hh_10',
-  qo = '_logo_158hh_15',
-  Jo = '_center_158hh_29',
-  Ho = '_right_158hh_45',
-  Xo = '_username_158hh_60',
-  Yo = '_round_158hh_63';
-var O = {
-  navbar: Go,
-  left: Wo,
-  logo: qo,
+const Qo = '_navbar_158hh_1',
+  en = '_left_158hh_10',
+  tn = '_logo_158hh_15',
+  sn = '_center_158hh_29',
+  on = '_right_158hh_45',
+  nn = '_username_158hh_60',
+  rn = '_round_158hh_63';
+var z = {
+  navbar: Qo,
+  left: en,
+  logo: tn,
   'logo-name': '_logo-name_158hh_22',
-  center: Jo,
-  right: Ho,
-  username: Xo,
-  round: Yo,
+  center: sn,
+  right: on,
+  username: nn,
+  round: rn,
   'dropdown-icon': '_dropdown-icon_158hh_69',
   'fixed-settings': '_fixed-settings_158hh_74',
 };
-function Zo(t) {
-  return Object.prototype.toString.call(t) === '[object Array]';
+function an(e) {
+  return Object.prototype.toString.call(e) === '[object Array]';
 }
-const me = (function () {
+const be = (function () {
     try {
       return !(typeof window != 'undefined' && document !== void 0);
     } catch {
       return !0;
     }
   })(),
-  Qo = (t) => {
-    if (!me) return localStorage.getItem(t);
+  un = (e) => {
+    if (!be) return localStorage.getItem(e);
   };
-function xe(t, s) {
-  const [o, n] = l.exports.useState(Qo(t) || s),
+function je(e, s) {
+  const [o, n] = l.exports.useState(un(e) || s),
     r = (i) => {
-      me || (localStorage.setItem(t, i), i !== o && n(i));
+      be || (localStorage.setItem(e, i), i !== o && n(i));
     },
     a = () => {
-      me || localStorage.removeItem(t);
+      be || localStorage.removeItem(e);
     };
   return (
     l.exports.useEffect(() => {
-      const i = localStorage.getItem(t);
+      const i = localStorage.getItem(e);
       i && n(i);
-    }, [t]),
+    }, [e]),
     [o, r, a]
   );
 }
-const Ae = 'user-profile';
-function Ee(t = window.location.pathname) {
-  const [, s] = t.split('/');
+const Me = 'user-profile';
+function Ve(e = window.location.pathname) {
+  const [, s] = e.split('/');
   return !s || s === 'login' || s === '403' ? '' : s;
 }
-function Xe(t = window.location.pathname) {
-  const s = Ee(t);
-  if (!s) return t || '/';
-  const o = t.replace(`/${s}`, '') || '/';
+function tt(e = window.location.pathname) {
+  const s = Ve(e);
+  if (!s) return e || '/';
+  const o = e.replace(`/${s}`, '') || '/';
   return o.startsWith('/') ? o : `/${o}`;
 }
-function Gt() {
-  const t = localStorage.getItem(Ae);
-  if (!t) return null;
+function st() {
+  const e = localStorage.getItem(Me);
+  if (!e) return null;
   try {
-    return JSON.parse(t);
+    return JSON.parse(e);
   } catch {
     return null;
   }
 }
-const ve = 'X-Access-Token',
-  Be = 'X-Organization',
-  Wt = 'Accept-Language',
-  en = 'zh-CN';
-function tn() {
-  return localStorage.getItem(ve) || localStorage.getItem('accessToken') || '';
+const Ne = 'X-Access-Token',
+  Te = 'X-Organization',
+  Jt = 'Accept-Language',
+  ln = 'zh-CN';
+function cn() {
+  return localStorage.getItem(Ne) || localStorage.getItem('accessToken') || '';
 }
-function sn() {
+function mn() {
   return (
-    Ee() ||
-    localStorage.getItem(Be) ||
+    Ve() ||
+    localStorage.getItem(Te) ||
     localStorage.getItem('organization') ||
     ''
   );
 }
-function on() {
-  return localStorage.getItem(Wt) || en;
+function dn() {
+  return localStorage.getItem(Jt) || ln;
 }
-function nn(t) {
-  return t === 200;
+function fn(e) {
+  return e === 200;
 }
-function rn(t, s = '\u8BF7\u6C42\u5931\u8D25') {
-  return (t == null ? void 0 : t.message) || s;
+function pn(e, s = '\u8BF7\u6C42\u5931\u8D25') {
+  return (e == null ? void 0 : e.message) || s;
 }
-function an(t, s) {
-  return t.status === 200 && nn(t.data.code)
-    ? t.data.data
-    : ((s == null ? void 0 : s.skipErrorMessage) || be.error(rn(t.data)),
-      Promise.reject(t.data));
+let ot = !1;
+function Le(e) {
+  var s;
+  return (
+    (e == null ? void 0 : e.status) === 401 ||
+    ((s = e == null ? void 0 : e.data) == null ? void 0 : s.code) === 401
+  );
 }
-function un(t, s) {
+function hn() {
+  if (ot) return;
+  (ot = !0),
+    localStorage.removeItem(Ne),
+    localStorage.setItem('userStatus', 'logout');
+  const { pathname: e } = window.location;
+  e === '/login' || e.endsWith('/login')
+    ? (ot = !1)
+    : window.location.replace('/login');
+}
+function $e(e) {
+  (e == null ? void 0 : e.skipErrorMessage) ||
+    pe.error(
+      '\u767B\u5F55\u72B6\u6001\u5DF2\u5931\u6548\uFF0C\u8BF7\u91CD\u65B0\u767B\u5F55'
+    ),
+    hn();
+}
+Ae.interceptors.response.use(
+  (e) => (Le(e) && $e(), e),
+  (e) => (Le(e.response) && $e(), Promise.reject(e))
+);
+function bn(e, s) {
+  return Le(e)
+    ? ($e(s), Promise.reject(e.data))
+    : e.status === 200 && fn(e.data.code)
+    ? e.data.data
+    : ((s == null ? void 0 : s.skipErrorMessage) || pe.error(pn(e.data)),
+      Promise.reject(e.data));
+}
+function Nn(e, s) {
   var o, n, r;
+  if (Le(e.response)) return $e(s), Promise.reject(e);
   if (!(s == null ? void 0 : s.skipErrorMessage)) {
     const a =
-      ((n = (o = t.response) == null ? void 0 : o.data) == null
+      ((n = (o = e.response) == null ? void 0 : o.data) == null
         ? void 0
         : n.message) ||
-      (((r = t.response) == null ? void 0 : r.status)
-        ? `\u8BF7\u6C42\u5931\u8D25\uFF0C\u72B6\u6001\u7801\uFF1A${t.response.status}`
-        : t.message ||
+      (((r = e.response) == null ? void 0 : r.status)
+        ? `\u8BF7\u6C42\u5931\u8D25\uFF0C\u72B6\u6001\u7801\uFF1A${e.response.status}`
+        : e.message ||
           '\u7F51\u7EDC\u5F02\u5E38\uFF0C\u8BF7\u7A0D\u540E\u91CD\u8BD5');
-    be.error(a);
+    pe.error(a);
   }
-  return Promise.reject(t);
+  return Promise.reject(e);
 }
-function qt(t) {
-  const s = Ue.create({
-    baseURL: 'http://127.0.0.1:8888',
-    timeout: 3e4,
-    validateStatus: () => !0,
-  });
+function Ht(e) {
+  const s = Ae.create({ baseURL: '', timeout: 3e4, validateStatus: () => !0 });
   return (
     s.interceptors.request.use((o) => {
-      const n = C({ [Wt]: on() }, o.headers);
-      if (t) {
-        const r = tn(),
-          a = sn();
-        o.headers = $(C({}, n), { [ve]: r, [Be]: a });
+      const n = F({ [Jt]: dn() }, o.headers);
+      if (e) {
+        const r = cn(),
+          a = mn();
+        o.headers = $(F({}, n), { [Ne]: r, [Te]: a });
       } else o.headers = n;
       return o;
     }),
     s
   );
 }
-function Jt(t) {
+function Xt(e) {
   return async function (o) {
     try {
-      const n = await t.request(o);
-      return an(n, o);
+      const n = await e.request(o);
+      return bn(n, o);
     } catch (n) {
-      return un(n, o);
+      return Nn(n, o);
     }
   };
 }
-const Ht = Jt(qt(!0)),
-  Xt = Jt(qt(!1));
-function ln(t) {
-  return Xt({ url: '/api/system/users/login', method: 'POST', data: t });
+const Yt = Xt(Ht(!0)),
+  Zt = Xt(Ht(!1));
+function gn(e) {
+  return Zt({ url: '/api/system/users/login', method: 'POST', data: e });
 }
-function cn() {
-  return Ht({ url: '/api/system/users/logout', method: 'POST' });
+function xn() {
+  return Yt({ url: '/api/system/users/logout', method: 'POST' });
 }
-function Ie(t) {
-  return `${t}-resource`;
+function ze(e) {
+  return `${e}-resource`;
 }
-function Ye(t) {
-  const s = localStorage.getItem(Ie(t));
+function nt(e) {
+  const s = localStorage.getItem(ze(e));
   if (!s) return null;
   try {
     return JSON.parse(s);
   } catch {
-    return localStorage.removeItem(Ie(t)), null;
+    return localStorage.removeItem(ze(e)), null;
   }
 }
-function mn(t, s) {
-  localStorage.setItem(Ie(t), JSON.stringify(s));
+function En(e, s) {
+  localStorage.setItem(ze(e), JSON.stringify(s));
 }
-function dn() {
-  return Ht({ url: '/api/auth/context', method: 'GET' });
+function vn() {
+  return Yt({ url: '/api/auth/context', method: 'GET' });
 }
-async function Ze(t) {
-  const s = Ye(t);
+async function rt(e) {
+  const s = nt(e);
   if (s) return s;
-  const o = await dn();
-  return mn(t, o), o;
+  const o = await vn();
+  return En(e, o), o;
 }
 var m =
   '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/components/NavBar/index.tsx';
-function fn({ show: t, topMenu: s, menu: o }) {
-  const n = J(),
-    r = he((c) => c.userInfo),
-    [, a] = xe('userStatus'),
-    [i, u] = xe('userRole', 'admin'),
-    { setLang: p, lang: d, theme: h, setTheme: v } = l.exports.useContext(qe);
-  function L() {
-    const c = Ee();
-    a('logout'),
-      localStorage.removeItem(ve),
-      localStorage.removeItem(Be),
-      localStorage.removeItem(Ae),
-      c && localStorage.removeItem(Ie(c)),
+function Dn({ show: e, topMenu: s, menu: o }) {
+  const n = H(),
+    r = De((k) => k.userInfo),
+    a = st(),
+    i = (a == null ? void 0 : a.avatar) || (r == null ? void 0 : r.avatar),
+    [, u] = je('userStatus'),
+    [N, d] = je('userRole', 'admin'),
+    { setLang: b, lang: x, theme: P, setTheme: B } = l.exports.useContext(Ie);
+  function g() {
+    const k = Ve();
+    u('logout'),
+      localStorage.removeItem(Ne),
+      localStorage.removeItem(Te),
+      localStorage.removeItem(Me),
+      k && localStorage.removeItem(ze(k)),
       localStorage.removeItem('accessToken'),
       localStorage.removeItem('organization');
   }
-  function k() {
-    cn()
+  function R() {
+    xn()
       .catch(() => {})
       .finally(() => {
-        L(), (window.location.href = '/login');
+        g(), (window.location.href = '/login');
       });
   }
-  function N(c) {
-    c === 'logout' ? k() : be.info(`You clicked ${c}`);
+  function Y(k) {
+    k === 'logout' ? R() : pe.info(`You clicked ${k}`);
   }
-  if (!t)
-    return e.exports.jsxDEV(
+  if (!e)
+    return t.exports.jsxDEV(
       'div',
       {
-        className: O['fixed-settings'],
-        children: e.exports.jsxDEV(
-          Kt,
+        className: z['fixed-settings'],
+        children: t.exports.jsxDEV(
+          qt,
           {
-            trigger: e.exports.jsxDEV(
-              Y,
+            trigger: t.exports.jsxDEV(
+              ee,
               {
-                icon: e.exports.jsxDEV(
-                  we,
+                icon: t.exports.jsxDEV(
+                  Be,
                   {},
                   void 0,
                   !1,
-                  { fileName: m, lineNumber: 93, columnNumber: 27 },
+                  { fileName: m, lineNumber: 99, columnNumber: 27 },
                   this
                 ),
                 type: 'primary',
@@ -1388,56 +1419,56 @@ function fn({ show: t, topMenu: s, menu: o }) {
               },
               void 0,
               !1,
-              { fileName: m, lineNumber: 93, columnNumber: 13 },
+              { fileName: m, lineNumber: 99, columnNumber: 13 },
               this
             ),
           },
           void 0,
           !1,
-          { fileName: m, lineNumber: 91, columnNumber: 9 },
+          { fileName: m, lineNumber: 97, columnNumber: 9 },
           this
         ),
       },
       void 0,
       !1,
-      { fileName: m, lineNumber: 90, columnNumber: 7 },
+      { fileName: m, lineNumber: 96, columnNumber: 7 },
       this
     );
-  const I = () => {
-      u(i === 'admin' ? 'user' : 'admin');
+  const C = () => {
+      d(N === 'admin' ? 'user' : 'admin');
     },
-    b = e.exports.jsxDEV(
-      A,
+    ie = t.exports.jsxDEV(
+      I,
       {
-        onClickMenuItem: N,
+        onClickMenuItem: Y,
         children: [
-          e.exports.jsxDEV(
-            A.SubMenu,
+          t.exports.jsxDEV(
+            I.SubMenu,
             {
-              title: e.exports.jsxDEV(
-                e.exports.Fragment,
+              title: t.exports.jsxDEV(
+                t.exports.Fragment,
                 {
                   children: [
-                    e.exports.jsxDEV(
-                      Ct,
-                      { className: O['dropdown-icon'] },
+                    t.exports.jsxDEV(
+                      Bt,
+                      { className: z['dropdown-icon'] },
                       void 0,
                       !1,
-                      { fileName: m, lineNumber: 111, columnNumber: 13 },
+                      { fileName: m, lineNumber: 117, columnNumber: 13 },
                       this
                     ),
-                    e.exports.jsxDEV(
+                    t.exports.jsxDEV(
                       'span',
                       {
-                        className: O['user-role'],
+                        className: z['user-role'],
                         children:
-                          i === 'admin'
+                          N === 'admin'
                             ? n['menu.user.role.admin']
                             : n['menu.user.role.user'],
                       },
                       void 0,
                       !1,
-                      { fileName: m, lineNumber: 112, columnNumber: 13 },
+                      { fileName: m, lineNumber: 118, columnNumber: 13 },
                       this
                     ),
                   ],
@@ -1445,17 +1476,17 @@ function fn({ show: t, topMenu: s, menu: o }) {
                 void 0,
                 !0
               ),
-              children: e.exports.jsxDEV(
-                A.Item,
+              children: t.exports.jsxDEV(
+                I.Item,
                 {
-                  onClick: I,
+                  onClick: C,
                   children: [
-                    e.exports.jsxDEV(
-                      wt,
-                      { className: O['dropdown-icon'] },
+                    t.exports.jsxDEV(
+                      Ws,
+                      { className: z['dropdown-icon'] },
                       void 0,
                       !1,
-                      { fileName: m, lineNumber: 121, columnNumber: 11 },
+                      { fileName: m, lineNumber: 127, columnNumber: 11 },
                       this
                     ),
                     n['menu.user.switchRoles'],
@@ -1463,25 +1494,25 @@ function fn({ show: t, topMenu: s, menu: o }) {
                 },
                 'switch role',
                 !0,
-                { fileName: m, lineNumber: 120, columnNumber: 9 },
+                { fileName: m, lineNumber: 126, columnNumber: 9 },
                 this
               ),
             },
             'role',
             !1,
-            { fileName: m, lineNumber: 107, columnNumber: 7 },
+            { fileName: m, lineNumber: 113, columnNumber: 7 },
             this
           ),
-          e.exports.jsxDEV(
-            A.Item,
+          t.exports.jsxDEV(
+            I.Item,
             {
               children: [
-                e.exports.jsxDEV(
-                  we,
-                  { className: O['dropdown-icon'] },
+                t.exports.jsxDEV(
+                  Be,
+                  { className: z['dropdown-icon'] },
                   void 0,
                   !1,
-                  { fileName: m, lineNumber: 126, columnNumber: 9 },
+                  { fileName: m, lineNumber: 132, columnNumber: 9 },
                   this
                 ),
                 n['menu.user.setting'],
@@ -1489,23 +1520,23 @@ function fn({ show: t, topMenu: s, menu: o }) {
             },
             'setting',
             !0,
-            { fileName: m, lineNumber: 125, columnNumber: 7 },
+            { fileName: m, lineNumber: 131, columnNumber: 7 },
             this
           ),
-          e.exports.jsxDEV(
-            A.SubMenu,
+          t.exports.jsxDEV(
+            I.SubMenu,
             {
-              title: e.exports.jsxDEV(
+              title: t.exports.jsxDEV(
                 'div',
                 {
                   style: { width: 80 },
                   children: [
-                    e.exports.jsxDEV(
-                      Os,
-                      { className: O['dropdown-icon'] },
+                    t.exports.jsxDEV(
+                      qs,
+                      { className: z['dropdown-icon'] },
                       void 0,
                       !1,
-                      { fileName: m, lineNumber: 133, columnNumber: 13 },
+                      { fileName: m, lineNumber: 139, columnNumber: 13 },
                       this
                     ),
                     n['message.seeMore'],
@@ -1513,19 +1544,19 @@ function fn({ show: t, topMenu: s, menu: o }) {
                 },
                 void 0,
                 !0,
-                { fileName: m, lineNumber: 132, columnNumber: 11 },
+                { fileName: m, lineNumber: 138, columnNumber: 11 },
                 this
               ),
-              children: e.exports.jsxDEV(
-                A.Item,
+              children: t.exports.jsxDEV(
+                I.Item,
                 {
                   children: [
-                    e.exports.jsxDEV(
-                      St,
-                      { className: O['dropdown-icon'] },
+                    t.exports.jsxDEV(
+                      Js,
+                      { className: z['dropdown-icon'] },
                       void 0,
                       !1,
-                      { fileName: m, lineNumber: 139, columnNumber: 11 },
+                      { fileName: m, lineNumber: 145, columnNumber: 11 },
                       this
                     ),
                     n['menu.dashboard.workplace'],
@@ -1533,33 +1564,33 @@ function fn({ show: t, topMenu: s, menu: o }) {
                 },
                 'workplace',
                 !0,
-                { fileName: m, lineNumber: 138, columnNumber: 9 },
+                { fileName: m, lineNumber: 144, columnNumber: 9 },
                 this
               ),
             },
             'more',
             !1,
-            { fileName: m, lineNumber: 129, columnNumber: 7 },
+            { fileName: m, lineNumber: 135, columnNumber: 7 },
             this
           ),
-          e.exports.jsxDEV(
-            Vt,
+          t.exports.jsxDEV(
+            kt,
             { style: { margin: '4px 0' } },
             void 0,
             !1,
-            { fileName: m, lineNumber: 144, columnNumber: 7 },
+            { fileName: m, lineNumber: 150, columnNumber: 7 },
             this
           ),
-          e.exports.jsxDEV(
-            A.Item,
+          t.exports.jsxDEV(
+            I.Item,
             {
               children: [
-                e.exports.jsxDEV(
-                  zs,
-                  { className: O['dropdown-icon'] },
+                t.exports.jsxDEV(
+                  Hs,
+                  { className: z['dropdown-icon'] },
                   void 0,
                   !1,
-                  { fileName: m, lineNumber: 146, columnNumber: 9 },
+                  { fileName: m, lineNumber: 152, columnNumber: 9 },
                   this
                 ),
                 n['navbar.logout'],
@@ -1567,93 +1598,93 @@ function fn({ show: t, topMenu: s, menu: o }) {
             },
             'logout',
             !0,
-            { fileName: m, lineNumber: 145, columnNumber: 7 },
+            { fileName: m, lineNumber: 151, columnNumber: 7 },
             this
           ),
         ],
       },
       void 0,
       !0,
-      { fileName: m, lineNumber: 106, columnNumber: 5 },
+      { fileName: m, lineNumber: 112, columnNumber: 5 },
       this
     );
-  return e.exports.jsxDEV(
+  return t.exports.jsxDEV(
     'div',
     {
-      className: O.navbar,
+      className: z.navbar,
       children: [
-        e.exports.jsxDEV(
+        t.exports.jsxDEV(
           'div',
           {
-            className: O.left,
-            children: e.exports.jsxDEV(
+            className: z.left,
+            children: t.exports.jsxDEV(
               'div',
               {
-                className: O.logo,
+                className: z.logo,
                 children: [
-                  e.exports.jsxDEV(
-                    Ut,
+                  t.exports.jsxDEV(
+                    Wt,
                     {},
                     void 0,
                     !1,
-                    { fileName: m, lineNumber: 156, columnNumber: 11 },
+                    { fileName: m, lineNumber: 162, columnNumber: 11 },
                     this
                   ),
-                  e.exports.jsxDEV(
+                  t.exports.jsxDEV(
                     'div',
-                    { className: O['logo-name'], children: 'Arco Pro' },
+                    { className: z['logo-name'], children: 'Arco Pro' },
                     void 0,
                     !1,
-                    { fileName: m, lineNumber: 157, columnNumber: 11 },
+                    { fileName: m, lineNumber: 163, columnNumber: 11 },
                     this
                   ),
                 ],
               },
               void 0,
               !0,
-              { fileName: m, lineNumber: 155, columnNumber: 9 },
+              { fileName: m, lineNumber: 161, columnNumber: 9 },
               this
             ),
           },
           void 0,
           !1,
-          { fileName: m, lineNumber: 154, columnNumber: 7 },
-          this
-        ),
-        e.exports.jsxDEV(
-          'div',
-          { className: O.center, children: o && s },
-          void 0,
-          !1,
           { fileName: m, lineNumber: 160, columnNumber: 7 },
           this
         ),
-        e.exports.jsxDEV(
+        t.exports.jsxDEV(
+          'div',
+          { className: z.center, children: o && s },
+          void 0,
+          !1,
+          { fileName: m, lineNumber: 166, columnNumber: 7 },
+          this
+        ),
+        t.exports.jsxDEV(
           'ul',
           {
-            className: O.right,
+            className: z.right,
             children: [
-              e.exports.jsxDEV(
+              t.exports.jsxDEV(
                 'li',
                 {
-                  children: e.exports.jsxDEV(
-                    Us,
+                  children: t.exports.jsxDEV(
+                    Xs,
                     {
-                      triggerElement: e.exports.jsxDEV(
-                        Se,
+                      triggerElement: t.exports.jsxDEV(
+                        Pe,
                         {
-                          icon: e.exports.jsxDEV(
-                            Ks,
+                          icon: t.exports.jsxDEV(
+                            Ys,
                             {},
                             void 0,
                             !1,
-                            { fileName: m, lineNumber: 164, columnNumber: 47 },
+                            { fileName: m, lineNumber: 170, columnNumber: 47 },
                             this
                           ),
                         },
                         void 0,
                         !1,
-                        { fileName: m, lineNumber: 164, columnNumber: 29 },
+                        { fileName: m, lineNumber: 170, columnNumber: 29 },
                         this
                       ),
                       options: [
@@ -1661,222 +1692,275 @@ function fn({ show: t, topMenu: s, menu: o }) {
                         { label: 'Espa\xF1a', value: 'es-ES' },
                         { label: 'English', value: 'en-US' },
                       ],
-                      value: d,
+                      value: x,
                       triggerProps: {
                         autoAlignPopupWidth: !1,
                         autoAlignPopupMinWidth: !0,
                         position: 'br',
                       },
                       trigger: 'hover',
-                      onChange: (c) => {
-                        p(c);
-                        const j = zt[c];
-                        be.info(`${j['message.lang.tips']}${c}`);
+                      onChange: (k) => {
+                        b(k);
+                        const f = Gt[k];
+                        pe.info(`${f['message.lang.tips']}${k}`);
                       },
                     },
                     void 0,
                     !1,
-                    { fileName: m, lineNumber: 163, columnNumber: 11 },
+                    { fileName: m, lineNumber: 169, columnNumber: 11 },
                     this
                   ),
                 },
                 void 0,
                 !1,
-                { fileName: m, lineNumber: 162, columnNumber: 9 },
+                { fileName: m, lineNumber: 168, columnNumber: 9 },
                 this
               ),
-              e.exports.jsxDEV(
+              t.exports.jsxDEV(
                 'li',
                 {
-                  children: e.exports.jsxDEV(
-                    Io,
+                  children: t.exports.jsxDEV(
+                    Oo,
                     {
-                      children: e.exports.jsxDEV(
-                        Se,
+                      children: t.exports.jsxDEV(
+                        Pe,
                         {
-                          icon: e.exports.jsxDEV(
-                            Gs,
+                          icon: t.exports.jsxDEV(
+                            Zs,
                             {},
                             void 0,
                             !1,
-                            { fileName: m, lineNumber: 186, columnNumber: 31 },
+                            { fileName: m, lineNumber: 192, columnNumber: 31 },
                             this
                           ),
                         },
                         void 0,
                         !1,
-                        { fileName: m, lineNumber: 186, columnNumber: 13 },
+                        { fileName: m, lineNumber: 192, columnNumber: 13 },
                         this
                       ),
                     },
                     void 0,
                     !1,
-                    { fileName: m, lineNumber: 185, columnNumber: 11 },
+                    { fileName: m, lineNumber: 191, columnNumber: 11 },
                     this
                   ),
                 },
                 void 0,
                 !1,
-                { fileName: m, lineNumber: 184, columnNumber: 9 },
+                { fileName: m, lineNumber: 190, columnNumber: 9 },
                 this
               ),
-              e.exports.jsxDEV(
+              t.exports.jsxDEV(
                 'li',
                 {
-                  children: e.exports.jsxDEV(
-                    Ws,
+                  children: t.exports.jsxDEV(
+                    Qs,
                     {
                       content:
-                        h === 'light'
+                        P === 'light'
                           ? n['settings.navbar.theme.toDark']
                           : n['settings.navbar.theme.toLight'],
-                      children: e.exports.jsxDEV(
-                        Se,
+                      children: t.exports.jsxDEV(
+                        Pe,
                         {
                           icon:
-                            h !== 'dark'
-                              ? e.exports.jsxDEV(
-                                  qs,
+                            P !== 'dark'
+                              ? t.exports.jsxDEV(
+                                  eo,
                                   {},
                                   void 0,
                                   !1,
                                   {
                                     fileName: m,
-                                    lineNumber: 198,
+                                    lineNumber: 204,
                                     columnNumber: 40,
                                   },
                                   this
                                 )
-                              : e.exports.jsxDEV(
-                                  Js,
+                              : t.exports.jsxDEV(
+                                  to,
                                   {},
                                   void 0,
                                   !1,
                                   {
                                     fileName: m,
-                                    lineNumber: 198,
+                                    lineNumber: 204,
                                     columnNumber: 59,
                                   },
                                   this
                                 ),
-                          onClick: () => v(h === 'light' ? 'dark' : 'light'),
+                          onClick: () => B(P === 'light' ? 'dark' : 'light'),
                         },
                         void 0,
                         !1,
-                        { fileName: m, lineNumber: 197, columnNumber: 13 },
+                        { fileName: m, lineNumber: 203, columnNumber: 13 },
                         this
                       ),
                     },
                     void 0,
                     !1,
-                    { fileName: m, lineNumber: 190, columnNumber: 11 },
+                    { fileName: m, lineNumber: 196, columnNumber: 11 },
                     this
                   ),
                 },
                 void 0,
                 !1,
-                { fileName: m, lineNumber: 189, columnNumber: 9 },
+                { fileName: m, lineNumber: 195, columnNumber: 9 },
                 this
               ),
-              e.exports.jsxDEV(
-                Kt,
+              t.exports.jsxDEV(
+                qt,
                 {},
                 void 0,
                 !1,
-                { fileName: m, lineNumber: 203, columnNumber: 9 },
+                { fileName: m, lineNumber: 209, columnNumber: 9 },
                 this
               ),
               r &&
-                e.exports.jsxDEV(
+                t.exports.jsxDEV(
                   'li',
                   {
-                    children: e.exports.jsxDEV(
-                      kt,
+                    children: t.exports.jsxDEV(
+                      It,
                       {
-                        droplist: b,
+                        droplist: ie,
                         position: 'br',
-                        children: e.exports.jsxDEV(
-                          Dt,
+                        children: t.exports.jsxDEV(
+                          Ft,
                           {
                             size: 32,
                             style: { cursor: 'pointer' },
-                            children: e.exports.jsxDEV(
-                              'img',
-                              { alt: 'avatar', src: r.avatar },
-                              void 0,
-                              !1,
-                              {
-                                fileName: m,
-                                lineNumber: 208,
-                                columnNumber: 17,
-                              },
-                              this
-                            ),
+                            children:
+                              i &&
+                              t.exports.jsxDEV(
+                                'img',
+                                { alt: 'avatar', src: i },
+                                void 0,
+                                !1,
+                                {
+                                  fileName: m,
+                                  lineNumber: 214,
+                                  columnNumber: 28,
+                                },
+                                this
+                              ),
                           },
                           void 0,
                           !1,
-                          { fileName: m, lineNumber: 207, columnNumber: 15 },
+                          { fileName: m, lineNumber: 213, columnNumber: 15 },
                           this
                         ),
                       },
                       void 0,
                       !1,
-                      { fileName: m, lineNumber: 206, columnNumber: 13 },
+                      { fileName: m, lineNumber: 212, columnNumber: 13 },
                       this
                     ),
                   },
                   void 0,
                   !1,
-                  { fileName: m, lineNumber: 205, columnNumber: 11 },
+                  { fileName: m, lineNumber: 211, columnNumber: 11 },
                   this
                 ),
             ],
           },
           void 0,
           !0,
-          { fileName: m, lineNumber: 161, columnNumber: 7 },
+          { fileName: m, lineNumber: 167, columnNumber: 7 },
           this
         ),
       ],
     },
     void 0,
     !0,
-    { fileName: m, lineNumber: 153, columnNumber: 5 },
+    { fileName: m, lineNumber: 159, columnNumber: 5 },
     this
   );
 }
-const pn = '_footer_1si67_1';
-var hn = { footer: pn },
-  bn =
+const _n = '_footer_1si67_1';
+var yn = { footer: _n },
+  jn =
     '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/components/Footer/index.tsx';
-function Yt(t = {}) {
-  const n = t,
+function Qt(e = {}) {
+  const n = e,
     { className: s } = n,
-    o = Fe(n, ['className']);
-  return e.exports.jsxDEV(
-    ce.Footer,
-    $(C({ className: pe(hn.footer, s) }, o), { children: 'Arco Design Pro' }),
+    o = Se(n, ['className']);
+  return t.exports.jsxDEV(
+    he.Footer,
+    $(F({ className: ve(yn.footer, s) }, o), { children: 'Arco Design Pro' }),
     void 0,
     !1,
-    { fileName: bn, lineNumber: 10, columnNumber: 5 },
+    { fileName: jn, lineNumber: 10, columnNumber: 5 },
     this
   );
 }
-var B = {
-    'tab-bar-container': '_tab-bar-container_1eenx_1',
-    'tab-bar-box': '_tab-bar-box_1eenx_6',
-    'tab-bar-scroll': '_tab-bar-scroll_1eenx_13',
-    'tags-wrap': '_tags-wrap_1eenx_18',
-    'tab-tag': '_tab-tag_1eenx_27',
-    'tag-link': '_tag-link_1eenx_42',
-    'link-activated': '_link-activated_1eenx_46',
-    'dropdown-label': '_dropdown-label_1eenx_61',
-    'separate-line': '_separate-line_1eenx_64',
-    'tag-bar-operation': '_tag-bar-operation_1eenx_67',
+const Vn = '_layout_316fi_1',
+  Fn = '_icon_316fi_86',
+  Cn = '_spin_316fi_111';
+var O = {
+    layout: Vn,
+    'layout-navbar': '_layout-navbar_316fi_5',
+    'layout-navbar-hidden': '_layout-navbar-hidden_316fi_13',
+    'layout-sider': '_layout-sider_316fi_16',
+    'collapse-btn': '_collapse-btn_316fi_50',
+    'menu-wrapper': '_menu-wrapper_316fi_67',
+    icon: Fn,
+    'icon-empty': '_icon-empty_316fi_90',
+    'layout-content': '_layout-content_316fi_95',
+    'layout-content-wrapper': '_layout-content-wrapper_316fi_102',
+    'layout-content-wrapper-with-tab':
+      '_layout-content-wrapper-with-tab_316fi_105',
+    'layout-breadcrumb': '_layout-breadcrumb_316fi_108',
+    spin: Cn,
   },
-  x =
+  es = '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/utils/routeIcon.tsx';
+function wn(e) {
+  if (!e) return '';
+  if (e.startsWith('Icon')) return e;
+  const s = e
+    .replace(/^icon[-_]?/i, '')
+    .split(/[-_\s]+/)
+    .filter(Boolean)
+    .map((o) => o.charAt(0).toUpperCase() + o.slice(1))
+    .join('');
+  return s ? `Icon${s}` : '';
+}
+function ts(e, s) {
+  const n = so[wn(s || e)];
+  return n
+    ? t.exports.jsxDEV(
+        n,
+        { className: O.icon },
+        void 0,
+        !1,
+        { fileName: es, lineNumber: 31, columnNumber: 5 },
+        this
+      )
+    : t.exports.jsxDEV(
+        'div',
+        { className: O['icon-empty'] },
+        void 0,
+        !1,
+        { fileName: es, lineNumber: 33, columnNumber: 5 },
+        this
+      );
+}
+var T = {
+    'tab-bar-container': '_tab-bar-container_1821m_1',
+    'tab-bar-box': '_tab-bar-box_1821m_6',
+    'tab-bar-scroll': '_tab-bar-scroll_1821m_13',
+    'tags-wrap': '_tags-wrap_1821m_18',
+    'tab-tag': '_tab-tag_1821m_27',
+    'tag-link': '_tag-link_1821m_42',
+    'link-activated': '_link-activated_1821m_49',
+    'dropdown-label': '_dropdown-label_1821m_64',
+    'separate-line': '_separate-line_1821m_67',
+    'tag-bar-operation': '_tag-bar-operation_1821m_70',
+  },
+  E =
     '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/components/TabBar/index.tsx';
-const H = {
+const X = {
   Reload: 'reload',
   Current: 'current',
   Left: 'left',
@@ -1884,357 +1968,373 @@ const H = {
   Others: 'others',
   All: 'all',
 };
-function Nn(t, s) {
-  const o = Xe(t);
+function ss(e, s) {
+  const o = tt(e);
   return s.find((n) => o === `/${n.key}`);
 }
-function Zt(t, s, o) {
-  const n = Nn(t, o);
+function os(e, s, o) {
+  const n = ss(e, o);
   if (!n) return null;
-  const r = Xe(t);
+  const r = tt(e);
   return {
     title: n.name,
     name: r.replace(/^\//, ''),
-    path: t,
-    fullPath: `${t}${s || ''}`,
+    path: e,
+    fullPath: `${e}${s || ''}`,
   };
 }
-function gn({
-  defaultTab: t,
+function Sn({
+  defaultTab: e,
   tabList: s,
-  offsetTop: o = 0,
-  onTabsChange: n,
-  onCloseTabs: r,
-  onReload: a,
+  routes: o,
+  offsetTop: n = 0,
+  onTabsChange: r,
+  onCloseTabs: a,
+  onReload: i,
 }) {
-  const i = Ge(),
-    u = At(),
-    p = J(),
-    d = `${u.pathname}${u.search || ''}`;
-  function h(b) {
-    b.fullPath !== d && i.push(b.fullPath);
+  const u = Ye(),
+    N = Pt(),
+    d = H(),
+    b = `${N.pathname}${N.search || ''}`;
+  function x(f) {
+    return ss(f.path, o);
   }
-  function v(b, c) {
+  function P(f) {
+    const c = x(f),
+      h = (c == null ? void 0 : c.name) || f.title;
+    return d[h] || h;
+  }
+  function B(f) {
+    const c = x(f);
+    return ts(
+      (c == null ? void 0 : c.key) || f.name,
+      c == null ? void 0 : c.icon
+    );
+  }
+  function g(f) {
+    f.fullPath !== b && u.push(f.fullPath);
+  }
+  function R(f, c) {
     if (c === 0) return;
-    const j = s.filter((W, z) => z !== c);
-    if ((r == null || r([b]), n(j), b.fullPath === d)) {
-      const W = j[c - 1] || j[0];
-      i.push(W.fullPath);
+    const h = s.filter((A, M) => M !== c);
+    if ((a == null || a([f]), r(h), f.fullPath === b)) {
+      const A = h[c - 1] || h[0];
+      u.push(A.fullPath);
     }
   }
-  function L(b = s) {
-    return b.findIndex((c) => c.fullPath === d);
+  function Y(f = s) {
+    return f.findIndex((c) => c.fullPath === b);
   }
-  function k(b, c) {
-    c.length && (r == null || r(c)), n(b);
+  function C(f, c) {
+    c.length && (a == null || a(c)), r(f);
   }
-  function N(b, c, j) {
-    const W = L();
-    if (b === H.Current) {
-      v(c, j);
+  function ie(f, c, h) {
+    const A = Y();
+    if (f === X.Current) {
+      R(c, h);
       return;
     }
-    if (b === H.Left) {
-      const V = s.filter((P, D) => D === 0 || D >= j),
-        g = s.filter((P, D) => D > 0 && D < j);
-      k(V, g), W > 0 && W < j && i.push(c.fullPath);
+    if (f === X.Left) {
+      const D = s.filter((Z, w) => w === 0 || w >= h),
+        U = s.filter((Z, w) => w > 0 && w < h);
+      C(D, U), A > 0 && A < h && u.push(c.fullPath);
       return;
     }
-    if (b === H.Right) {
-      const V = s.filter((P, D) => D <= j),
-        g = s.filter((P, D) => D > j);
-      k(V, g), W > j && i.push(c.fullPath);
+    if (f === X.Right) {
+      const D = s.filter((Z, w) => w <= h),
+        U = s.filter((Z, w) => w > h);
+      C(D, U), A > h && u.push(c.fullPath);
       return;
     }
-    if (b === H.Others) {
-      const V = s.filter((P, D) => D === 0 || D === j),
-        g = s.filter((P, D) => D !== 0 && D !== j);
-      k(V, g), i.push(c.fullPath);
+    if (f === X.Others) {
+      const D = s.filter((Z, w) => w === 0 || w === h),
+        U = s.filter((Z, w) => w !== 0 && w !== h);
+      C(D, U), u.push(c.fullPath);
       return;
     }
-    if (b === H.Reload) {
-      a == null || a(c);
+    if (f === X.Reload) {
+      i == null || i(c);
       return;
     }
-    const z = s.filter((V, g) => g !== 0);
-    k([t], z), i.push(t.fullPath);
+    const M = s.filter((D, U) => U !== 0);
+    C([e], M), u.push(e.fullPath);
   }
-  function I(b, c) {
-    const j = b.fullPath !== d,
-      W = c === 0,
-      z = c <= 1,
-      V = c === s.length - 1;
-    return e.exports.jsxDEV(
-      A,
+  function k(f, c) {
+    const h = f.fullPath !== b,
+      A = c === 0,
+      M = c <= 1,
+      D = c === s.length - 1;
+    return t.exports.jsxDEV(
+      I,
       {
-        onClickMenuItem: (g) => N(g, b, c),
+        onClickMenuItem: (U) => ie(U, f, c),
         children: [
-          e.exports.jsxDEV(
-            A.Item,
+          t.exports.jsxDEV(
+            I.Item,
             {
-              disabled: j,
+              disabled: h,
               children: [
-                e.exports.jsxDEV(
-                  Xs,
+                t.exports.jsxDEV(
+                  no,
                   {},
                   void 0,
                   !1,
-                  { fileName: x, lineNumber: 164, columnNumber: 11 },
+                  { fileName: E, lineNumber: 182, columnNumber: 11 },
                   this
                 ),
-                e.exports.jsxDEV(
+                t.exports.jsxDEV(
                   'span',
                   {
-                    className: B['dropdown-label'],
+                    className: T['dropdown-label'],
                     children: '\u91CD\u65B0\u52A0\u8F7D',
                   },
                   void 0,
                   !1,
-                  { fileName: x, lineNumber: 165, columnNumber: 11 },
+                  { fileName: E, lineNumber: 183, columnNumber: 11 },
                   this
                 ),
               ],
             },
-            H.Reload,
+            X.Reload,
             !0,
-            { fileName: x, lineNumber: 163, columnNumber: 9 },
+            { fileName: E, lineNumber: 181, columnNumber: 9 },
             this
           ),
-          e.exports.jsxDEV(
-            A.Item,
+          t.exports.jsxDEV(
+            I.Item,
             {
-              disabled: W,
-              className: B['separate-line'],
+              disabled: A,
+              className: T['separate-line'],
               children: [
-                e.exports.jsxDEV(
-                  Bt,
+                t.exports.jsxDEV(
+                  Rt,
                   {},
                   void 0,
                   !1,
-                  { fileName: x, lineNumber: 172, columnNumber: 11 },
+                  { fileName: E, lineNumber: 190, columnNumber: 11 },
                   this
                 ),
-                e.exports.jsxDEV(
+                t.exports.jsxDEV(
                   'span',
                   {
-                    className: B['dropdown-label'],
+                    className: T['dropdown-label'],
                     children: '\u5173\u95ED\u5F53\u524D\u6807\u7B7E\u9875',
                   },
                   void 0,
                   !1,
-                  { fileName: x, lineNumber: 173, columnNumber: 11 },
+                  { fileName: E, lineNumber: 191, columnNumber: 11 },
                   this
                 ),
               ],
             },
-            H.Current,
+            X.Current,
             !0,
-            { fileName: x, lineNumber: 167, columnNumber: 9 },
+            { fileName: E, lineNumber: 185, columnNumber: 9 },
             this
           ),
-          e.exports.jsxDEV(
-            A.Item,
+          t.exports.jsxDEV(
+            I.Item,
             {
-              disabled: z,
+              disabled: M,
               children: [
-                e.exports.jsxDEV(
-                  Ys,
+                t.exports.jsxDEV(
+                  ro,
                   {},
                   void 0,
                   !1,
-                  { fileName: x, lineNumber: 176, columnNumber: 11 },
+                  { fileName: E, lineNumber: 194, columnNumber: 11 },
                   this
                 ),
-                e.exports.jsxDEV(
+                t.exports.jsxDEV(
                   'span',
                   {
-                    className: B['dropdown-label'],
+                    className: T['dropdown-label'],
                     children: '\u5173\u95ED\u5DE6\u4FA7\u6807\u7B7E\u9875',
                   },
                   void 0,
                   !1,
-                  { fileName: x, lineNumber: 177, columnNumber: 11 },
+                  { fileName: E, lineNumber: 195, columnNumber: 11 },
                   this
                 ),
               ],
             },
-            H.Left,
+            X.Left,
             !0,
-            { fileName: x, lineNumber: 175, columnNumber: 9 },
+            { fileName: E, lineNumber: 193, columnNumber: 9 },
             this
           ),
-          e.exports.jsxDEV(
-            A.Item,
+          t.exports.jsxDEV(
+            I.Item,
             {
-              disabled: V,
-              className: B['separate-line'],
+              disabled: D,
+              className: T['separate-line'],
               children: [
-                e.exports.jsxDEV(
-                  Zs,
+                t.exports.jsxDEV(
+                  io,
                   {},
                   void 0,
                   !1,
-                  { fileName: x, lineNumber: 184, columnNumber: 11 },
+                  { fileName: E, lineNumber: 202, columnNumber: 11 },
                   this
                 ),
-                e.exports.jsxDEV(
+                t.exports.jsxDEV(
                   'span',
                   {
-                    className: B['dropdown-label'],
+                    className: T['dropdown-label'],
                     children: '\u5173\u95ED\u53F3\u4FA7\u6807\u7B7E\u9875',
                   },
                   void 0,
                   !1,
-                  { fileName: x, lineNumber: 185, columnNumber: 11 },
+                  { fileName: E, lineNumber: 203, columnNumber: 11 },
                   this
                 ),
               ],
             },
-            H.Right,
+            X.Right,
             !0,
-            { fileName: x, lineNumber: 179, columnNumber: 9 },
+            { fileName: E, lineNumber: 197, columnNumber: 9 },
             this
           ),
-          e.exports.jsxDEV(
-            A.Item,
+          t.exports.jsxDEV(
+            I.Item,
             {
               disabled: s.length <= 2 && c !== 0,
               children: [
-                e.exports.jsxDEV(
-                  Qs,
+                t.exports.jsxDEV(
+                  ao,
                   {},
                   void 0,
                   !1,
-                  { fileName: x, lineNumber: 191, columnNumber: 11 },
+                  { fileName: E, lineNumber: 209, columnNumber: 11 },
                   this
                 ),
-                e.exports.jsxDEV(
+                t.exports.jsxDEV(
                   'span',
                   {
-                    className: B['dropdown-label'],
+                    className: T['dropdown-label'],
                     children: '\u5173\u95ED\u5176\u5B83\u6807\u7B7E\u9875',
                   },
                   void 0,
                   !1,
-                  { fileName: x, lineNumber: 192, columnNumber: 11 },
+                  { fileName: E, lineNumber: 210, columnNumber: 11 },
                   this
                 ),
               ],
             },
-            H.Others,
+            X.Others,
             !0,
-            { fileName: x, lineNumber: 187, columnNumber: 9 },
+            { fileName: E, lineNumber: 205, columnNumber: 9 },
             this
           ),
-          e.exports.jsxDEV(
-            A.Item,
+          t.exports.jsxDEV(
+            I.Item,
             {
               disabled: s.length <= 1,
               children: [
-                e.exports.jsxDEV(
-                  eo,
+                t.exports.jsxDEV(
+                  uo,
                   {},
                   void 0,
                   !1,
-                  { fileName: x, lineNumber: 195, columnNumber: 11 },
+                  { fileName: E, lineNumber: 213, columnNumber: 11 },
                   this
                 ),
-                e.exports.jsxDEV(
+                t.exports.jsxDEV(
                   'span',
                   {
-                    className: B['dropdown-label'],
+                    className: T['dropdown-label'],
                     children: '\u5173\u95ED\u5168\u90E8\u6807\u7B7E\u9875',
                   },
                   void 0,
                   !1,
-                  { fileName: x, lineNumber: 196, columnNumber: 11 },
+                  { fileName: E, lineNumber: 214, columnNumber: 11 },
                   this
                 ),
               ],
             },
-            H.All,
+            X.All,
             !0,
-            { fileName: x, lineNumber: 194, columnNumber: 9 },
+            { fileName: E, lineNumber: 212, columnNumber: 9 },
             this
           ),
         ],
       },
       void 0,
       !0,
-      { fileName: x, lineNumber: 162, columnNumber: 7 },
+      { fileName: E, lineNumber: 180, columnNumber: 7 },
       this
     );
   }
-  return e.exports.jsxDEV(
+  return t.exports.jsxDEV(
     'div',
     {
-      className: B['tab-bar-container'],
-      children: e.exports.jsxDEV(
-        Hs,
+      className: T['tab-bar-container'],
+      children: t.exports.jsxDEV(
+        oo,
         {
-          offsetTop: o,
-          children: e.exports.jsxDEV(
+          offsetTop: n,
+          children: t.exports.jsxDEV(
             'div',
             {
-              className: B['tab-bar-box'],
+              className: T['tab-bar-box'],
               children: [
-                e.exports.jsxDEV(
+                t.exports.jsxDEV(
                   'div',
                   {
-                    className: B['tab-bar-scroll'],
-                    children: e.exports.jsxDEV(
+                    className: T['tab-bar-scroll'],
+                    children: t.exports.jsxDEV(
                       'div',
                       {
-                        className: B['tags-wrap'],
-                        children: s.map((b, c) =>
-                          e.exports.jsxDEV(
-                            kt,
+                        className: T['tags-wrap'],
+                        children: s.map((f, c) =>
+                          t.exports.jsxDEV(
+                            It,
                             {
-                              droplist: I(b, c),
+                              droplist: k(f, c),
                               trigger: 'contextMenu',
                               position: 'bl',
-                              children: e.exports.jsxDEV(
+                              children: t.exports.jsxDEV(
                                 'span',
                                 {
-                                  className: pe(
+                                  className: ve(
                                     'arco-tag arco-tag-size-medium arco-tag-checked',
-                                    B['tab-tag'],
-                                    { [B['link-activated']]: b.fullPath === d }
+                                    T['tab-tag'],
+                                    { [T['link-activated']]: f.fullPath === b }
                                   ),
-                                  onClick: () => h(b),
+                                  onClick: () => g(f),
                                   children: [
-                                    e.exports.jsxDEV(
+                                    t.exports.jsxDEV(
                                       'span',
                                       {
-                                        className: B['tag-link'],
-                                        children: p[b.title] || b.title,
+                                        className: T['tag-link'],
+                                        children: [B(f), P(f)],
                                       },
                                       void 0,
-                                      !1,
+                                      !0,
                                       {
-                                        fileName: x,
-                                        lineNumber: 226,
+                                        fileName: E,
+                                        lineNumber: 244,
                                         columnNumber: 21,
                                       },
                                       this
                                     ),
                                     c !== 0 &&
-                                      e.exports.jsxDEV(
+                                      t.exports.jsxDEV(
                                         'span',
                                         {
                                           className:
                                             'arco-icon-hover arco-tag-icon-hover arco-icon-hover-size-medium arco-tag-close-btn',
-                                          onClick: (j) => {
-                                            j.stopPropagation(), v(b, c);
+                                          onClick: (h) => {
+                                            h.stopPropagation(), R(f, c);
                                           },
-                                          children: e.exports.jsxDEV(
-                                            Bt,
+                                          children: t.exports.jsxDEV(
+                                            Rt,
                                             {},
                                             void 0,
                                             !1,
                                             {
-                                              fileName: x,
-                                              lineNumber: 237,
+                                              fileName: E,
+                                              lineNumber: 256,
                                               columnNumber: 25,
                                             },
                                             this
@@ -2243,8 +2343,8 @@ function gn({
                                         void 0,
                                         !1,
                                         {
-                                          fileName: x,
-                                          lineNumber: 230,
+                                          fileName: E,
+                                          lineNumber: 249,
                                           columnNumber: 23,
                                         },
                                         this
@@ -2254,89 +2354,89 @@ function gn({
                                 void 0,
                                 !0,
                                 {
-                                  fileName: x,
-                                  lineNumber: 215,
+                                  fileName: E,
+                                  lineNumber: 233,
                                   columnNumber: 19,
                                 },
                                 this
                               ),
                             },
-                            b.fullPath,
+                            f.fullPath,
                             !1,
-                            { fileName: x, lineNumber: 209, columnNumber: 17 },
+                            { fileName: E, lineNumber: 227, columnNumber: 17 },
                             this
                           )
                         ),
                       },
                       void 0,
                       !1,
-                      { fileName: x, lineNumber: 207, columnNumber: 13 },
+                      { fileName: E, lineNumber: 225, columnNumber: 13 },
                       this
                     ),
                   },
                   void 0,
                   !1,
-                  { fileName: x, lineNumber: 206, columnNumber: 11 },
+                  { fileName: E, lineNumber: 224, columnNumber: 11 },
                   this
                 ),
-                e.exports.jsxDEV(
+                t.exports.jsxDEV(
                   'div',
-                  { className: B['tag-bar-operation'] },
+                  { className: T['tag-bar-operation'] },
                   void 0,
                   !1,
-                  { fileName: x, lineNumber: 245, columnNumber: 11 },
+                  { fileName: E, lineNumber: 264, columnNumber: 11 },
                   this
                 ),
               ],
             },
             void 0,
             !0,
-            { fileName: x, lineNumber: 205, columnNumber: 9 },
+            { fileName: E, lineNumber: 223, columnNumber: 9 },
             this
           ),
         },
         void 0,
         !1,
-        { fileName: x, lineNumber: 204, columnNumber: 7 },
+        { fileName: E, lineNumber: 222, columnNumber: 7 },
         this
       ),
     },
     void 0,
     !1,
-    { fileName: x, lineNumber: 203, columnNumber: 5 },
+    { fileName: E, lineNumber: 221, columnNumber: 5 },
     this
   );
 }
-const xn = 'marketing:tabs';
-function Qt(t) {
-  return encodeURIComponent(String(t || 'unknown'));
+const kn = 'marketing:tabs';
+function ns(e) {
+  return encodeURIComponent(String(e || 'unknown'));
 }
-function Qe(t, s) {
-  if (!!t)
+function it(e, s) {
+  if (!!e)
     for (const o of s) {
-      const n = t[o];
+      const n = e[o];
       if (typeof n == 'string' || typeof n == 'number') return n;
     }
 }
-function En(t) {
-  const s = t == null ? void 0 : t.currentTenant,
-    o = t == null ? void 0 : t.defaultTenant;
+function An(e) {
+  const s = e == null ? void 0 : e.currentTenant,
+    o = e == null ? void 0 : e.defaultTenant;
   return {
     tenantCode:
-      Qe(s, ['tenantCode', 'code', 'tenantId', 'id']) ||
-      Qe(t || void 0, ['tenantCode', 'tenantId']) ||
-      Qe(o, ['tenantCode', 'code', 'tenantId', 'id']),
+      it(s, ['tenantCode', 'code', 'tenantId', 'id']) ||
+      it(e || void 0, ['tenantCode', 'tenantId']) ||
+      it(o, ['tenantCode', 'code', 'tenantId', 'id']),
   };
 }
-function es(t) {
-  return `${xn}:${Qt(t.tenantCode)}`;
+function rs(e) {
+  return `${kn}:${ns(e.tenantCode)}`;
 }
-function et(t, s) {
-  return `${Qt(t.tenantCode)}:${encodeURIComponent(s)}`;
+function Oe(e, s) {
+  return `${ns(e.tenantCode)}:${encodeURIComponent(s)}`;
 }
-function vn(t) {
+function Bn(e) {
   try {
-    const s = sessionStorage.getItem(es(t));
+    const s = sessionStorage.getItem(rs(e));
     if (!s) return null;
     const o = JSON.parse(s);
     return Array.isArray(o)
@@ -2353,37 +2453,37 @@ function vn(t) {
     return null;
   }
 }
-function Dn(t, s) {
+function In(e, s) {
   try {
-    sessionStorage.setItem(es(t), JSON.stringify(s));
+    sessionStorage.setItem(rs(e), JSON.stringify(s));
   } catch {}
 }
-var tt =
+var at =
   '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/components/KeepAliveRoute/index.tsx';
-function _n(a) {
+function Pn(a) {
   var i = a,
-    { identity: t, component: s, render: o, children: n } = i,
-    r = Fe(i, ['identity', 'component', 'render', 'children']);
-  return e.exports.jsxDEV(
-    oe,
-    $(C({}, r), {
+    { identity: e, component: s, render: o, children: n } = i,
+    r = Se(i, ['identity', 'component', 'render', 'children']);
+  return t.exports.jsxDEV(
+    ne,
+    $(F({}, r), {
       render: (u) => {
-        const p = `${u.location.pathname}${u.location.search || ''}`,
-          d = et(t, p),
-          h = s;
-        return e.exports.jsxDEV(
-          to,
+        const N = `${u.location.pathname}${u.location.search || ''}`,
+          d = Oe(e, N),
+          b = s;
+        return t.exports.jsxDEV(
+          lo,
           {
             id: d,
             name: d,
             saveScrollPosition: 'screen',
-            children: h
-              ? e.exports.jsxDEV(
-                  h,
-                  C({}, u),
+            children: b
+              ? t.exports.jsxDEV(
+                  b,
+                  F({}, u),
                   void 0,
                   !1,
-                  { fileName: tt, lineNumber: 32, columnNumber: 15 },
+                  { fileName: at, lineNumber: 32, columnNumber: 15 },
                   this
                 )
               : o
@@ -2392,25 +2492,25 @@ function _n(a) {
           },
           void 0,
           !1,
-          { fileName: tt, lineNumber: 30, columnNumber: 11 },
+          { fileName: at, lineNumber: 30, columnNumber: 11 },
           this
         );
       },
     }),
     void 0,
     !1,
-    { fileName: tt, lineNumber: 18, columnNumber: 5 },
+    { fileName: at, lineNumber: 18, columnNumber: 5 },
     this
   );
 }
-const ts = (t, s) =>
+const is = (e, s) =>
     !s || !s.length
       ? !1
       : s.join('') === '*'
       ? !0
-      : t.every((o) => s.includes(o)),
-  yn = (t, s) => {
-    const { resource: o, actions: n = [] } = t;
+      : e.every((o) => s.includes(o)),
+  Rn = (e, s) => {
+    const { resource: o, actions: n = [] } = e;
     if (Array.isArray(s))
       return o instanceof RegExp
         ? s.some((a) => o.test(a))
@@ -2421,24 +2521,24 @@ const ts = (t, s) =>
       const i = Object.keys(s).filter((u) => u.match(o));
       return i.length
         ? i.every((u) => {
-            const p = s[u];
-            return ts(n, p);
+            const N = s[u];
+            return is(n, N);
           })
         : !1;
     }
     const r = s[o];
-    return ts(n, r);
+    return is(n, r);
   };
-var jn = (t, s) => {
-  const { requiredPermissions: o, oneOfPerm: n } = t;
+var Mn = (e, s) => {
+  const { requiredPermissions: o, oneOfPerm: n } = e;
   if (Array.isArray(o) && o.length) {
     let r = 0;
-    for (const a of o) yn(a, s) && r++;
+    for (const a of o) Rn(a, s) && r++;
     return n ? r > 0 : r === o.length;
   }
   return !0;
 };
-const De = [
+const Fe = [
   {
     name: 'menu.dashboard',
     key: 'dashboard',
@@ -2448,51 +2548,53 @@ const De = [
   },
   { name: 'Example', key: 'example' },
 ];
-function Vn(t) {
-  return (t || '').replace(/^\/+/, '').replace(/\/+$/, '');
+function Tn(e) {
+  return (e || '').replace(/^\/+/, '').replace(/\/+$/, '');
 }
-function ss(t) {
-  return Vn(t.routerPath || t.resourcePath || t.resourceCode);
+function as(e) {
+  return Tn(e.routerPath || e.resourcePath || e.resourceCode);
 }
-function Fn(t) {
-  var s;
+function Ln(e, s = 'zh-CN') {
+  var o, n;
   return (
-    t.resourceName ||
-    ((s = t.resourceNames) == null ? void 0 : s['zh-CN']) ||
-    t.resourceCode ||
-    ss(t)
+    ((o = e.resourceNames) == null ? void 0 : o[s]) ||
+    ((n = e.resourceNames) == null ? void 0 : n['zh-CN']) ||
+    e.resourceName ||
+    e.resourceCode ||
+    as(e)
   );
 }
-function st(t = []) {
-  return t
+function ut(e = [], s = 'zh-CN') {
+  return e
     .slice()
-    .sort((s, o) => (s.sortOrder || 0) - (o.sortOrder || 0))
-    .map((s) => {
-      const o = st(s.children || []),
-        n = {
-          name: Fn(s),
-          key: ss(s),
-          path: s.routerPath || s.resourcePath,
-          icon: s.resourceIcon,
-          children: o.length ? o : void 0,
+    .sort((o, n) => (o.sortOrder || 0) - (n.sortOrder || 0))
+    .map((o) => {
+      const n = ut(o.children || [], s),
+        r = {
+          name: Ln(o, s),
+          resourceNames: o.resourceNames,
+          key: as(o),
+          path: o.routerPath || o.resourcePath,
+          icon: o.resourceIcon,
+          children: n.length ? n : void 0,
         };
       return (
-        n.key === 'dashboard' && !n.children && (n.children = De[0].children), n
+        r.key === 'dashboard' && !r.children && (r.children = Fe[0].children), r
       );
     })
-    .filter((s) => s.key);
+    .filter((o) => o.key);
 }
-function os(t) {
-  if (!t) return De;
-  const s = Ye(t),
-    o = st((s == null ? void 0 : s.menus) || []);
-  return o.length ? o : De;
+function us(e, s = 'zh-CN') {
+  if (!e) return Fe;
+  const o = nt(e),
+    n = ut((o == null ? void 0 : o.menus) || [], s);
+  return n.length ? n : Fe;
 }
-const Cn = (t) => {
-    const s = t === 'admin' ? ['*'] : ['read'],
+const $n = (e) => {
+    const s = e === 'admin' ? ['*'] : ['read'],
       o = {};
     return (
-      De.forEach((n) => {
+      Fe.forEach((n) => {
         n.children &&
           n.children.forEach((r) => {
             o[r.name] = s;
@@ -2501,305 +2603,255 @@ const Cn = (t) => {
       o
     );
   },
-  ot = (t, s, o = []) => {
-    if (!t.length) return [];
-    for (const n of t) {
+  lt = (e, s, o = []) => {
+    if (!e.length) return [];
+    for (const n of e) {
       const { requiredPermissions: r, oneOfPerm: a } = n;
       let i = !0;
-      if ((r && (i = jn({ requiredPermissions: r, oneOfPerm: a }, s)), !!i))
+      if ((r && (i = Mn({ requiredPermissions: r, oneOfPerm: a }, s)), !!i))
         if (n.children && n.children.length) {
-          const u = $(C({}, n), { children: [] });
-          ot(n.children, s, u.children), u.children.length && o.push(u);
-        } else o.push(C({}, n));
+          const u = $(F({}, n), { children: [] });
+          lt(n.children, s, u.children), u.children.length && o.push(u);
+        } else o.push(F({}, n));
     }
     return o;
   },
-  wn = (t, s) => {
-    const [o, n] = l.exports.useState(() => os(s)),
-      [r, a] = l.exports.useState(!1),
-      i = l.exports.useMemo(() => JSON.stringify(t || {}), [t]);
+  zn = (e, s) => {
+    const { lang: o = 'zh-CN' } = l.exports.useContext(Ie),
+      [n, r] = l.exports.useState(() => us(s, o)),
+      [a, i] = l.exports.useState(!1),
+      u = l.exports.useMemo(() => JSON.stringify(e || {}), [e]);
     l.exports.useEffect(() => {
-      let p = !1;
-      async function d() {
-        const h = os(s);
-        if ((n(ot(h, t)), !(!s || Ye(s)))) {
-          a(!0);
+      let d = !1;
+      async function b() {
+        const x = us(s, o);
+        if ((r(lt(x, e)), !(!s || nt(s)))) {
+          i(!0);
           try {
-            const v = await Ze(s);
-            if (p) return;
-            const L = st(v.menus || []);
-            n(ot(L.length ? L : De, t));
+            const P = await rt(s);
+            if (d) return;
+            const B = ut(P.menus || [], o);
+            r(lt(B.length ? B : Fe, e));
           } finally {
-            p || a(!1);
+            d || i(!1);
           }
         }
       }
       return (
-        d(),
+        b(),
         () => {
-          p = !0;
+          d = !0;
         }
       );
-    }, [i, s, t]);
-    const u = l.exports.useMemo(() => {
-      var d, h;
-      const p = o[0];
-      return p
-        ? ((h =
-            (d = p == null ? void 0 : p.children) == null ? void 0 : d[0]) ==
+    }, [o, u, s, e]);
+    const N = l.exports.useMemo(() => {
+      var b, x;
+      const d = n[0];
+      return d
+        ? ((x =
+            (b = d == null ? void 0 : d.children) == null ? void 0 : b[0]) ==
           null
             ? void 0
-            : h.key) || p.key
+            : x.key) || d.key
         : '';
-    }, [o]);
-    return [o, u, r];
+    }, [n]);
+    return [n, N, a];
   };
-function Sn() {
-  const t = It.parseUrl(me ? '' : window.location.href).query,
+function On() {
+  const e = Mt.parseUrl(be ? '' : window.location.href).query,
     s = {};
   return (
-    Object.keys(t).forEach((o) => {
-      t[o] === 'true' && (s[o] = !0), t[o] === 'false' && (s[o] = !1);
+    Object.keys(e).forEach((o) => {
+      e[o] === 'true' && (s[o] = !0), e[o] === 'false' && (s[o] = !1);
     }),
     s
   );
 }
-const kn = '_layout_316fi_1',
-  An = '_icon_316fi_86',
-  Bn = '_spin_316fi_111';
-var T = {
-    layout: kn,
-    'layout-navbar': '_layout-navbar_316fi_5',
-    'layout-navbar-hidden': '_layout-navbar-hidden_316fi_13',
-    'layout-sider': '_layout-sider_316fi_16',
-    'collapse-btn': '_collapse-btn_316fi_50',
-    'menu-wrapper': '_menu-wrapper_316fi_67',
-    icon: An,
-    'icon-empty': '_icon-empty_316fi_90',
-    'layout-content': '_layout-content_316fi_95',
-    'layout-content-wrapper': '_layout-content-wrapper_316fi_102',
-    'layout-content-wrapper-with-tab':
-      '_layout-content-wrapper-with-tab_316fi_105',
-    'layout-breadcrumb': '_layout-breadcrumb_316fi_108',
-    spin: Bn,
-  },
-  ns = '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/utils/lazyload.tsx';
-function In(t, s) {
-  const o = so(t, s);
-  return (o.preload = t.requireAsync || t), o;
+var ls = '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/utils/lazyload.tsx';
+function Un(e, s) {
+  const o = co(e, s);
+  return (o.preload = e.requireAsync || e), o;
 }
-function Pn(t) {
-  return t.error
-    ? (console.error(t.error), null)
-    : e.exports.jsxDEV(
+function Kn(e) {
+  return e.error
+    ? (console.error(e.error), null)
+    : t.exports.jsxDEV(
         'div',
         {
-          className: T.spin,
-          children: e.exports.jsxDEV(
-            ze,
+          className: O.spin,
+          children: t.exports.jsxDEV(
+            He,
             {},
             void 0,
             !1,
-            { fileName: ns, lineNumber: 26, columnNumber: 7 },
+            { fileName: ls, lineNumber: 26, columnNumber: 7 },
             this
           ),
         },
         void 0,
         !1,
-        { fileName: ns, lineNumber: 25, columnNumber: 5 },
+        { fileName: ls, lineNumber: 25, columnNumber: 5 },
         this
       );
 }
-var rs = (t) =>
-    In(t, { fallback: Pn({ pastDelay: !0, error: !1, timedOut: !1 }) }),
-  E = '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/layout.tsx';
-const Rn = A.Item,
-  Mn = A.SubMenu,
-  Tn = ce.Sider,
-  Ln = ce.Content;
-function $n(t, s) {
-  switch (s || t) {
-    case 'dashboard':
-      return e.exports.jsxDEV(
-        St,
-        { className: T.icon },
-        void 0,
-        !1,
-        { fileName: E, lineNumber: 56, columnNumber: 14 },
-        this
-      );
-    case 'example':
-    case 'tag':
-      return e.exports.jsxDEV(
-        wt,
-        { className: T.icon },
-        void 0,
-        !1,
-        { fileName: E, lineNumber: 59, columnNumber: 14 },
-        this
-      );
-    default:
-      return e.exports.jsxDEV(
-        'div',
-        { className: T['icon-empty'] },
-        void 0,
-        !1,
-        { fileName: E, lineNumber: 61, columnNumber: 14 },
-        this
-      );
-  }
-}
-function On(t) {
+var cs = (e) =>
+    Un(e, { fallback: Kn({ pastDelay: !0, error: !1, timedOut: !1 }) }),
+  v = '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/layout.tsx';
+const Gn = I.Item,
+  Wn = I.SubMenu,
+  qn = he.Sider,
+  Jn = he.Content;
+function Hn(e) {
   const s = {
       './pages/example/index.tsx': () =>
-        M(
-          () => import('./index.fda925f4.js'),
+        L(
+          () => import('./index.fccae909.js'),
           [
-            'assets/index.fda925f4.js',
+            'assets/index.fccae909.js',
             'assets/index.e7a6af1d.css',
-            'assets/vendor.aa22cee8.js',
+            'assets/vendor.c4f0d1e5.js',
             'assets/vendor.503ea215.css',
           ]
         ),
       './pages/login/banner.tsx': () =>
-        M(
+        L(
           () =>
             Promise.resolve().then(function () {
-              return Yn;
+              return rr;
             }),
           void 0
         ),
       './pages/login/form.tsx': () =>
-        M(
+        L(
           () =>
             Promise.resolve().then(function () {
-              return Xn;
+              return nr;
             }),
           void 0
         ),
       './pages/login/index.tsx': () =>
-        M(
+        L(
           () =>
             Promise.resolve().then(function () {
-              return Zn;
+              return ir;
             }),
           void 0
         ),
       './pages/dashboard/workplace/announcement.tsx': () =>
-        M(
-          () => import('./announcement.1eea7d1d.js'),
+        L(
+          () => import('./announcement.1de93c9b.js'),
           [
-            'assets/announcement.1eea7d1d.js',
+            'assets/announcement.1de93c9b.js',
             'assets/announcement.4446c828.css',
             'assets/index.4623c961.css',
             'assets/index.e7a6af1d.css',
-            'assets/vendor.aa22cee8.js',
+            'assets/vendor.c4f0d1e5.js',
             'assets/vendor.503ea215.css',
             'assets/index.9464998a.js',
           ]
         ),
       './pages/dashboard/workplace/carousel.tsx': () =>
-        M(
-          () => import('./carousel.08a2e5b8.js'),
+        L(
+          () => import('./carousel.3c91a035.js'),
           [
-            'assets/carousel.08a2e5b8.js',
-            'assets/vendor.aa22cee8.js',
+            'assets/carousel.3c91a035.js',
+            'assets/vendor.c4f0d1e5.js',
             'assets/vendor.503ea215.css',
           ]
         ),
       './pages/dashboard/workplace/content-percentage.tsx': () =>
-        M(
-          () => import('./content-percentage.0755657e.js'),
+        L(
+          () => import('./content-percentage.5a34d777.js'),
           [
-            'assets/content-percentage.0755657e.js',
+            'assets/content-percentage.5a34d777.js',
             'assets/index.e7a6af1d.css',
-            'assets/vendor.aa22cee8.js',
+            'assets/vendor.c4f0d1e5.js',
             'assets/vendor.503ea215.css',
-            'assets/index.fbad3a32.js',
+            'assets/index.91c0c8fa.js',
             'assets/index.9464998a.js',
           ]
         ),
       './pages/dashboard/workplace/docs.tsx': () =>
-        M(
-          () => import('./docs.46272cd6.js'),
+        L(
+          () => import('./docs.45dd779c.js'),
           [
-            'assets/docs.46272cd6.js',
+            'assets/docs.45dd779c.js',
             'assets/docs.e521c9d6.css',
             'assets/index.e7a6af1d.css',
-            'assets/vendor.aa22cee8.js',
+            'assets/vendor.c4f0d1e5.js',
             'assets/vendor.503ea215.css',
             'assets/index.9464998a.js',
           ]
         ),
       './pages/dashboard/workplace/index.tsx': () =>
-        M(
-          () => import('./index.9a6f52db.js'),
+        L(
+          () => import('./index.bd02f6f1.js'),
           [
-            'assets/index.9a6f52db.js',
+            'assets/index.bd02f6f1.js',
             'assets/index.0a453fe0.css',
             'assets/index.4623c961.css',
             'assets/index.e7a6af1d.css',
-            'assets/vendor.aa22cee8.js',
+            'assets/vendor.c4f0d1e5.js',
             'assets/vendor.503ea215.css',
-            'assets/overview.beb60c8e.js',
+            'assets/overview.f019b948.js',
             'assets/overview.65964fa4.css',
-            'assets/index.fbad3a32.js',
+            'assets/index.91c0c8fa.js',
             'assets/index.9464998a.js',
-            'assets/popular-contents.95c81152.js',
+            'assets/popular-contents.f0ccf41d.js',
             'assets/popular-contents.884121de.css',
-            'assets/content-percentage.0755657e.js',
-            'assets/shortcuts.324f82f2.js',
+            'assets/content-percentage.5a34d777.js',
+            'assets/shortcuts.683c7565.js',
             'assets/shortcuts.0626e3d2.css',
-            'assets/announcement.1eea7d1d.js',
+            'assets/announcement.1de93c9b.js',
             'assets/announcement.4446c828.css',
-            'assets/carousel.08a2e5b8.js',
-            'assets/docs.46272cd6.js',
+            'assets/carousel.3c91a035.js',
+            'assets/docs.45dd779c.js',
             'assets/docs.e521c9d6.css',
           ]
         ),
       './pages/dashboard/workplace/overview.tsx': () =>
-        M(
-          () => import('./overview.beb60c8e.js'),
+        L(
+          () => import('./overview.f019b948.js'),
           [
-            'assets/overview.beb60c8e.js',
+            'assets/overview.f019b948.js',
             'assets/overview.65964fa4.css',
             'assets/index.4623c961.css',
             'assets/index.e7a6af1d.css',
-            'assets/vendor.aa22cee8.js',
+            'assets/vendor.c4f0d1e5.js',
             'assets/vendor.503ea215.css',
-            'assets/index.fbad3a32.js',
+            'assets/index.91c0c8fa.js',
             'assets/index.9464998a.js',
           ]
         ),
       './pages/dashboard/workplace/popular-contents.tsx': () =>
-        M(
-          () => import('./popular-contents.95c81152.js'),
+        L(
+          () => import('./popular-contents.f0ccf41d.js'),
           [
-            'assets/popular-contents.95c81152.js',
+            'assets/popular-contents.f0ccf41d.js',
             'assets/popular-contents.884121de.css',
             'assets/index.e7a6af1d.css',
-            'assets/vendor.aa22cee8.js',
+            'assets/vendor.c4f0d1e5.js',
             'assets/vendor.503ea215.css',
             'assets/index.9464998a.js',
           ]
         ),
       './pages/dashboard/workplace/shortcuts.tsx': () =>
-        M(
-          () => import('./shortcuts.324f82f2.js'),
+        L(
+          () => import('./shortcuts.683c7565.js'),
           [
-            'assets/shortcuts.324f82f2.js',
+            'assets/shortcuts.683c7565.js',
             'assets/shortcuts.0626e3d2.css',
             'assets/index.e7a6af1d.css',
-            'assets/vendor.aa22cee8.js',
+            'assets/vendor.c4f0d1e5.js',
             'assets/vendor.503ea215.css',
             'assets/index.9464998a.js',
           ]
         ),
       './pages/exception/403/index.tsx': () =>
-        M(
+        L(
           () =>
             Promise.resolve().then(function () {
-              return it;
+              return dt;
             }),
           void 0
         ),
@@ -2811,289 +2863,300 @@ function On(t) {
         const i =
           s[`./pages/${a.key}/index.tsx`] ||
           (() =>
-            M(
+            L(
               () =>
                 Promise.resolve().then(function () {
-                  return it;
+                  return dt;
                 }),
               void 0
             ));
-        (a.component = rs(i)), o.push(a);
-      } else Zo(a.children) && a.children.length && n(a.children);
+        (a.component = cs(i)), o.push(a);
+      } else an(a.children) && a.children.length && n(a.children);
     });
   }
-  return n(t), o;
+  return n(e), o;
 }
-function zn() {
-  const t = Sn(),
-    s = Ge(),
-    o = At(),
-    { dropScope: n, refreshScope: r } = Pt.exports.useAliveController(),
+function Xn() {
+  const e = On(),
+    s = Ye(),
+    o = Pt(),
+    { dropScope: n, refreshScope: r } = Tt.exports.useAliveController(),
     a = o.pathname,
-    i = Ee(a),
+    i = Ve(a),
     u = i ? `/${i}` : '',
-    p = Xe(a),
-    d = It.parseUrl(p).url.slice(1),
-    h = J(),
-    { settings: v, userLoading: L, userInfo: k } = he((f) => f),
-    N = l.exports.useMemo(
-      () => ({ tenantCode: i || En(k).tenantCode }),
-      [i, k]
+    N = tt(a),
+    d = Mt.parseUrl(N).url.slice(1),
+    b = H(),
+    { settings: x, userLoading: P, userInfo: B } = De((p) => p),
+    g = l.exports.useMemo(
+      () => ({ tenantCode: i || An(B).tenantCode }),
+      [i, B]
     ),
-    I = l.exports.useMemo(() => N.tenantCode || 'unknown', [N.tenantCode]),
-    [b, c, j] = wn(k == null ? void 0 : k.permissions, i),
-    W = [d || c],
-    z = (d || c).split('/'),
-    V = z.slice(0, z.length - 1),
-    [g, P] = l.exports.useState([]),
-    [D, R] = l.exports.useState(!1),
-    [Te, _e] = l.exports.useState(W),
-    [ye, fe] = l.exports.useState(V),
-    [ee, ae] = l.exports.useState([]),
-    re = l.exports.useRef(new Map()),
-    Le = l.exports.useRef(new Map()),
-    at = 60,
-    ut = D ? 48 : v.menuWidth,
-    je = v.navbar && t.navbar !== !1,
-    lt = v.menu && t.menu !== !1,
-    ue = lt && v.topMenu,
-    ct = lt && !ue,
-    mt = v.tabBar && t.tabBar !== !1,
-    ms = v.footer && t.footer !== !1,
-    le = l.exports.useMemo(() => On(b) || [], [b]),
-    te = l.exports.useMemo(() => {
-      const f = `${u}/${c}`;
-      return Zt(f, '', le) || { title: c, name: c, path: f, fullPath: f };
-    }, [c, le, u]);
-  l.exports.useEffect(() => {
-    if (!c) return;
-    const f = vn(N);
-    ae((f == null ? void 0 : f.length) ? f : [te]);
-  }, [c, te, I, N]),
-    l.exports.useEffect(() => {
-      const f = Zt(o.pathname, o.search, le);
-      !f ||
-        ae((S) => {
-          const X = S.length ? S : [te];
-          return X.some((se) => se.fullPath === f.fullPath) ? X : [...X, f];
-        });
-    }, [te, le, o.pathname, o.search]),
-    l.exports.useEffect(() => {
-      ee.length && Dn(N, ee);
-    }, [I, N, ee]);
-  const ds = l.exports.useCallback(
-      (f) => {
-        ae(f.length ? f : [te]);
-      },
-      [te]
-    ),
-    fs = l.exports.useCallback(
-      (f) => {
-        f.forEach((S) => {
-          n(et(N, S.fullPath));
-        });
-      },
-      [n, N]
-    ),
-    ps = l.exports.useCallback(
-      (f) => {
-        r(et(N, f.fullPath));
-      },
-      [r, N]
+    R = l.exports.useMemo(() => g.tenantCode || 'unknown', [g.tenantCode]),
+    [Y, C, ie] = zn(B == null ? void 0 : B.permissions, i),
+    k = [d || C],
+    f = (d || C).split('/'),
+    c = f.slice(0, f.length - 1),
+    [h, A] = l.exports.useState([]),
+    [M, D] = l.exports.useState(!1),
+    [U, Z] = l.exports.useState(k),
+    [w, xe] = l.exports.useState(c),
+    [q, me] = l.exports.useState([]),
+    ae = l.exports.useRef(new Map()),
+    We = l.exports.useRef(new Map()),
+    ft = 60,
+    pt = M ? 48 : x.menuWidth,
+    Ce = x.navbar && e.navbar !== !1,
+    ht = x.menu && e.menu !== !1,
+    de = ht && x.topMenu,
+    bt = ht && !de,
+    Q = x.tabBar && e.tabBar !== !1,
+    bs = x.footer && e.footer !== !1,
+    ue = l.exports.useMemo(() => Hn(Y) || [], [Y]),
+    oe = l.exports.useMemo(() => {
+      const p = `${u}/${C}`;
+      return os(p, '', ue) || { title: C, name: C, path: p, fullPath: p };
+    }, [C, ue, u]),
+    Ee = l.exports.useMemo(
+      () => os(o.pathname, o.search, ue),
+      [ue, o.pathname, o.search]
     );
-  function hs(f) {
-    const S = le.find((U) => U.key === f),
-      se = S.component.preload();
-    Tt.start(),
-      se.then(() => {
-        s.push(S.path ? `${u}${S.path}` : `${u}/${f}`), Tt.done();
+  l.exports.useEffect(() => {
+    if (!C || !Q) return;
+    const p = Bn(g);
+    me((p == null ? void 0 : p.length) ? p : [oe]);
+  }, [C, oe, R, Q, g]),
+    l.exports.useEffect(() => {
+      if (Q || !q.length) return;
+      const p = `${o.pathname}${o.search || ''}`;
+      q.forEach((j) => {
+        j.fullPath !== p && n(Oe(g, j.fullPath));
+      });
+    }, [n, o.pathname, o.search, Q, g, q]),
+    l.exports.useEffect(() => {
+      !Ee ||
+        me((p) => {
+          if (!Q) return [Ee];
+          const j = p.length ? p : [oe];
+          return j.some((le) => le.fullPath === Ee.fullPath) ? j : [...j, Ee];
+        });
+    }, [Ee, oe, Q]),
+    l.exports.useEffect(() => {
+      !q.length || In(g, Q ? q : q.slice(-1));
+    }, [R, Q, g, q]);
+  const Ns = l.exports.useCallback(
+      (p) => {
+        me(p.length ? p : [oe]);
+      },
+      [oe]
+    ),
+    gs = l.exports.useCallback(
+      (p) => {
+        p.forEach((j) => {
+          n(Oe(g, j.fullPath));
+        });
+      },
+      [n, g]
+    ),
+    xs = l.exports.useCallback(
+      (p) => {
+        r(Oe(g, p.fullPath));
+      },
+      [r, g]
+    );
+  function Es(p) {
+    const j = ue.find((K) => K.key === p),
+      fe = j.component.preload();
+    zt.start(),
+      fe.then(() => {
+        s.push(j.path ? `${u}${j.path}` : `${u}/${p}`), zt.done();
       });
   }
-  function bs() {
-    R((f) => !f);
+  function vs() {
+    D((p) => !p);
   }
-  const Ns = ct ? { paddingLeft: ut } : {},
-    dt = je ? { paddingTop: at } : {},
-    gs = C(C({}, Ns), dt),
-    ft = e.exports.jsxDEV(
-      A,
+  const Ds = bt ? { paddingLeft: pt } : {},
+    Nt = Ce ? { paddingTop: ft } : {},
+    _s = F(F({}, Ds), Nt),
+    gt = t.exports.jsxDEV(
+      I,
       {
-        mode: ue ? 'horizontal' : 'vertical',
-        collapse: !ue && D,
-        onClickMenuItem: hs,
-        selectedKeys: Te,
-        openKeys: ue ? void 0 : ye,
-        onClickSubMenu: (f, S) => {
-          ue || fe(S);
+        mode: de ? 'horizontal' : 'vertical',
+        collapse: !de && M,
+        onClickMenuItem: Es,
+        selectedKeys: U,
+        openKeys: de ? void 0 : w,
+        onClickSubMenu: (p, j) => {
+          de || xe(j);
         },
-        children: xs(h)(b, 1),
+        children: ys(b)(Y, 1),
       },
       void 0,
       !1,
-      { fileName: E, lineNumber: 225, columnNumber: 5 },
+      { fileName: v, lineNumber: 245, columnNumber: 5 },
       this
     );
-  function xs(f) {
+  function ys(p) {
     return (
-      re.current.clear(),
-      function S(X, se, U = []) {
-        return X.map((F) => {
-          const { breadcrumb: Es = !0, ignore: vs } = F,
-            Ds = $n(F.key, F.icon),
-            ht = e.exports.jsxDEV(
-              e.exports.Fragment,
-              { children: [Ds, ' ', f[F.name] || F.name] },
+      ae.current.clear(),
+      function j(le, fe, K = []) {
+        return le.map((V) => {
+          const { breadcrumb: js = !0, ignore: Vs } = V,
+            Fs = ts(V.key, V.icon),
+            Et = t.exports.jsxDEV(
+              t.exports.Fragment,
+              { children: [Fs, ' ', p[V.name] || V.name] },
               void 0,
               !0
             );
-          re.current.set(`/${F.key}`, Es ? [...U, F.name] : []);
-          const bt = (F.children || []).filter(($e) => {
-            const { ignore: Nt, breadcrumb: _s = !0 } = $e;
+          ae.current.set(`/${V.key}`, js ? [...K, V.name] : []);
+          const vt = (V.children || []).filter((qe) => {
+            const { ignore: Dt, breadcrumb: Cs = !0 } = qe;
             return (
-              (Nt || F.ignore) &&
-                re.current.set(`/${$e.key}`, _s ? [...U, F.name, $e.name] : []),
-              !Nt
+              (Dt || V.ignore) &&
+                ae.current.set(`/${qe.key}`, Cs ? [...K, V.name, qe.name] : []),
+              !Dt
             );
           });
-          return vs
+          return Vs
             ? ''
-            : bt.length
-            ? (Le.current.set(F.key, { subMenu: !0 }),
-              e.exports.jsxDEV(
-                Mn,
-                { title: ht, children: S(bt, se + 1, [...U, F.name]) },
-                F.key,
+            : vt.length
+            ? (We.current.set(V.key, { subMenu: !0 }),
+              t.exports.jsxDEV(
+                Wn,
+                { title: Et, children: j(vt, fe + 1, [...K, V.name]) },
+                V.key,
                 !1,
-                { fileName: E, lineNumber: 276, columnNumber: 13 },
+                { fileName: v, lineNumber: 296, columnNumber: 13 },
                 this
               ))
-            : (Le.current.set(F.key, { menuItem: !0 }),
-              e.exports.jsxDEV(
-                Rn,
-                { children: ht },
-                F.key,
+            : (We.current.set(V.key, { menuItem: !0 }),
+              t.exports.jsxDEV(
+                Gn,
+                { children: Et },
+                V.key,
                 !1,
-                { fileName: E, lineNumber: 282, columnNumber: 16 },
+                { fileName: v, lineNumber: 302, columnNumber: 16 },
                 this
               ));
         });
       }
     );
   }
-  const pt = l.exports.useCallback(() => {
-    const f = p.split('/'),
-      S = [],
-      X = [];
-    for (; f.length > 0; ) {
-      const U = f.join('/').replace(/^\//, ''),
-        F = Le.current.get(U);
-      F && F.menuItem && S.push(U), F && F.subMenu && X.push(U), f.pop();
+  const xt = l.exports.useCallback(() => {
+    const p = N.split('/'),
+      j = [],
+      le = [];
+    for (; p.length > 0; ) {
+      const K = p.join('/').replace(/^\//, ''),
+        V = We.current.get(K);
+      V && V.menuItem && j.push(K), V && V.subMenu && le.push(K), p.pop();
     }
-    _e(S),
-      fe((se) => {
-        const U = [...se];
+    Z(j),
+      xe((fe) => {
+        const K = [...fe];
         return (
-          X.forEach((F) => {
-            U.includes(F) || U.push(F);
+          le.forEach((V) => {
+            K.includes(V) || K.push(V);
           }),
-          U
+          K
         );
       });
-  }, [p]);
+  }, [N]);
   return (
     l.exports.useEffect(() => {
-      const f = re.current.get(p);
-      P(f || []), pt();
-    }, [p, pt]),
-    e.exports.jsxDEV(
-      ce,
+      const p = ae.current.get(N);
+      A(p || []), xt();
+    }, [N, xt]),
+    t.exports.jsxDEV(
+      he,
       {
-        className: T.layout,
+        className: O.layout,
         children: [
-          e.exports.jsxDEV(
+          t.exports.jsxDEV(
             'div',
             {
-              className: pe(T['layout-navbar'], {
-                [T['layout-navbar-hidden']]: !je,
+              className: ve(O['layout-navbar'], {
+                [O['layout-navbar-hidden']]: !Ce,
               }),
-              children: e.exports.jsxDEV(
-                fn,
-                { show: je, menu: ue, topMenu: ft },
+              children: t.exports.jsxDEV(
+                Dn,
+                { show: Ce, menu: de, topMenu: gt },
                 void 0,
                 !1,
-                { fileName: E, lineNumber: 327, columnNumber: 9 },
+                { fileName: v, lineNumber: 347, columnNumber: 9 },
                 this
               ),
             },
             void 0,
             !1,
-            { fileName: E, lineNumber: 322, columnNumber: 7 },
+            { fileName: v, lineNumber: 342, columnNumber: 7 },
             this
           ),
-          L || j
-            ? e.exports.jsxDEV(
-                ze,
-                { className: T.spin },
+          P || ie
+            ? t.exports.jsxDEV(
+                He,
+                { className: O.spin },
                 void 0,
                 !1,
-                { fileName: E, lineNumber: 330, columnNumber: 9 },
+                { fileName: v, lineNumber: 350, columnNumber: 9 },
                 this
               )
-            : e.exports.jsxDEV(
-                ce,
+            : t.exports.jsxDEV(
+                he,
                 {
                   children: [
-                    ct &&
-                      e.exports.jsxDEV(
-                        Tn,
+                    bt &&
+                      t.exports.jsxDEV(
+                        qn,
                         {
-                          className: T['layout-sider'],
-                          width: ut,
-                          collapsed: D,
-                          onCollapse: R,
+                          className: O['layout-sider'],
+                          width: pt,
+                          collapsed: M,
+                          onCollapse: D,
                           trigger: null,
                           collapsible: !0,
                           breakpoint: 'xl',
-                          style: dt,
+                          style: Nt,
                           children: [
-                            e.exports.jsxDEV(
+                            t.exports.jsxDEV(
                               'div',
-                              { className: T['menu-wrapper'], children: ft },
+                              { className: O['menu-wrapper'], children: gt },
                               void 0,
                               !1,
                               {
-                                fileName: E,
-                                lineNumber: 344,
+                                fileName: v,
+                                lineNumber: 364,
                                 columnNumber: 15,
                               },
                               this
                             ),
-                            e.exports.jsxDEV(
+                            t.exports.jsxDEV(
                               'div',
                               {
-                                className: T['collapse-btn'],
-                                onClick: bs,
-                                children: D
-                                  ? e.exports.jsxDEV(
-                                      oo,
+                                className: O['collapse-btn'],
+                                onClick: vs,
+                                children: M
+                                  ? t.exports.jsxDEV(
+                                      mo,
                                       {},
                                       void 0,
                                       !1,
                                       {
-                                        fileName: E,
-                                        lineNumber: 346,
+                                        fileName: v,
+                                        lineNumber: 366,
                                         columnNumber: 30,
                                       },
                                       this
                                     )
-                                  : e.exports.jsxDEV(
-                                      no,
+                                  : t.exports.jsxDEV(
+                                      fo,
                                       {},
                                       void 0,
                                       !1,
                                       {
-                                        fileName: E,
-                                        lineNumber: 346,
+                                        fileName: v,
+                                        lineNumber: 366,
                                         columnNumber: 51,
                                       },
                                       this
@@ -3102,8 +3165,8 @@ function zn() {
                               void 0,
                               !1,
                               {
-                                fileName: E,
-                                lineNumber: 345,
+                                fileName: v,
+                                lineNumber: 365,
                                 columnNumber: 15,
                               },
                               this
@@ -3112,64 +3175,65 @@ function zn() {
                         },
                         void 0,
                         !0,
-                        { fileName: E, lineNumber: 334, columnNumber: 13 },
+                        { fileName: v, lineNumber: 354, columnNumber: 13 },
                         this
                       ),
-                    e.exports.jsxDEV(
-                      ce,
+                    t.exports.jsxDEV(
+                      he,
                       {
-                        className: T['layout-content'],
-                        style: gs,
+                        className: O['layout-content'],
+                        style: _s,
                         children: [
-                          mt &&
-                            e.exports.jsxDEV(
-                              gn,
+                          Q &&
+                            t.exports.jsxDEV(
+                              Sn,
                               {
-                                defaultTab: te,
-                                tabList: ee.length ? ee : [te],
-                                offsetTop: je ? at : 0,
-                                onTabsChange: ds,
-                                onCloseTabs: fs,
-                                onReload: ps,
+                                defaultTab: oe,
+                                tabList: q.length ? q : [oe],
+                                routes: ue,
+                                offsetTop: Ce ? ft : 0,
+                                onTabsChange: Ns,
+                                onCloseTabs: gs,
+                                onReload: xs,
                               },
                               void 0,
                               !1,
                               {
-                                fileName: E,
-                                lineNumber: 352,
+                                fileName: v,
+                                lineNumber: 372,
                                 columnNumber: 15,
                               },
                               this
                             ),
-                          e.exports.jsxDEV(
+                          t.exports.jsxDEV(
                             'div',
                             {
-                              className: pe(T['layout-content-wrapper'], {
-                                [T['layout-content-wrapper-with-tab']]: mt,
+                              className: ve(O['layout-content-wrapper'], {
+                                [O['layout-content-wrapper-with-tab']]: Q,
                               }),
                               children: [
-                                !!g.length &&
-                                  e.exports.jsxDEV(
+                                !!h.length &&
+                                  t.exports.jsxDEV(
                                     'div',
                                     {
-                                      className: T['layout-breadcrumb'],
-                                      children: e.exports.jsxDEV(
-                                        Rt,
+                                      className: O['layout-breadcrumb'],
+                                      children: t.exports.jsxDEV(
+                                        Lt,
                                         {
-                                          children: g.map((f, S) =>
-                                            e.exports.jsxDEV(
-                                              Rt.Item,
+                                          children: h.map((p, j) =>
+                                            t.exports.jsxDEV(
+                                              Lt.Item,
                                               {
                                                 children:
-                                                  (typeof f == 'string' &&
-                                                    h[f]) ||
-                                                  f,
+                                                  (typeof p == 'string' &&
+                                                    b[p]) ||
+                                                  p,
                                               },
-                                              S,
+                                              j,
                                               !1,
                                               {
-                                                fileName: E,
-                                                lineNumber: 370,
+                                                fileName: v,
+                                                lineNumber: 391,
                                                 columnNumber: 23,
                                               },
                                               this
@@ -3179,8 +3243,8 @@ function zn() {
                                         void 0,
                                         !1,
                                         {
-                                          fileName: E,
-                                          lineNumber: 368,
+                                          fileName: v,
+                                          lineNumber: 389,
                                           columnNumber: 19,
                                         },
                                         this
@@ -3189,50 +3253,50 @@ function zn() {
                                     void 0,
                                     !1,
                                     {
-                                      fileName: E,
-                                      lineNumber: 367,
+                                      fileName: v,
+                                      lineNumber: 388,
                                       columnNumber: 17,
                                     },
                                     this
                                   ),
-                                e.exports.jsxDEV(
-                                  Ln,
+                                t.exports.jsxDEV(
+                                  Jn,
                                   {
-                                    children: e.exports.jsxDEV(
-                                      Mt,
+                                    children: t.exports.jsxDEV(
+                                      $t,
                                       {
                                         children: [
-                                          le.map((f, S) =>
-                                            e.exports.jsxDEV(
-                                              _n,
+                                          ue.map((p, j) =>
+                                            t.exports.jsxDEV(
+                                              Pn,
                                               {
-                                                path: `${u}/${f.key}`,
-                                                component: f.component,
-                                                identity: N,
+                                                path: `${u}/${p.key}`,
+                                                component: p.component,
+                                                identity: g,
                                               },
-                                              S,
+                                              j,
                                               !1,
                                               {
-                                                fileName: E,
-                                                lineNumber: 381,
+                                                fileName: v,
+                                                lineNumber: 402,
                                                 columnNumber: 23,
                                               },
                                               this
                                             )
                                           ),
-                                          e.exports.jsxDEV(
-                                            oe,
+                                          t.exports.jsxDEV(
+                                            ne,
                                             {
                                               exact: !0,
                                               path: u || '/',
-                                              children: e.exports.jsxDEV(
-                                                ro,
-                                                { to: `${u}/${c}` },
+                                              children: t.exports.jsxDEV(
+                                                po,
+                                                { to: `${u}/${C}` },
                                                 void 0,
                                                 !1,
                                                 {
-                                                  fileName: E,
-                                                  lineNumber: 390,
+                                                  fileName: v,
+                                                  lineNumber: 411,
                                                   columnNumber: 21,
                                                 },
                                                 this
@@ -3241,22 +3305,22 @@ function zn() {
                                             void 0,
                                             !1,
                                             {
-                                              fileName: E,
-                                              lineNumber: 389,
+                                              fileName: v,
+                                              lineNumber: 410,
                                               columnNumber: 19,
                                             },
                                             this
                                           ),
-                                          e.exports.jsxDEV(
-                                            oe,
+                                          t.exports.jsxDEV(
+                                            ne,
                                             {
                                               path: '*',
-                                              component: rs(() =>
-                                                M(
+                                              component: cs(() =>
+                                                L(
                                                   () =>
                                                     Promise.resolve().then(
                                                       function () {
-                                                        return it;
+                                                        return dt;
                                                       }
                                                     ),
                                                   void 0
@@ -3266,8 +3330,8 @@ function zn() {
                                             void 0,
                                             !1,
                                             {
-                                              fileName: E,
-                                              lineNumber: 392,
+                                              fileName: v,
+                                              lineNumber: 413,
                                               columnNumber: 19,
                                             },
                                             this
@@ -3277,8 +3341,8 @@ function zn() {
                                       void 0,
                                       !0,
                                       {
-                                        fileName: E,
-                                        lineNumber: 378,
+                                        fileName: v,
+                                        lineNumber: 399,
                                         columnNumber: 17,
                                       },
                                       this
@@ -3287,8 +3351,8 @@ function zn() {
                                   void 0,
                                   !1,
                                   {
-                                    fileName: E,
-                                    lineNumber: 377,
+                                    fileName: v,
+                                    lineNumber: 398,
                                     columnNumber: 15,
                                   },
                                   this
@@ -3297,18 +3361,18 @@ function zn() {
                             },
                             void 0,
                             !0,
-                            { fileName: E, lineNumber: 361, columnNumber: 13 },
+                            { fileName: v, lineNumber: 382, columnNumber: 13 },
                             this
                           ),
-                          ms &&
-                            e.exports.jsxDEV(
-                              Yt,
+                          bs &&
+                            t.exports.jsxDEV(
+                              Qt,
                               {},
                               void 0,
                               !1,
                               {
-                                fileName: E,
-                                lineNumber: 399,
+                                fileName: v,
+                                lineNumber: 420,
                                 columnNumber: 28,
                               },
                               this
@@ -3317,29 +3381,29 @@ function zn() {
                       },
                       void 0,
                       !0,
-                      { fileName: E, lineNumber: 350, columnNumber: 11 },
+                      { fileName: v, lineNumber: 370, columnNumber: 11 },
                       this
                     ),
                   ],
                 },
                 void 0,
                 !0,
-                { fileName: E, lineNumber: 332, columnNumber: 9 },
+                { fileName: v, lineNumber: 352, columnNumber: 9 },
                 this
               ),
         ],
       },
       void 0,
       !0,
-      { fileName: E, lineNumber: 321, columnNumber: 5 },
+      { fileName: v, lineNumber: 341, columnNumber: 5 },
       this
     )
   );
 }
-function Un() {
-  return Xt({ url: '/api/system/captcha', method: 'GET' });
+function Yn() {
+  return Zt({ url: '/api/system/captcha', method: 'GET' });
 }
-const is = {
+const ms = {
     'en-US': {
       'login.form.title': 'Login to Arco Design Pro',
       'login.form.userName.errMsg': 'Username cannot be empty',
@@ -3393,21 +3457,21 @@ const is = {
         '\u5B9E\u73B0\u7075\u6D3B\u7684\u533A\u5757\u5F0F\u5F00\u53D1',
     },
   },
-  Kn = '_container_1kbuy_1',
-  Gn = '_banner_1kbuy_5',
-  Wn = '_content_1kbuy_9',
-  qn = '_footer_1kbuy_14',
-  Jn = '_logo_1kbuy_20',
-  Hn = '_carousel_1kbuy_48';
+  Zn = '_container_1kbuy_1',
+  Qn = '_banner_1kbuy_5',
+  er = '_content_1kbuy_9',
+  tr = '_footer_1kbuy_14',
+  sr = '_logo_1kbuy_20',
+  or = '_carousel_1kbuy_48';
 var _ = {
-    container: Kn,
-    banner: Gn,
-    content: Wn,
-    footer: qn,
-    logo: Jn,
+    container: Zn,
+    banner: Qn,
+    content: er,
+    footer: tr,
+    logo: sr,
     'logo-text': '_logo-text_1kbuy_28',
     'banner-inner': '_banner-inner_1kbuy_39',
-    carousel: Hn,
+    carousel: or,
     'carousel-item': '_carousel-item_1kbuy_51',
     'carousel-title': '_carousel-title_1kbuy_58',
     'carousel-sub-title': '_carousel-sub-title_1kbuy_64',
@@ -3424,257 +3488,257 @@ var _ = {
     'login-form-register-btn': '_login-form-register-btn_1kbuy_119',
   },
   y = '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/pages/login/form.tsx';
-function as() {
-  const t = l.exports.useRef(),
+function ds() {
+  const e = l.exports.useRef(),
     [s, o] = l.exports.useState(''),
     [n, r] = l.exports.useState(!1),
     [a, i] = l.exports.useState(!1),
-    [u, p] = l.exports.useState(''),
-    [d, h] = l.exports.useState(''),
-    [v, L, k] = xe('loginParams'),
-    N = J(is),
-    [I, b] = l.exports.useState(!!v);
-  function c() {
+    [u, N] = l.exports.useState(''),
+    [d, b] = l.exports.useState(''),
+    [x, P, B] = je('loginParams'),
+    g = H(ms),
+    [R, Y] = l.exports.useState(!!x);
+  function C() {
     i(!0),
-      Un()
-        .then((V) => {
-          var g;
-          p(V.captchaKey),
-            h(V.captchaImage),
-            (g = t.current) == null || g.setFieldValue('captchaCode', '');
+      Yn()
+        .then((c) => {
+          var h;
+          N(c.captchaKey),
+            b(c.captchaImage),
+            (h = e.current) == null || h.setFieldValue('captchaCode', '');
         })
         .finally(() => {
           i(!1);
         });
   }
-  async function j(V, g) {
-    var _e, ye, fe, ee, ae, re;
-    const P = (_e = g.defaultTenant) == null ? void 0 : _e.tenantCode;
-    if (!P) {
+  async function ie(c, h) {
+    var Z, w, xe, q, me, ae;
+    const A = (Z = h.defaultTenant) == null ? void 0 : Z.tenantCode;
+    if (!A) {
       window.location.href = '/403';
       return;
     }
-    I ? L(JSON.stringify({ account: V.account })) : k(),
-      localStorage.setItem(ve, g.accessToken),
-      localStorage.setItem(Be, P),
-      localStorage.setItem(Ae, JSON.stringify(g.profile || {})),
+    R ? P(JSON.stringify({ account: c.account })) : B(),
+      localStorage.setItem(Ne, h.accessToken),
+      localStorage.setItem(Te, A),
+      localStorage.setItem(Me, JSON.stringify(h.profile || {})),
       localStorage.setItem('userStatus', 'login');
-    const D = await Ze(P);
-    localStorage.setItem(Ae, JSON.stringify(D.profile || g.profile || {}));
-    const R = (ye = D.menus) == null ? void 0 : ye[0],
-      Te =
-        ((ee =
-          (fe = R == null ? void 0 : R.children) == null ? void 0 : fe[0]) ==
+    const M = await rt(A);
+    localStorage.setItem(Me, JSON.stringify(M.profile || h.profile || {}));
+    const D = (w = M.menus) == null ? void 0 : w[0],
+      U =
+        ((q =
+          (xe = D == null ? void 0 : D.children) == null ? void 0 : xe[0]) ==
         null
           ? void 0
-          : ee.routerPath) ||
-        ((re =
-          (ae = R == null ? void 0 : R.children) == null ? void 0 : ae[0]) ==
+          : q.routerPath) ||
+        ((ae =
+          (me = D == null ? void 0 : D.children) == null ? void 0 : me[0]) ==
         null
           ? void 0
-          : re.resourcePath) ||
-        (R == null ? void 0 : R.routerPath) ||
-        (R == null ? void 0 : R.resourcePath) ||
+          : ae.resourcePath) ||
+        (D == null ? void 0 : D.routerPath) ||
+        (D == null ? void 0 : D.resourcePath) ||
         '/dashboard/workplace';
-    window.location.href = `/${P}/${Te.replace(/^\/+/, '')}`;
+    window.location.href = `/${A}/${U.replace(/^\/+/, '')}`;
   }
-  function W(V) {
+  function k(c) {
     o(''),
       r(!0),
-      ln($(C({}, V), { captchaKey: u }))
-        .then((g) => j(V, g))
-        .catch((g) => {
-          var P, D;
+      gn($(F({}, c), { captchaKey: u }))
+        .then((h) => ie(c, h))
+        .catch((h) => {
+          var A, M;
           o(
-            (g == null ? void 0 : g.message) ||
-              ((D =
-                (P = g == null ? void 0 : g.response) == null
+            (h == null ? void 0 : h.message) ||
+              ((M =
+                (A = h == null ? void 0 : h.response) == null
                   ? void 0
-                  : P.data) == null
+                  : A.data) == null
                 ? void 0
-                : D.message) ||
-              N['login.form.login.errMsg']
+                : M.message) ||
+              g['login.form.login.errMsg']
           ),
-            c();
+            C();
         })
         .finally(() => {
           r(!1);
         });
   }
-  function z() {
-    t.current.validate().then((V) => {
-      W(V);
+  function f() {
+    e.current.validate().then((c) => {
+      k(c);
     });
   }
   return (
     l.exports.useEffect(() => {
-      c();
+      C();
     }, []),
     l.exports.useEffect(() => {
-      const V = !!v;
-      if ((b(V), t.current && V)) {
-        const g = JSON.parse(v);
-        t.current.setFieldsValue(g);
+      const c = !!x;
+      if ((Y(c), e.current && c)) {
+        const h = JSON.parse(x);
+        e.current.setFieldsValue(h);
       }
-    }, [v]),
-    e.exports.jsxDEV(
+    }, [x]),
+    t.exports.jsxDEV(
       'div',
       {
         className: _['login-form-wrapper'],
         children: [
-          e.exports.jsxDEV(
+          t.exports.jsxDEV(
             'div',
             {
               className: _['login-form-title'],
-              children: N['login.form.title'],
+              children: g['login.form.title'],
             },
             void 0,
             !1,
-            { fileName: y, lineNumber: 124, columnNumber: 7 },
+            { fileName: y, lineNumber: 133, columnNumber: 7 },
             this
           ),
-          e.exports.jsxDEV(
+          t.exports.jsxDEV(
             'div',
             {
               className: _['login-form-sub-title'],
-              children: N['login.form.title'],
+              children: g['login.form.title'],
             },
             void 0,
             !1,
-            { fileName: y, lineNumber: 125, columnNumber: 7 },
+            { fileName: y, lineNumber: 134, columnNumber: 7 },
             this
           ),
-          e.exports.jsxDEV(
+          t.exports.jsxDEV(
             'div',
             { className: _['login-form-error-msg'], children: s },
             void 0,
             !1,
-            { fileName: y, lineNumber: 128, columnNumber: 7 },
+            { fileName: y, lineNumber: 137, columnNumber: 7 },
             this
           ),
-          e.exports.jsxDEV(
-            Ne,
+          t.exports.jsxDEV(
+            _e,
             {
               className: _['login-form'],
               layout: 'vertical',
-              ref: t,
+              ref: e,
               initialValues: { account: 'operator', password: 'Aa123!@#' },
               children: [
-                e.exports.jsxDEV(
-                  Ne.Item,
+                t.exports.jsxDEV(
+                  _e.Item,
                   {
                     field: 'account',
                     rules: [
                       {
                         required: !0,
-                        message: N['login.form.userName.errMsg'],
+                        message: g['login.form.userName.errMsg'],
                       },
                     ],
-                    children: e.exports.jsxDEV(
-                      We,
+                    children: t.exports.jsxDEV(
+                      Ze,
                       {
-                        prefix: e.exports.jsxDEV(
-                          Ct,
+                        prefix: t.exports.jsxDEV(
+                          Bt,
                           {},
                           void 0,
                           !1,
-                          { fileName: y, lineNumber: 140, columnNumber: 21 },
+                          { fileName: y, lineNumber: 149, columnNumber: 21 },
                           this
                         ),
-                        placeholder: N['login.form.userName.placeholder'],
-                        onPressEnter: z,
+                        placeholder: g['login.form.userName.placeholder'],
+                        onPressEnter: f,
                       },
                       void 0,
                       !1,
-                      { fileName: y, lineNumber: 139, columnNumber: 11 },
+                      { fileName: y, lineNumber: 148, columnNumber: 11 },
                       this
                     ),
                   },
                   void 0,
                   !1,
-                  { fileName: y, lineNumber: 135, columnNumber: 9 },
+                  { fileName: y, lineNumber: 144, columnNumber: 9 },
                   this
                 ),
-                e.exports.jsxDEV(
-                  Ne.Item,
+                t.exports.jsxDEV(
+                  _e.Item,
                   {
                     field: 'password',
                     rules: [
                       {
                         required: !0,
-                        message: N['login.form.password.errMsg'],
+                        message: g['login.form.password.errMsg'],
                       },
                     ],
-                    children: e.exports.jsxDEV(
-                      We.Password,
+                    children: t.exports.jsxDEV(
+                      Ze.Password,
                       {
-                        prefix: e.exports.jsxDEV(
-                          io,
+                        prefix: t.exports.jsxDEV(
+                          ho,
                           {},
                           void 0,
                           !1,
-                          { fileName: y, lineNumber: 150, columnNumber: 21 },
+                          { fileName: y, lineNumber: 159, columnNumber: 21 },
                           this
                         ),
-                        placeholder: N['login.form.password.placeholder'],
-                        onPressEnter: z,
+                        placeholder: g['login.form.password.placeholder'],
+                        onPressEnter: f,
                       },
                       void 0,
                       !1,
-                      { fileName: y, lineNumber: 149, columnNumber: 11 },
+                      { fileName: y, lineNumber: 158, columnNumber: 11 },
                       this
                     ),
                   },
                   void 0,
                   !1,
-                  { fileName: y, lineNumber: 145, columnNumber: 9 },
+                  { fileName: y, lineNumber: 154, columnNumber: 9 },
                   this
                 ),
-                e.exports.jsxDEV(
-                  Ne.Item,
+                t.exports.jsxDEV(
+                  _e.Item,
                   {
-                    children: e.exports.jsxDEV(
+                    children: t.exports.jsxDEV(
                       'div',
                       {
                         className: _['login-form-captcha-row'],
                         children: [
-                          e.exports.jsxDEV(
-                            Ne.Item,
+                          t.exports.jsxDEV(
+                            _e.Item,
                             {
                               field: 'captchaCode',
                               rules: [
                                 {
                                   required: !0,
-                                  message: N['login.form.captcha.errMsg'],
+                                  message: g['login.form.captcha.errMsg'],
                                 },
                               ],
                               noStyle: !0,
-                              children: e.exports.jsxDEV(
-                                We,
+                              children: t.exports.jsxDEV(
+                                Ze,
                                 {
                                   className: _['login-form-captcha-input'],
-                                  prefix: e.exports.jsxDEV(
-                                    ao,
+                                  prefix: t.exports.jsxDEV(
+                                    bo,
                                     {},
                                     void 0,
                                     !1,
                                     {
                                       fileName: y,
-                                      lineNumber: 164,
+                                      lineNumber: 175,
                                       columnNumber: 25,
                                     },
                                     this
                                   ),
                                   maxLength: 5,
                                   placeholder:
-                                    N['login.form.captcha.placeholder'],
-                                  onPressEnter: z,
+                                    g['login.form.captcha.placeholder'],
+                                  onPressEnter: f,
                                 },
                                 void 0,
                                 !1,
                                 {
                                   fileName: y,
-                                  lineNumber: 162,
+                                  lineNumber: 173,
                                   columnNumber: 15,
                                 },
                                 this
@@ -3682,18 +3746,18 @@ function as() {
                             },
                             void 0,
                             !1,
-                            { fileName: y, lineNumber: 157, columnNumber: 13 },
+                            { fileName: y, lineNumber: 166, columnNumber: 13 },
                             this
                           ),
-                          e.exports.jsxDEV(
-                            Y,
+                          t.exports.jsxDEV(
+                            ee,
                             {
                               type: 'text',
                               loading: a,
                               className: _['login-form-captcha-btn'],
-                              onClick: c,
+                              onClick: C,
                               children: d
-                                ? e.exports.jsxDEV(
+                                ? t.exports.jsxDEV(
                                     'img',
                                     {
                                       className: _['login-form-captcha-image'],
@@ -3704,66 +3768,66 @@ function as() {
                                     !1,
                                     {
                                       fileName: y,
-                                      lineNumber: 177,
+                                      lineNumber: 188,
                                       columnNumber: 17,
                                     },
                                     this
                                   )
-                                : N['login.form.captcha.refresh'],
+                                : g['login.form.captcha.refresh'],
                             },
                             void 0,
                             !1,
-                            { fileName: y, lineNumber: 170, columnNumber: 13 },
+                            { fileName: y, lineNumber: 181, columnNumber: 13 },
                             this
                           ),
                         ],
                       },
                       void 0,
                       !0,
-                      { fileName: y, lineNumber: 156, columnNumber: 11 },
+                      { fileName: y, lineNumber: 165, columnNumber: 11 },
                       this
                     ),
                   },
                   void 0,
                   !1,
-                  { fileName: y, lineNumber: 155, columnNumber: 9 },
+                  { fileName: y, lineNumber: 164, columnNumber: 9 },
                   this
                 ),
-                e.exports.jsxDEV(
-                  _t,
+                t.exports.jsxDEV(
+                  Ct,
                   {
                     size: 16,
                     direction: 'vertical',
                     children: [
-                      e.exports.jsxDEV(
+                      t.exports.jsxDEV(
                         'div',
                         {
                           className: _['login-form-password-actions'],
                           children: [
-                            e.exports.jsxDEV(
-                              uo,
+                            t.exports.jsxDEV(
+                              No,
                               {
-                                checked: I,
-                                onChange: b,
-                                children: N['login.form.rememberPassword'],
+                                checked: R,
+                                onChange: Y,
+                                children: g['login.form.rememberPassword'],
                               },
                               void 0,
                               !1,
                               {
                                 fileName: y,
-                                lineNumber: 190,
+                                lineNumber: 201,
                                 columnNumber: 13,
                               },
                               this
                             ),
-                            e.exports.jsxDEV(
-                              lo,
-                              { children: N['login.form.forgetPassword'] },
+                            t.exports.jsxDEV(
+                              go,
+                              { children: g['login.form.forgetPassword'] },
                               void 0,
                               !1,
                               {
                                 fileName: y,
-                                lineNumber: 193,
+                                lineNumber: 204,
                                 columnNumber: 13,
                               },
                               this
@@ -3772,110 +3836,110 @@ function as() {
                         },
                         void 0,
                         !0,
-                        { fileName: y, lineNumber: 189, columnNumber: 11 },
+                        { fileName: y, lineNumber: 200, columnNumber: 11 },
                         this
                       ),
-                      e.exports.jsxDEV(
-                        Y,
+                      t.exports.jsxDEV(
+                        ee,
                         {
                           type: 'primary',
                           long: !0,
-                          onClick: z,
+                          onClick: f,
                           loading: n,
-                          children: N['login.form.login'],
+                          children: g['login.form.login'],
                         },
                         void 0,
                         !1,
-                        { fileName: y, lineNumber: 195, columnNumber: 11 },
+                        { fileName: y, lineNumber: 206, columnNumber: 11 },
                         this
                       ),
-                      e.exports.jsxDEV(
-                        Y,
+                      t.exports.jsxDEV(
+                        ee,
                         {
                           type: 'text',
                           long: !0,
                           className: _['login-form-register-btn'],
-                          children: N['login.form.register'],
+                          children: g['login.form.register'],
                         },
                         void 0,
                         !1,
-                        { fileName: y, lineNumber: 198, columnNumber: 11 },
+                        { fileName: y, lineNumber: 209, columnNumber: 11 },
                         this
                       ),
                     ],
                   },
                   void 0,
                   !0,
-                  { fileName: y, lineNumber: 188, columnNumber: 9 },
+                  { fileName: y, lineNumber: 199, columnNumber: 9 },
                   this
                 ),
               ],
             },
             void 0,
             !0,
-            { fileName: y, lineNumber: 129, columnNumber: 7 },
+            { fileName: y, lineNumber: 138, columnNumber: 7 },
             this
           ),
         ],
       },
       void 0,
       !0,
-      { fileName: y, lineNumber: 123, columnNumber: 5 },
+      { fileName: y, lineNumber: 132, columnNumber: 5 },
       this
     )
   );
 }
-var Xn = Object.freeze({
+var nr = Object.freeze({
     __proto__: null,
     [Symbol.toStringTag]: 'Module',
-    default: as,
+    default: ds,
   }),
-  de = '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/pages/login/banner.tsx';
-function us() {
-  const t = J(is),
+  ge = '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/pages/login/banner.tsx';
+function fs() {
+  const e = H(ms),
     s = [
       {
-        slogan: t['login.banner.slogan1'],
-        subSlogan: t['login.banner.subSlogan1'],
+        slogan: e['login.banner.slogan1'],
+        subSlogan: e['login.banner.subSlogan1'],
         image:
           'http://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/6c85f43aed61e320ebec194e6a78d6d3.png~tplv-uwbnlip3yd-png.png',
       },
       {
-        slogan: t['login.banner.slogan2'],
-        subSlogan: t['login.banner.subSlogan2'],
+        slogan: e['login.banner.slogan2'],
+        subSlogan: e['login.banner.subSlogan2'],
         image:
           'http://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/6c85f43aed61e320ebec194e6a78d6d3.png~tplv-uwbnlip3yd-png.png',
       },
       {
-        slogan: t['login.banner.slogan3'],
-        subSlogan: t['login.banner.subSlogan3'],
+        slogan: e['login.banner.slogan3'],
+        subSlogan: e['login.banner.subSlogan3'],
         image:
           'http://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/6c85f43aed61e320ebec194e6a78d6d3.png~tplv-uwbnlip3yd-png.png',
       },
     ];
-  return e.exports.jsxDEV(
-    co,
+  return t.exports.jsxDEV(
+    xo,
     {
       className: _.carousel,
       animation: 'fade',
       children: s.map((o, n) =>
-        e.exports.jsxDEV(
+        t.exports.jsxDEV(
           'div',
           {
-            children: e.exports.jsxDEV(
+            children: t.exports.jsxDEV(
               'div',
               {
                 className: _['carousel-item'],
                 children: [
-                  e.exports.jsxDEV(
+                  t.exports.jsxDEV(
                     'div',
                     { className: _['carousel-title'], children: o.slogan },
                     void 0,
                     !1,
-                    { fileName: de, lineNumber: 34, columnNumber: 13 },
+                    { fileName: ge, lineNumber: 34, columnNumber: 13 },
                     this
                   ),
-                  e.exports.jsxDEV(
+                  t.exports.jsxDEV(
                     'div',
                     {
                       className: _['carousel-sub-title'],
@@ -3883,10 +3947,10 @@ function us() {
                     },
                     void 0,
                     !1,
-                    { fileName: de, lineNumber: 35, columnNumber: 13 },
+                    { fileName: ge, lineNumber: 35, columnNumber: 13 },
                     this
                   ),
-                  e.exports.jsxDEV(
+                  t.exports.jsxDEV(
                     'img',
                     {
                       alt: 'banner-image',
@@ -3895,166 +3959,166 @@ function us() {
                     },
                     void 0,
                     !1,
-                    { fileName: de, lineNumber: 36, columnNumber: 13 },
+                    { fileName: ge, lineNumber: 36, columnNumber: 13 },
                     this
                   ),
                 ],
               },
               void 0,
               !0,
-              { fileName: de, lineNumber: 33, columnNumber: 11 },
+              { fileName: ge, lineNumber: 33, columnNumber: 11 },
               this
             ),
           },
           `${n}`,
           !1,
-          { fileName: de, lineNumber: 32, columnNumber: 9 },
+          { fileName: ge, lineNumber: 32, columnNumber: 9 },
           this
         )
       ),
     },
     void 0,
     !1,
-    { fileName: de, lineNumber: 30, columnNumber: 5 },
+    { fileName: ge, lineNumber: 30, columnNumber: 5 },
     this
   );
 }
-var Yn = Object.freeze({
+var rr = Object.freeze({
     __proto__: null,
     [Symbol.toStringTag]: 'Module',
-    default: us,
+    default: fs,
   }),
-  q = '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/pages/login/index.tsx';
-function Pe() {
+  J = '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/pages/login/index.tsx';
+function Ue() {
   return (
     l.exports.useEffect(() => {
       document.body.setAttribute('arco-theme', 'light');
     }, []),
-    e.exports.jsxDEV(
+    t.exports.jsxDEV(
       'div',
       {
         className: _.container,
         children: [
-          e.exports.jsxDEV(
+          t.exports.jsxDEV(
             'div',
             {
               className: _.logo,
               children: [
-                e.exports.jsxDEV(
-                  Ut,
+                t.exports.jsxDEV(
+                  Wt,
                   {},
                   void 0,
                   !1,
-                  { fileName: q, lineNumber: 16, columnNumber: 9 },
+                  { fileName: J, lineNumber: 16, columnNumber: 9 },
                   this
                 ),
-                e.exports.jsxDEV(
+                t.exports.jsxDEV(
                   'div',
                   { className: _['logo-text'], children: 'Arco Design Pro' },
                   void 0,
                   !1,
-                  { fileName: q, lineNumber: 17, columnNumber: 9 },
+                  { fileName: J, lineNumber: 17, columnNumber: 9 },
                   this
                 ),
               ],
             },
             void 0,
             !0,
-            { fileName: q, lineNumber: 15, columnNumber: 7 },
+            { fileName: J, lineNumber: 15, columnNumber: 7 },
             this
           ),
-          e.exports.jsxDEV(
+          t.exports.jsxDEV(
             'div',
             {
               className: _.banner,
-              children: e.exports.jsxDEV(
+              children: t.exports.jsxDEV(
                 'div',
                 {
                   className: _['banner-inner'],
-                  children: e.exports.jsxDEV(
-                    us,
+                  children: t.exports.jsxDEV(
+                    fs,
                     {},
                     void 0,
                     !1,
-                    { fileName: q, lineNumber: 21, columnNumber: 11 },
+                    { fileName: J, lineNumber: 21, columnNumber: 11 },
                     this
                   ),
                 },
                 void 0,
                 !1,
-                { fileName: q, lineNumber: 20, columnNumber: 9 },
+                { fileName: J, lineNumber: 20, columnNumber: 9 },
                 this
               ),
             },
             void 0,
             !1,
-            { fileName: q, lineNumber: 19, columnNumber: 7 },
+            { fileName: J, lineNumber: 19, columnNumber: 7 },
             this
           ),
-          e.exports.jsxDEV(
+          t.exports.jsxDEV(
             'div',
             {
               className: _.content,
               children: [
-                e.exports.jsxDEV(
+                t.exports.jsxDEV(
                   'div',
                   {
                     className: _['content-inner'],
-                    children: e.exports.jsxDEV(
-                      as,
+                    children: t.exports.jsxDEV(
+                      ds,
                       {},
                       void 0,
                       !1,
-                      { fileName: q, lineNumber: 26, columnNumber: 11 },
+                      { fileName: J, lineNumber: 26, columnNumber: 11 },
                       this
                     ),
                   },
                   void 0,
                   !1,
-                  { fileName: q, lineNumber: 25, columnNumber: 9 },
+                  { fileName: J, lineNumber: 25, columnNumber: 9 },
                   this
                 ),
-                e.exports.jsxDEV(
+                t.exports.jsxDEV(
                   'div',
                   {
                     className: _.footer,
-                    children: e.exports.jsxDEV(
-                      Yt,
+                    children: t.exports.jsxDEV(
+                      Qt,
                       {},
                       void 0,
                       !1,
-                      { fileName: q, lineNumber: 29, columnNumber: 11 },
+                      { fileName: J, lineNumber: 29, columnNumber: 11 },
                       this
                     ),
                   },
                   void 0,
                   !1,
-                  { fileName: q, lineNumber: 28, columnNumber: 9 },
+                  { fileName: J, lineNumber: 28, columnNumber: 9 },
                   this
                 ),
               ],
             },
             void 0,
             !0,
-            { fileName: q, lineNumber: 24, columnNumber: 7 },
+            { fileName: J, lineNumber: 24, columnNumber: 7 },
             this
           ),
         ],
       },
       void 0,
       !0,
-      { fileName: q, lineNumber: 14, columnNumber: 5 },
+      { fileName: J, lineNumber: 14, columnNumber: 5 },
       this
     )
   );
 }
-Pe.displayName = 'LoginPage';
-var Zn = Object.freeze({
+Ue.displayName = 'LoginPage';
+var ir = Object.freeze({
   __proto__: null,
   [Symbol.toStringTag]: 'Module',
-  default: Pe,
+  default: Ue,
 });
-const Qn = {
+const ar = {
     'en-US': {
       'menu.exception': 'Exception page',
       'menu.exception.403': '403',
@@ -4070,83 +4134,86 @@ const Qn = {
       'exception.result.403.back': '\u8FD4\u56DE',
     },
   },
-  er = '_wrapper_jqkv8_1',
-  tr = '_result_jqkv8_6';
-var nt = { wrapper: er, result: tr },
-  Re =
+  ur = '_wrapper_jqkv8_1',
+  lr = '_result_jqkv8_6';
+var ct = { wrapper: ur, result: lr },
+  Ke =
     '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/pages/exception/403/index.tsx';
-function rt() {
-  const t = J(Qn),
-    s = Ge();
-  return e.exports.jsxDEV(
+function mt() {
+  const e = H(ar),
+    s = Ye();
+  return t.exports.jsxDEV(
     'div',
     {
-      className: nt.container,
-      children: e.exports.jsxDEV(
+      className: ct.container,
+      children: t.exports.jsxDEV(
         'div',
         {
-          className: nt.wrapper,
-          children: e.exports.jsxDEV(
-            vt,
+          className: ct.wrapper,
+          children: t.exports.jsxDEV(
+            Vt,
             {
-              className: nt.result,
+              className: ct.result,
               status: '403',
-              subTitle: t['exception.result.403.description'],
-              extra: e.exports.jsxDEV(
-                Y,
+              subTitle: e['exception.result.403.description'],
+              extra: t.exports.jsxDEV(
+                ee,
                 {
                   type: 'primary',
                   onClick: () => s.push('/login'),
-                  children: t['exception.result.403.back'],
+                  children: e['exception.result.403.back'],
                 },
                 'back',
                 !1,
-                { fileName: Re, lineNumber: 20, columnNumber: 13 },
+                { fileName: Ke, lineNumber: 20, columnNumber: 13 },
                 this
               ),
             },
             void 0,
             !1,
-            { fileName: Re, lineNumber: 15, columnNumber: 9 },
+            { fileName: Ke, lineNumber: 15, columnNumber: 9 },
             this
           ),
         },
         void 0,
         !1,
-        { fileName: Re, lineNumber: 14, columnNumber: 7 },
+        { fileName: Ke, lineNumber: 14, columnNumber: 7 },
         this
       ),
     },
     void 0,
     !1,
-    { fileName: Re, lineNumber: 13, columnNumber: 5 },
+    { fileName: Ke, lineNumber: 13, columnNumber: 5 },
     this
   );
 }
-var it = Object.freeze({
+var dt = Object.freeze({
   __proto__: null,
   [Symbol.toStringTag]: 'Module',
-  default: rt,
+  default: mt,
 });
-function sr() {
-  return !!localStorage.getItem(ve);
+function cr() {
+  return !!localStorage.getItem(Ne);
 }
-function or(t) {
-  t === 'dark'
+function mr(e) {
+  e === 'dark'
     ? document.body.setAttribute('arco-theme', 'dark')
     : document.body.removeAttribute('arco-theme');
 }
-var ls = (t) => {
-  const { mock: s = !0, setup: o } = t;
+var ps = (e) => {
+  const {
+    mock: s = ['production', 'development'] === 'development',
+    setup: o,
+  } = e;
   s !== !1 && o();
 };
-me ||
-  ((ne.XHR.prototype.withCredentials = !0),
-  ls({
+be ||
+  ((re.XHR.prototype.withCredentials = !0),
+  ps({
     setup: () => {
-      const t = window.localStorage.getItem('userRole') || 'admin';
-      ne.mock(new RegExp('/api/user/userInfo'), () =>
-        ne.mock({
+      const e = window.localStorage.getItem('userRole') || 'admin';
+      re.mock(new RegExp('/api/user/userInfo'), () =>
+        re.mock({
           name: 'admin',
           avatar:
             'https://lf1-xgcdn-tos.pstatp.com/obj/vcloud/vadmin/start.8e0e4855ee346a46ccff8ff3e24db27b.png',
@@ -4163,11 +4230,11 @@ me ||
           verified: !0,
           phoneNumber: /177[*]{6}[0-9]{2}/,
           accountId: /[a-z]{4}[-][0-9]{8}/,
-          registrationTime: ne.Random.datetime('yyyy-MM-dd HH:mm:ss'),
-          permissions: Cn(t),
+          registrationTime: re.Random.datetime('yyyy-MM-dd HH:mm:ss'),
+          permissions: $n(e),
         })
       ),
-        ne.mock(new RegExp('/api/user/login'), (s) => {
+        re.mock(new RegExp('/api/user/login'), (s) => {
           const { userName: o, password: n } = JSON.parse(s.body);
           return o
             ? n
@@ -4185,8 +4252,8 @@ me ||
         });
     },
   }));
-const cs = [],
-  nr = () =>
+const hs = [],
+  dr = () =>
     [
       {
         id: 1,
@@ -4254,43 +4321,43 @@ const cs = [],
           '\u5185\u5BB9\u5C4F\u853D\u89C4\u5219\u4E8E 2021-12-01 \u5F00\u901A\u6210\u529F\u5E76\u751F\u6548\u3002',
         tag: { text: '\u5DF2\u5F00\u901A', color: 'green' },
       },
-    ].map((t) => $(C({}, t), { status: cs.indexOf(t.id) === -1 ? 0 : 1 }));
-ls({
+    ].map((e) => $(F({}, e), { status: hs.indexOf(e.id) === -1 ? 0 : 1 }));
+ps({
   setup: () => {
-    ne.mock(new RegExp('/api/message/list'), () => nr()),
-      ne.mock(new RegExp('/api/message/read'), (t) => {
-        const { ids: s } = JSON.parse(t.body);
-        return cs.push(...(s || [])), !0;
+    re.mock(new RegExp('/api/message/list'), () => dr()),
+      re.mock(new RegExp('/api/message/read'), (e) => {
+        const { ids: s } = JSON.parse(e.body);
+        return hs.push(...(s || [])), !0;
       });
   },
 });
-me || ne.setup({ timeout: '500-1500' });
-var G = '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/main.tsx';
-const Me = mo(Co);
-function rr() {
-  const t = Ke(),
-    [s, o] = xe('arco-lang', 'en-US'),
-    [n, r] = xe('arco-theme', 'light');
+be || re.setup({ timeout: '500-1500' });
+var W = '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/main.tsx';
+const Ge = Eo(Ro);
+function fr() {
+  const e = Xe(),
+    [s, o] = je('arco-lang', 'en-US'),
+    [n, r] = je('arco-theme', 'light');
   function a() {
     switch (s) {
       case 'zh-CN':
-        return Lt;
+        return Ot;
       case 'en-US':
-        return No;
+        return jo;
       default:
-        return Lt;
+        return Ot;
     }
   }
   async function i() {
-    Me.dispatch({ type: 'update-userInfo', payload: { userLoading: !0 } });
-    const p = Ee();
+    Ge.dispatch({ type: 'update-userInfo', payload: { userLoading: !0 } });
+    const N = Ve();
     try {
-      const d = p ? await Ze(p) : null;
-      Me.dispatch({
+      const d = N ? await rt(N) : null;
+      Ge.dispatch({
         type: 'update-userInfo',
         payload: {
           userInfo: $(
-            C(C({}, Gt() || {}), (d == null ? void 0 : d.profile) || {}),
+            F(F({}, st() || {}), (d == null ? void 0 : d.profile) || {}),
             {
               permissions: (d == null ? void 0 : d.permissions) || [],
               fieldPolicies: (d == null ? void 0 : d.fieldPolicies) || {},
@@ -4300,27 +4367,27 @@ function rr() {
         },
       });
     } catch {
-      Me.dispatch({
+      Ge.dispatch({
         type: 'update-userInfo',
-        payload: { userInfo: Gt() || { permissions: {} }, userLoading: !1 },
+        payload: { userInfo: st() || { permissions: {} }, userLoading: !1 },
       });
     }
   }
   l.exports.useEffect(() => {
-    const p = window.location.pathname,
-      d = p === '/login' || p.endsWith('/login'),
-      h = p === '/403' || p.endsWith('/403');
-    sr() ? i() : !d && !h && (window.location.pathname = '/login');
+    const N = window.location.pathname,
+      d = N === '/login' || N.endsWith('/login'),
+      b = N === '/403' || N.endsWith('/403');
+    cr() ? i() : !d && !b && (window.location.pathname = '/login');
   }, []),
     l.exports.useEffect(() => {
-      or(n), t({ type: 'update-theme', payload: { theme: n } });
-    }, [t, n]);
+      mr(n), e({ type: 'update-theme', payload: { theme: n } });
+    }, [e, n]);
   const u = { lang: s, setLang: o, theme: n, setTheme: r };
-  return e.exports.jsxDEV(
-    ho,
+  return t.exports.jsxDEV(
+    _o,
     {
-      children: e.exports.jsxDEV(
-        bo,
+      children: t.exports.jsxDEV(
+        yo,
         {
           locale: a(),
           componentConfig: {
@@ -4328,118 +4395,118 @@ function rr() {
             List: { bordered: !1 },
             Table: { border: !1 },
           },
-          children: e.exports.jsxDEV(
-            qe.Provider,
+          children: t.exports.jsxDEV(
+            Ie.Provider,
             {
               value: u,
-              children: e.exports.jsxDEV(
-                Pt.exports.AliveScope,
+              children: t.exports.jsxDEV(
+                Tt.exports.AliveScope,
                 {
-                  children: e.exports.jsxDEV(
-                    Mt,
+                  children: t.exports.jsxDEV(
+                    $t,
                     {
                       children: [
-                        e.exports.jsxDEV(
-                          oe,
-                          { path: '/login', component: Pe },
+                        t.exports.jsxDEV(
+                          ne,
+                          { path: '/login', component: Ue },
                           void 0,
                           !1,
-                          { fileName: G, lineNumber: 116, columnNumber: 15 },
+                          { fileName: W, lineNumber: 121, columnNumber: 15 },
                           this
                         ),
-                        e.exports.jsxDEV(
-                          oe,
-                          { path: '/:tenantCode/login', component: Pe },
+                        t.exports.jsxDEV(
+                          ne,
+                          { path: '/:tenantCode/login', component: Ue },
                           void 0,
                           !1,
-                          { fileName: G, lineNumber: 117, columnNumber: 15 },
+                          { fileName: W, lineNumber: 122, columnNumber: 15 },
                           this
                         ),
-                        e.exports.jsxDEV(
-                          oe,
-                          { path: '/403', component: rt },
+                        t.exports.jsxDEV(
+                          ne,
+                          { path: '/403', component: mt },
                           void 0,
                           !1,
-                          { fileName: G, lineNumber: 118, columnNumber: 15 },
+                          { fileName: W, lineNumber: 123, columnNumber: 15 },
                           this
                         ),
-                        e.exports.jsxDEV(
-                          oe,
-                          { path: '/:tenantCode/403', component: rt },
+                        t.exports.jsxDEV(
+                          ne,
+                          { path: '/:tenantCode/403', component: mt },
                           void 0,
                           !1,
-                          { fileName: G, lineNumber: 119, columnNumber: 15 },
+                          { fileName: W, lineNumber: 124, columnNumber: 15 },
                           this
                         ),
-                        e.exports.jsxDEV(
-                          oe,
-                          { path: '/', component: zn },
+                        t.exports.jsxDEV(
+                          ne,
+                          { path: '/', component: Xn },
                           void 0,
                           !1,
-                          { fileName: G, lineNumber: 120, columnNumber: 15 },
+                          { fileName: W, lineNumber: 125, columnNumber: 15 },
                           this
                         ),
                       ],
                     },
                     void 0,
                     !0,
-                    { fileName: G, lineNumber: 115, columnNumber: 13 },
+                    { fileName: W, lineNumber: 120, columnNumber: 13 },
                     this
                   ),
                 },
                 void 0,
                 !1,
-                { fileName: G, lineNumber: 114, columnNumber: 11 },
+                { fileName: W, lineNumber: 119, columnNumber: 11 },
                 this
               ),
             },
             void 0,
             !1,
-            { fileName: G, lineNumber: 113, columnNumber: 9 },
+            { fileName: W, lineNumber: 118, columnNumber: 9 },
             this
           ),
         },
         void 0,
         !1,
-        { fileName: G, lineNumber: 99, columnNumber: 7 },
+        { fileName: W, lineNumber: 104, columnNumber: 7 },
         this
       ),
     },
     void 0,
     !1,
-    { fileName: G, lineNumber: 98, columnNumber: 5 },
+    { fileName: W, lineNumber: 103, columnNumber: 5 },
     this
   );
 }
-function ir() {
-  return e.exports.jsxDEV(
-    po,
+function pr() {
+  return t.exports.jsxDEV(
+    Do,
     {
-      store: Me,
-      children: e.exports.jsxDEV(
-        rr,
+      store: Ge,
+      children: t.exports.jsxDEV(
+        fr,
         {},
         void 0,
         !1,
-        { fileName: G, lineNumber: 132, columnNumber: 7 },
+        { fileName: W, lineNumber: 137, columnNumber: 7 },
         this
       ),
     },
     void 0,
     !1,
-    { fileName: G, lineNumber: 131, columnNumber: 5 },
+    { fileName: W, lineNumber: 136, columnNumber: 5 },
     this
   );
 }
-fo.render(
-  e.exports.jsxDEV(
-    ir,
+vo.render(
+  t.exports.jsxDEV(
+    pr,
     {},
     void 0,
     !1,
-    { fileName: G, lineNumber: 137, columnNumber: 17 },
+    { fileName: W, lineNumber: 142, columnNumber: 17 },
     globalThis
   ),
   document.getElementById('root')
 );
-export { ls as s, J as u };
+export { ps as s, H as u };

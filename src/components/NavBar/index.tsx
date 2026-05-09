@@ -34,7 +34,11 @@ import defaultLocale from '@/locale';
 import useStorage from '@/utils/useStorage';
 import { logout as userLogout } from '@/api/user';
 import { ACCESS_TOKEN_KEY, ORGANIZATION_KEY } from '@/api/request';
-import { USER_PROFILE_KEY, getTenantCodeFromPathname } from '@/utils/tenant';
+import {
+  USER_PROFILE_KEY,
+  getTenantCodeFromPathname,
+  readUserProfile,
+} from '@/utils/tenant';
 import { getAuthResourceCacheKey } from '@/api/auth';
 
 function Navbar({
@@ -48,6 +52,8 @@ function Navbar({
 }) {
   const t = useLocale();
   const userInfo = useSelector((state: GlobalState) => state.userInfo);
+  const userProfile = readUserProfile<{ avatar?: string }>();
+  const avatar = userProfile?.avatar || userInfo?.avatar;
 
   const [, setUserStatus] = useStorage('userStatus');
   const [role, setRole] = useStorage('userRole', 'admin');
@@ -205,7 +211,7 @@ function Navbar({
           <li>
             <Dropdown droplist={droplist} position="br">
               <Avatar size={32} style={{ cursor: 'pointer' }}>
-                <img alt="avatar" src={userInfo.avatar} />
+                {avatar && <img alt="avatar" src={avatar} />}
               </Avatar>
             </Dropdown>
           </li>

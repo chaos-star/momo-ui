@@ -1,13 +1,13 @@
-import { ak as t, a4 as E, j as e, aG as x } from './vendor.aa22cee8.js';
-import N from './overview.beb60c8e.js';
-import d from './popular-contents.95c81152.js';
-import F from './content-percentage.0755657e.js';
-import f from './shortcuts.324f82f2.js';
-import B from './announcement.1eea7d1d.js';
-import D from './carousel.08a2e5b8.js';
-import b from './docs.46272cd6.js';
-import { s as C } from './index.7cc85f9b.js';
-/* empty css               */ /* empty css              */ import './index.fbad3a32.js';
+import { al as t, a5 as E, j as e, aH as x } from './vendor.c4f0d1e5.js';
+import d from './overview.f019b948.js';
+import N from './popular-contents.f0ccf41d.js';
+import f from './content-percentage.5a34d777.js';
+import F from './shortcuts.683c7565.js';
+import B from './announcement.1de93c9b.js';
+import D from './carousel.3c91a035.js';
+import C from './docs.45dd779c.js';
+import { s as b } from './index.1f1355a3.js';
+/* empty css               */ /* empty css              */ import './index.91c0c8fa.js';
 import './index.9464998a.js';
 const h = '_banner_i5y7o_1',
   j = '_content_i5y7o_5',
@@ -25,7 +25,7 @@ var o = {
   right: g,
   panel: _,
 };
-C({
+b({
   setup: () => {
     t.mock(new RegExp('/api/workplace/overview-content'), () => {
       const n = new Date().getFullYear();
@@ -118,7 +118,7 @@ var u =
   '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/pages/dashboard/workplace/index.tsx';
 const { Row: w, Col: c } = x,
   A = 16;
-function W() {
+function T() {
   return e.exports.jsxDEV(
     'div',
     {
@@ -130,7 +130,7 @@ function W() {
             className: o.main,
             children: [
               e.exports.jsxDEV(
-                N,
+                d,
                 {},
                 void 0,
                 !1,
@@ -153,7 +153,7 @@ function W() {
                         xl: 12,
                         xxl: 12,
                         children: e.exports.jsxDEV(
-                          d,
+                          N,
                           {},
                           void 0,
                           !1,
@@ -176,7 +176,7 @@ function W() {
                         xl: 12,
                         xxl: 12,
                         children: e.exports.jsxDEV(
-                          F,
+                          f,
                           {},
                           void 0,
                           !1,
@@ -209,7 +209,7 @@ function W() {
             className: o.right,
             children: [
               e.exports.jsxDEV(
-                f,
+                F,
                 {},
                 void 0,
                 !1,
@@ -233,7 +233,7 @@ function W() {
                 this
               ),
               e.exports.jsxDEV(
-                b,
+                C,
                 {},
                 void 0,
                 !1,
@@ -255,4 +255,4 @@ function W() {
     this
   );
 }
-export { W as default };
+export { T as default };

@@ -1,17 +1,17 @@
 import {
   j as e,
   e as o,
-  aL as r,
+  aM as r,
   t as a,
-  aM as u,
-  aN as N,
-  as as d,
+  aN as u,
+  aO as N,
+  at as d,
   T as x,
-  ai as b,
-  D as f,
+  aj as f,
+  D as b,
   M as p,
-} from './vendor.aa22cee8.js';
-/* empty css              */ import { u as h } from './index.7cc85f9b.js';
+} from './vendor.c4f0d1e5.js';
+/* empty css              */ import { u as h } from './index.1f1355a3.js';
 import { i as v } from './index.9464998a.js';
 const j = '_shortcuts_f9b1x_1',
   k = '_item_f9b1x_5',
@@ -165,7 +165,7 @@ function w() {
                 this
               ),
               e.exports.jsxDEV(
-                b,
+                f,
                 { children: t['workplace.seeMore'] },
                 void 0,
                 !1,
@@ -221,7 +221,7 @@ function w() {
           this
         ),
         e.exports.jsxDEV(
-          f,
+          b,
           {},
           void 0,
           !1,

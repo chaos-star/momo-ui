@@ -3,14 +3,14 @@ import {
   i as v,
   j as a,
   T as u,
-  aH as g,
-  aI as y,
-  as as j,
-  ai as k,
-  aJ as w,
-  aK as D,
-} from './vendor.aa22cee8.js';
-/* empty css              */ import { u as E } from './index.7cc85f9b.js';
+  aI as g,
+  aJ as j,
+  at as y,
+  aj as k,
+  aK as w,
+  aL as D,
+} from './vendor.c4f0d1e5.js';
+/* empty css              */ import { u as E } from './index.1f1355a3.js';
 import { i as V } from './index.9464998a.js';
 const C = '_symbol_okjyb_1';
 var S = { symbol: C },
@@ -18,8 +18,8 @@ var S = { symbol: C },
     '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/pages/dashboard/workplace/popular-contents.tsx';
 function _() {
   const r = E(V),
-    [l, c] = s.exports.useState(0),
-    [m, p] = s.exports.useState([]),
+    [l, m] = s.exports.useState(0),
+    [c, p] = s.exports.useState([]),
     [d, i] = s.exports.useState(!0),
     [o, x] = s.exports.useState(1),
     [b, N] = s.exports.useState(0),
@@ -86,7 +86,7 @@ function _() {
                           this
                         )
                       : a.exports.jsxDEV(
-                          y,
+                          j,
                           { style: { color: 'rgb(var(--red-6))' } },
                           void 0,
                           !1,
@@ -109,7 +109,7 @@ function _() {
     },
   ];
   return a.exports.jsxDEV(
-    j,
+    y,
     {
       children: [
         a.exports.jsxDEV(
@@ -145,7 +145,7 @@ function _() {
           {
             type: 'button',
             value: l,
-            onChange: c,
+            onChange: m,
             options: [
               { label: r['workplace.text'], value: 0 },
               { label: r['workplace.image'], value: 1 },
@@ -163,7 +163,7 @@ function _() {
           {
             rowKey: 'rank',
             columns: f,
-            data: m,
+            data: c,
             loading: d,
             tableLayoutFixed: !0,
             onChange: (e) => {

@@ -1,14 +1,14 @@
-import { j as e, as as s, T as a } from './vendor.aa22cee8.js';
+import { j as e, at as a, T as s } from './vendor.c4f0d1e5.js';
 /* empty css              */ var i =
   '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/pages/example/index.tsx';
-function t() {
+function n() {
   return e.exports.jsxDEV(
-    s,
+    a,
     {
       style: { height: '80vh' },
       children: [
         e.exports.jsxDEV(
-          a.Title,
+          s.Title,
           { heading: 6, children: 'This is a very basic and simple page' },
           void 0,
           !1,
@@ -16,7 +16,7 @@ function t() {
           this
         ),
         e.exports.jsxDEV(
-          a.Text,
+          s.Text,
           { children: 'You can add content here :)' },
           void 0,
           !1,
@@ -31,4 +31,4 @@ function t() {
     this
   );
 }
-export { t as default };
+export { n as default };
