@@ -128,11 +128,25 @@ function AppContent() {
         return;
       }
 
-      applyUserTheme(readUserTheme());
+      const userTheme = readUserTheme();
+      writeUserTheme(userTheme);
+      setLangStorage(userTheme.lang);
+      setThemeStorage(userTheme.theme);
+      store.dispatch({
+        type: 'update-settings',
+        payload: { settings: userTheme.settings },
+      });
+      store.dispatch({
+        type: 'update-theme',
+        payload: { theme: userTheme.theme },
+      });
+      changeTheme(userTheme.theme, userTheme.settings.themeColor);
       fetchUserInfo();
     } else if (!isLoginPage && !is403Page) {
       window.location.pathname = '/login';
     }
+    // 初始化逻辑只应在应用启动时执行一次。
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
