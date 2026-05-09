@@ -2,13 +2,13 @@ import './style/global.less';
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { createStore } from 'redux';
-import { Provider, useDispatch } from 'react-redux';
+import { Provider, useDispatch, useSelector } from 'react-redux';
 import { ConfigProvider } from '@arco-design/web-react';
 import zhCN from '@arco-design/web-react/es/locale/zh-CN';
 import enUS from '@arco-design/web-react/es/locale/en-US';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { AliveScope } from 'react-activation';
-import rootReducer from './store';
+import rootReducer, { GlobalState } from './store';
 import PageLayout from './layout';
 import { GlobalContext } from './context';
 import Login from './pages/login';
@@ -26,6 +26,7 @@ function AppContent() {
   const dispatch = useDispatch();
   const [lang, setLang] = useStorage('arco-lang', 'en-US');
   const [theme, setTheme] = useStorage('arco-theme', 'light');
+  const settings = useSelector((state: GlobalState) => state.settings);
 
   function getArcoLocale() {
     switch (lang) {
@@ -85,12 +86,12 @@ function AppContent() {
   }, []);
 
   useEffect(() => {
-    changeTheme(theme);
+    changeTheme(theme, settings.themeColor);
     dispatch({
       type: 'update-theme',
       payload: { theme },
     });
-  }, [dispatch, theme]);
+  }, [dispatch, settings.themeColor, theme]);
 
   const contextValue = {
     lang,

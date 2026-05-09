@@ -1,11 +1,31 @@
 import React from 'react';
 import { Trigger, Typography } from '@arco-design/web-react';
 import { SketchPicker } from 'react-color';
-import { generate, getRgbStr } from '@arco-design/color';
+import { generate } from '@arco-design/color';
 import { useSelector, useDispatch } from 'react-redux';
 import { GlobalState } from '../../store';
 import useLocale from '@/utils/useLocale';
+import { applyThemeColor } from '@/utils/changeTheme';
 import styles from './style/color-panel.module.less';
+
+const presetColors = [
+  '#D0021B',
+  '#F5A623',
+  '#F8E71C',
+  '#8B572A',
+  '#7ED321',
+  '#417505',
+  '#BD10E0',
+  '#9013FE',
+  '#165DFF',
+  '#4A90E2',
+  '#50E3C2',
+  '#B8E986',
+  '#000000',
+  '#4A4A4A',
+  '#9B9B9B',
+  '#FFFFFF',
+];
 
 function ColorPanel() {
   const theme =
@@ -24,23 +44,14 @@ function ColorPanel() {
         popup={() => (
           <SketchPicker
             color={themeColor}
+            presetColors={presetColors}
             onChangeComplete={(color) => {
               const newColor = color.hex;
               dispatch({
                 type: 'update-settings',
                 payload: { settings: { ...settings, themeColor: newColor } },
               });
-              const newList = generate(newColor, {
-                list: true,
-                dark: theme === 'dark',
-              });
-              newList.forEach((l, index) => {
-                const rgbStr = getRgbStr(l);
-                document.body.style.setProperty(
-                  `--arcoblue-${index + 1}`,
-                  rgbStr
-                );
-              });
+              applyThemeColor(newColor, theme);
             }}
           />
         )}
