@@ -30,6 +30,7 @@ import getUrlParams from './utils/getUrlParams';
 import lazyload from './utils/lazyload';
 import { getRouteIcon } from './utils/routeIcon';
 import {
+  getDefaultTenantCode,
   getTenantCodeFromPathname,
   stripTenantFromPathname,
 } from './utils/tenant';
@@ -168,6 +169,17 @@ function PageLayout() {
     tabIdentity,
     tabList,
   ]);
+
+  useEffect(() => {
+    if (tenantCode) {
+      return;
+    }
+
+    const defaultTenantCode = getDefaultTenantCode();
+    history.replace(
+      defaultTenantCode ? `/${defaultTenantCode}${pathname}` : '/403'
+    );
+  }, [history, pathname, tenantCode]);
 
   useEffect(() => {
     if (!currentTab) {

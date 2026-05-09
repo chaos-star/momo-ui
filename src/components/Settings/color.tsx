@@ -5,7 +5,9 @@ import { generate } from '@arco-design/color';
 import { useSelector, useDispatch } from 'react-redux';
 import { GlobalState } from '../../store';
 import useLocale from '@/utils/useLocale';
+import { patchUserThemeItem } from '@/api/userTheme';
 import { applyThemeColor } from '@/utils/changeTheme';
+import { patchLocalUserTheme } from '@/utils/userTheme';
 import styles from './style/color-panel.module.less';
 
 const presetColors = [
@@ -51,6 +53,14 @@ function ColorPanel() {
                 type: 'update-settings',
                 payload: { settings: { ...settings, themeColor: newColor } },
               });
+              patchLocalUserTheme({
+                path: 'settings.themeColor',
+                value: newColor,
+              });
+              patchUserThemeItem({
+                path: 'settings.themeColor',
+                value: newColor,
+              }).catch(() => undefined);
               applyThemeColor(newColor, theme);
             }}
           />

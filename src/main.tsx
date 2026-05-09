@@ -16,17 +16,56 @@ import Exception403 from './pages/exception/403';
 import checkLogin from './utils/checkLogin';
 import changeTheme from './utils/changeTheme';
 import useStorage from './utils/useStorage';
-import { readUserProfile, getTenantCodeFromPathname } from './utils/tenant';
+import {
+  readUserProfile,
+  getTenantCodeFromPathname,
+  getDefaultTenantCode,
+} from './utils/tenant';
 import { getAuthContextResource } from './api/auth';
+import {
+  readUserTheme,
+  writeUserTheme,
+  UserThemeConfig,
+} from './utils/userTheme';
 import './mock';
 
 const store = createStore(rootReducer);
 
 function AppContent() {
   const dispatch = useDispatch();
-  const [lang, setLang] = useStorage('arco-lang', 'en-US');
-  const [theme, setTheme] = useStorage('arco-theme', 'light');
+  const [lang, setLangStorage] = useStorage('arco-lang', 'en-US');
+  const [theme, setThemeStorage] = useStorage('arco-theme', 'light');
   const settings = useSelector((state: GlobalState) => state.settings);
+
+  function applyUserTheme(userTheme: UserThemeConfig) {
+    writeUserTheme(userTheme);
+    setLangStorage(userTheme.lang);
+    setThemeStorage(userTheme.theme);
+    dispatch({
+      type: 'update-settings',
+      payload: { settings: userTheme.settings },
+    });
+    dispatch({
+      type: 'update-theme',
+      payload: { theme: userTheme.theme },
+    });
+    changeTheme(userTheme.theme, userTheme.settings.themeColor);
+  }
+
+  function setLang(value: string) {
+    const userTheme = writeUserTheme({ ...readUserTheme(), lang: value });
+    setLangStorage(userTheme.lang);
+  }
+
+  function setTheme(value: string) {
+    const userTheme = writeUserTheme({ ...readUserTheme(), theme: value });
+    setThemeStorage(userTheme.theme);
+    dispatch({
+      type: 'update-theme',
+      payload: { theme: userTheme.theme },
+    });
+    changeTheme(userTheme.theme, userTheme.settings.themeColor);
+  }
 
   function getArcoLocale() {
     switch (lang) {
@@ -79,6 +118,17 @@ function AppContent() {
     const is403Page = pathname === '/403' || pathname.endsWith('/403');
 
     if (checkLogin()) {
+      const tenantCode = getTenantCodeFromPathname(pathname);
+
+      if (!tenantCode && !isLoginPage && !is403Page) {
+        const defaultTenantCode = getDefaultTenantCode();
+        window.location.replace(
+          defaultTenantCode ? `/${defaultTenantCode}${pathname}` : '/403'
+        );
+        return;
+      }
+
+      applyUserTheme(readUserTheme());
       fetchUserInfo();
     } else if (!isLoginPage && !is403Page) {
       window.location.pathname = '/login';
@@ -98,6 +148,7 @@ function AppContent() {
     setLang,
     theme,
     setTheme,
+    applyUserTheme,
   };
 
   return (

@@ -40,6 +40,8 @@ import {
   readUserProfile,
 } from '@/utils/tenant';
 import { getAuthResourceCacheKey } from '@/api/auth';
+import { patchUserThemeItem } from '@/api/userTheme';
+import { patchLocalUserTheme } from '@/utils/userTheme';
 
 function Navbar({
   show,
@@ -72,6 +74,7 @@ function Navbar({
     }
     localStorage.removeItem('accessToken');
     localStorage.removeItem('organization');
+    localStorage.removeItem('user-theme');
   }
 
   function logout() {
@@ -182,6 +185,10 @@ function Navbar({
             trigger="hover"
             onChange={(value) => {
               setLang(value);
+              patchLocalUserTheme({ path: 'lang', value });
+              patchUserThemeItem({ path: 'lang', value }).catch(
+                () => undefined
+              );
               const nextLang = defaultLocale[value];
               Message.info(`${nextLang['message.lang.tips']}${value}`);
             }}
@@ -202,7 +209,14 @@ function Navbar({
           >
             <IconButton
               icon={theme !== 'dark' ? <IconMoonFill /> : <IconSunFill />}
-              onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+              onClick={() => {
+                const nextTheme = theme === 'light' ? 'dark' : 'light';
+                setTheme(nextTheme);
+                patchLocalUserTheme({ path: 'theme', value: nextTheme });
+                patchUserThemeItem({ path: 'theme', value: nextTheme }).catch(
+                  () => undefined
+                );
+              }}
             />
           </Tooltip>
         </li>

@@ -17,6 +17,7 @@ import { getCaptcha } from '@/api/system';
 import { login as userLogin, LoginParams, LoginResult } from '@/api/user';
 import { getAuthContextResource } from '@/api/auth';
 import { USER_PROFILE_KEY } from '@/utils/tenant';
+import { writeUserTheme } from '@/utils/userTheme';
 import locale from './locale';
 import styles from './style/index.module.less';
 
@@ -65,14 +66,21 @@ export default function LoginForm() {
     localStorage.setItem(ORGANIZATION_KEY, tenantCode);
     localStorage.setItem(
       USER_PROFILE_KEY,
-      JSON.stringify(result.profile || {})
+      JSON.stringify({
+        ...(result.profile || {}),
+        defaultTenant: result.defaultTenant,
+      })
     );
     localStorage.setItem('userStatus', 'login');
+    writeUserTheme(result.theme_setting);
 
     const resource = await getAuthContextResource(tenantCode);
     localStorage.setItem(
       USER_PROFILE_KEY,
-      JSON.stringify(resource.profile || result.profile || {})
+      JSON.stringify({
+        ...(resource.profile || result.profile || {}),
+        defaultTenant: result.defaultTenant,
+      })
     );
     const firstMenu = resource.menus?.[0];
     const defaultPath =

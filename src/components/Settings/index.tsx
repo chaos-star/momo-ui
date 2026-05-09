@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Drawer, Alert, Message } from '@arco-design/web-react';
 import { IconSettings } from '@arco-design/web-react/icon';
 import copy from 'copy-to-clipboard';
@@ -8,6 +8,9 @@ import Block from './block';
 import ColorPanel from './color';
 import IconButton from '../NavBar/IconButton';
 import useLocale from '@/utils/useLocale';
+import { GlobalContext } from '@/context';
+import { getUserTheme } from '@/api/userTheme';
+import { normalizeUserTheme } from '@/utils/userTheme';
 
 interface SettingProps {
   trigger?: React.ReactElement;
@@ -18,6 +21,16 @@ function Setting(props: SettingProps) {
   const [visible, setVisible] = useState(false);
   const locale = useLocale();
   const settings = useSelector((state: GlobalState) => state.settings);
+  const { applyUserTheme } = useContext(GlobalContext);
+
+  function openSettings() {
+    setVisible(true);
+    getUserTheme()
+      .then((result) => {
+        applyUserTheme?.(normalizeUserTheme(result.config));
+      })
+      .catch(() => undefined);
+  }
 
   function onCopySettings() {
     copy(JSON.stringify(settings, null, 2));
@@ -28,10 +41,10 @@ function Setting(props: SettingProps) {
     <>
       {trigger ? (
         React.cloneElement(trigger as React.ReactElement, {
-          onClick: () => setVisible(true),
+          onClick: openSettings,
         })
       ) : (
-        <IconButton icon={<IconSettings />} onClick={() => setVisible(true)} />
+        <IconButton icon={<IconSettings />} onClick={openSettings} />
       )}
       <Drawer
         width={300}

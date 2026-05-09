@@ -3,6 +3,8 @@ import { Switch, Divider, InputNumber } from '@arco-design/web-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { GlobalState } from '../../store';
 import useLocale from '../../utils/useLocale';
+import { patchUserThemeItem } from '@/api/userTheme';
+import { patchLocalUserTheme, UserThemePatchPayload } from '@/utils/userTheme';
 import styles from './style/block.module.less';
 
 export interface BlockProps {
@@ -16,6 +18,12 @@ export default function Block(props: BlockProps) {
   const locale = useLocale();
   const settings = useSelector((state: GlobalState) => state.settings);
   const dispatch = useDispatch();
+
+  function saveSetting(value: string, nextValue: unknown) {
+    const path = `settings.${value}` as UserThemePatchPayload['path'];
+    patchLocalUserTheme({ path, value: nextValue });
+    patchUserThemeItem({ path, value: nextValue }).catch(() => undefined);
+  }
 
   return (
     <div className={styles.block}>
@@ -40,6 +48,7 @@ export default function Block(props: BlockProps) {
                       type: 'update-settings',
                       payload: { settings: newSetting },
                     });
+                    saveSetting(option.value, checked);
                     // set color week
                     if (checked && option.value === 'colorWeek') {
                       document.body.style.filter = 'invert(80%)';
@@ -64,6 +73,7 @@ export default function Block(props: BlockProps) {
                       type: 'update-settings',
                       payload: { settings: newSetting },
                     });
+                    saveSetting(option.value, value);
                   }}
                 />
               )}

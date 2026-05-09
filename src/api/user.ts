@@ -40,6 +40,7 @@ export interface LoginResult {
   accessToken: string;
   expiresIn: number;
   defaultTenant?: DefaultTenant;
+  theme_setting?: unknown;
 }
 
 export function login(data: LoginParams) {

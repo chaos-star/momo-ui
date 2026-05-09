@@ -1,5 +1,16 @@
 export const USER_PROFILE_KEY = 'user-profile';
 
+type TenantProfile = Record<string, unknown> & {
+  defaultTenant?: Record<string, unknown>;
+};
+
+function readTenantCode(record?: Record<string, unknown> | null) {
+  const value = record?.tenantCode || record?.code;
+  return typeof value === 'string' || typeof value === 'number'
+    ? String(value)
+    : '';
+}
+
 export function getTenantCodeFromPathname(pathname = window.location.pathname) {
   const [, firstSegment] = pathname.split('/');
 
@@ -46,4 +57,14 @@ export function readUserProfile<T = Record<string, unknown>>() {
   } catch {
     return null;
   }
+}
+
+export function getDefaultTenantCode() {
+  const profile = readUserProfile<TenantProfile>();
+
+  return (
+    readTenantCode(profile?.defaultTenant) ||
+    readTenantCode(profile?.currentTenant as Record<string, unknown>) ||
+    readTenantCode(profile)
+  );
 }
