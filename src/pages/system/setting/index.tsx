@@ -62,6 +62,8 @@ const LANGUAGES: { key: SystemLanguage; label: string }[] = [
 
 const LOGO_TYPE_SVG: SystemLogoType = '1';
 const LOGO_TYPE_IMAGE: SystemLogoType = '2';
+const LOGO_MAX_SIZE_KB = 500;
+const LOGO_MAX_SIZE = LOGO_MAX_SIZE_KB * 1024;
 const FORM_ID = 'system-config-form';
 const FORM_INPUT_ID_SUFFIX = '_input';
 const TEXTAREA_MIRROR_ID = `${FORM_ID}-textarea-autosize-mirror`;
@@ -136,6 +138,7 @@ const TEXT: Record<
     noLogoUrl: string;
     logoUrlCopied: string;
     logoUploadSuccess: string;
+    logoSizeExceeded: string;
     saveSuccess: string;
   }
 > = {
@@ -172,8 +175,8 @@ const TEXT: Record<
       '请输入完整 SVGElement，例如 <svg viewBox="0 0 32 32">...</svg>',
     svgPreview: 'SVG 预览',
     noSvgPreview: '暂无 SVG 预览',
-    uploadTipTooltip: '支持 PNG、JPG、WebP、SVG 格式',
-    uploadTip: '支持 PNG / JPG / WebP / SVG，建议使用透明背景 Logo',
+    uploadTipTooltip: '支持 PNG、JPG、WebP、SVG 格式，最大 500KB',
+    uploadTip: '支持 PNG / JPG / WebP / SVG，最大 500KB，建议使用透明背景 Logo',
     logoPath: 'Logo 地址',
     logoPathRequired: '请上传 Logo 图片',
     logoPathPlaceholder: '上传后自动写入 system/ 目录地址',
@@ -181,6 +184,7 @@ const TEXT: Record<
     noLogoUrl: '暂无可复制的 Logo 地址',
     logoUrlCopied: 'Logo 地址已复制',
     logoUploadSuccess: 'Logo 上传成功',
+    logoSizeExceeded: 'Logo 图片大小不能超过 500KB',
     saveSuccess: '系统设置保存成功',
   },
   'en-US': {
@@ -262,9 +266,9 @@ const TEXT: Record<
       'Introduce un SVGElement completo, por ejemplo <svg viewBox="0 0 32 32">...</svg>',
     svgPreview: 'Vista previa SVG',
     noSvgPreview: 'Sin vista previa SVG',
-    uploadTipTooltip: 'Se admiten PNG, JPG, WebP y SVG',
+    uploadTipTooltip: 'Se admiten PNG, JPG, WebP y SVG. Máximo 500KB',
     uploadTip:
-      'Se admiten PNG / JPG / WebP / SVG. Se recomienda un Logo con fondo transparente.',
+      'Se admiten PNG / JPG / WebP / SVG. Máximo 500KB. Se recomienda un Logo con fondo transparente.',
     logoPath: 'Ruta del Logo',
     logoPathRequired: 'Sube una imagen de Logo',
     logoPathPlaceholder:
@@ -273,6 +277,7 @@ const TEXT: Record<
     noLogoUrl: 'No hay URL de Logo para copiar',
     logoUrlCopied: 'URL de Logo copiada',
     logoUploadSuccess: 'Logo subido correctamente',
+    logoSizeExceeded: 'La imagen del Logo no puede superar los 500KB',
     saveSuccess: 'Configuración del sistema guardada correctamente',
   },
 };
@@ -387,10 +392,12 @@ function SystemConfigPage() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [logoType, setLogoType] = useState<SystemLogoType>(LOGO_TYPE_IMAGE);
+  const [logoPath, setLogoPath] = useState('');
   const [svgPreview, setSvgPreview] = useState('');
   const uploadRef = useRef<
     UploadInstance & { getRootDOMNode?: () => HTMLElement | null }
   >(null);
+  const logoReselectInputRef = useRef<HTMLInputElement>(null);
 
   const currentLogoUrl = profile.logoUrl;
   const logoFullUrl = joinUrl(profile.obsCloudBase, profile.config.logoPath);
@@ -418,6 +425,7 @@ function SystemConfigPage() {
       const formValues = profileToFormValues(result);
       setProfile(result);
       setLogoType(formValues.logoType || LOGO_TYPE_IMAGE);
+      setLogoPath(formValues.logoPath || '');
       setSvgPreview(formValues.logoSvgElement || '');
       form.setFieldsValue(formValues);
       setSystemProfile?.(result);
@@ -456,11 +464,15 @@ function SystemConfigPage() {
     setSvgPreview(logoSvgElement);
   };
 
-  const handleUploadLogo = async ({
-    file,
-    onSuccess,
-    onError,
-  }: RequestOptions) => {
+  const handleBeforeUploadLogo = (file: File) => {
+    if (file.size > LOGO_MAX_SIZE) {
+      Message.warning(text.logoSizeExceeded);
+      return false;
+    }
+    return true;
+  };
+
+  const uploadLogoFile = async (file: File) => {
     setUploading(true);
     try {
       const uploadResult = normalizeLogoUploadResult(
@@ -478,16 +490,41 @@ function SystemConfigPage() {
       form.setFieldValue('logoType', LOGO_TYPE_IMAGE);
       form.setFieldValue('logoPath', uploadResult.objectPath || '');
       setLogoType(LOGO_TYPE_IMAGE);
+      setLogoPath(uploadResult.objectPath || '');
       setProfile(nextProfile);
       setSystemProfile?.(nextProfile);
       writeSystemProfile(nextProfile);
-      onSuccess(uploadResult);
       Message.success(text.logoUploadSuccess);
-    } catch (error) {
-      onError(error as object);
+      return uploadResult;
     } finally {
       setUploading(false);
     }
+  };
+
+  const handleUploadLogo = async ({
+    file,
+    onSuccess,
+    onError,
+  }: RequestOptions) => {
+    try {
+      const uploadResult = await uploadLogoFile(file);
+      onSuccess(uploadResult);
+    } catch (error) {
+      onError(error as object);
+    }
+  };
+
+  const handleReselectLogoFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+
+    if (!file || !handleBeforeUploadLogo(file)) {
+      return;
+    }
+
+    await uploadLogoFile(file);
   };
 
   const handleCopyLogoUrl = () => {
@@ -496,13 +533,12 @@ function SystemConfigPage() {
       return;
     }
     copy(logoFullUrl);
-    Message.success('Logo 地址已复制');
+    Message.success(text.logoUrlCopied);
   };
 
   const handleReselectLogo = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
-    const uploadRoot = uploadRef.current?.getRootDOMNode?.();
-    uploadRoot?.querySelector<HTMLInputElement>('input[type="file"]')?.click();
+    logoReselectInputRef.current?.click();
   };
 
   const handleSave = async () => {
@@ -515,6 +551,7 @@ function SystemConfigPage() {
       const formValues = profileToFormValues(result);
       setProfile(result);
       setLogoType(formValues.logoType || LOGO_TYPE_IMAGE);
+      setLogoPath(formValues.logoPath || '');
       setSvgPreview(formValues.logoSvgElement || '');
       form.setFieldsValue(formValues);
       setSystemProfile?.(result);
@@ -726,6 +763,7 @@ function SystemConfigPage() {
                         listType="picture-card"
                         imagePreview
                         accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml"
+                        beforeUpload={handleBeforeUploadLogo}
                         customRequest={handleUploadLogo}
                         limit={1}
                         showUploadList={{
@@ -773,6 +811,13 @@ function SystemConfigPage() {
                         }}
                         onRemove={() => false}
                       />
+                      <input
+                        ref={logoReselectInputRef}
+                        type="file"
+                        accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml"
+                        style={{ display: 'none' }}
+                        onChange={handleReselectLogoFileChange}
+                      />
                     </div>
                     <Tooltip content={text.uploadTipTooltip}>
                       <Typography.Text
@@ -790,21 +835,18 @@ function SystemConfigPage() {
                     rules={[{ required: true, message: text.logoPathRequired }]}
                   >
                     <Input
-                      id={getFormControlId('logoPath')}
+                      className={styles.logoPathInput}
                       name="logoPath"
                       placeholder={text.logoPathPlaceholder}
                       readOnly
-                      afterStyle={{
-                        marginLeft: 8,
-                        padding: 0,
-                        border: 0,
-                        background: 'transparent',
-                      }}
+                      style={{ width: '100%' }}
                       addAfter={
                         <Button
+                          className={styles.logoPathCopyButton}
                           type="text"
                           size="small"
                           onClick={handleCopyLogoUrl}
+                          style={{ whiteSpace: 'nowrap' }}
                         >
                           {text.copy}
                         </Button>
