@@ -1,288 +1,166 @@
-var g = Object.defineProperty;
-var v = Object.getOwnPropertySymbols;
-var w = Object.prototype.hasOwnProperty,
-  S = Object.prototype.propertyIsEnumerable;
-var y = (a, i, o) =>
-    i in a
-      ? g(a, i, { enumerable: !0, configurable: !0, writable: !0, value: o })
-      : (a[i] = o),
-  f = (a, i) => {
-    for (var o in i || (i = {})) w.call(i, o) && y(a, o, i[o]);
-    if (v) for (var o of v(i)) S.call(i, o) && y(a, o, i[o]);
-    return a;
+var B = Object.defineProperty;
+var E = Object.getOwnPropertySymbols;
+var g = Object.prototype.hasOwnProperty,
+  w = Object.prototype.propertyIsEnumerable;
+var C = (r, o, l) =>
+    o in r
+      ? B(r, o, { enumerable: !0, configurable: !0, writable: !0, value: l })
+      : (r[o] = l),
+  c = (r, o) => {
+    for (var l in o || (o = {})) g.call(o, l) && C(r, l, o[l]);
+    if (E) for (var l of E(o)) w.call(o, l) && C(r, l, o[l]);
+    return r;
   };
 import {
+  a as i,
   j as t,
-  c as k,
-  T as _,
-  f as A,
+  d as S,
+  T as u,
+  h as k,
   r as e,
-  u as b,
-  at as M,
-  D as d,
-  aI as D,
-  aj as F,
-  aH as G,
-  au as O,
-  i as V,
-} from './vendor.c4f0d1e5.js';
+  u as A,
+  av as M,
+  D as m,
+  aJ as F,
+  al as O,
+  aI as G,
+  aw as D,
+  k as I,
+} from './vendor.aac6daa3.js';
 /* empty css               */ /* empty css              */ import {
-  C as j,
-  A as N,
-  L as I,
-  a as U,
-  T as R,
-} from './index.91c0c8fa.js';
-import { i as L } from './index.9464998a.js';
-import { u as H } from './index.1f1355a3.js';
-var C = {
-    'customer-tooltip-title': '_customer-tooltip-title_1c8i1_1',
-    'customer-tooltip-item': '_customer-tooltip-item_1c8i1_4',
-  },
-  m =
-    '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/components/Chart/customer-tooltip.tsx';
-const { Text: B } = _;
-function Z(a) {
-  const { formatter: i = (l) => l, color: o, name: n } = a;
-  return t.exports.jsxDEV(
-    'div',
-    {
-      className: C['customer-tooltip'],
-      children: [
-        t.exports.jsxDEV(
-          'div',
-          {
-            className: C['customer-tooltip-title'],
-            children: t.exports.jsxDEV(
-              B,
-              { bold: !0, children: a.title },
-              void 0,
-              !1,
-              { fileName: m, lineNumber: 23, columnNumber: 9 },
-              this
-            ),
-          },
-          void 0,
-          !1,
-          { fileName: m, lineNumber: 22, columnNumber: 7 },
-          this
+  C as U,
+  A as v,
+  L,
+  a as R,
+  T as Z,
+} from './index.8450b337.js';
+import { i as H } from './index.9464998a.js';
+import { u as N } from './index.afddc419.js';
+var _ = {
+  'customer-tooltip-title': '_customer-tooltip-title_1c8i1_1',
+  'customer-tooltip-item': '_customer-tooltip-item_1c8i1_4',
+};
+const { Text: y } = u;
+function V(r) {
+  const { formatter: o = (a) => a, color: l, name: s } = r;
+  return i('div', {
+    className: _['customer-tooltip'],
+    children: [
+      t('div', {
+        className: _['customer-tooltip-title'],
+        children: t(y, { bold: !0, children: r.title }),
+      }),
+      t('div', {
+        children: r.data.map((a, p) =>
+          i(
+            'div',
+            {
+              className: _['customer-tooltip-item'],
+              children: [
+                i('div', {
+                  children: [t(S, { color: l || a.color }), s || a.name],
+                }),
+                t('div', {
+                  children: t(y, { bold: !0, children: o(a.value) }),
+                }),
+              ],
+            },
+            p
+          )
         ),
-        t.exports.jsxDEV(
-          'div',
-          {
-            children: a.data.map((l, c) =>
-              t.exports.jsxDEV(
-                'div',
-                {
-                  className: C['customer-tooltip-item'],
-                  children: [
-                    t.exports.jsxDEV(
-                      'div',
-                      {
-                        children: [
-                          t.exports.jsxDEV(
-                            k,
-                            { color: o || l.color },
-                            void 0,
-                            !1,
-                            { fileName: m, lineNumber: 29, columnNumber: 15 },
-                            this
-                          ),
-                          n || l.name,
-                        ],
-                      },
-                      void 0,
-                      !0,
-                      { fileName: m, lineNumber: 28, columnNumber: 13 },
-                      this
-                    ),
-                    t.exports.jsxDEV(
-                      'div',
-                      {
-                        children: t.exports.jsxDEV(
-                          B,
-                          { bold: !0, children: i(l.value) },
-                          void 0,
-                          !1,
-                          { fileName: m, lineNumber: 33, columnNumber: 15 },
-                          this
-                        ),
-                      },
-                      void 0,
-                      !1,
-                      { fileName: m, lineNumber: 32, columnNumber: 13 },
-                      this
-                    ),
-                  ],
-                },
-                c,
-                !0,
-                { fileName: m, lineNumber: 27, columnNumber: 11 },
-                this
-              )
-            ),
-          },
-          void 0,
-          !1,
-          { fileName: m, lineNumber: 25, columnNumber: 7 },
-          this
-        ),
-      ],
-    },
-    void 0,
-    !0,
-    { fileName: m, lineNumber: 21, columnNumber: 5 },
-    this
-  );
+      }),
+    ],
+  });
 }
-var p =
-  '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/components/Chart/overview-area-line.tsx';
-function T({
-  data: a,
-  loading: i,
-  name: o = '\u603B\u5185\u5BB9\u91CF',
-  color: n = '#4080FF',
+function b({
+  data: r,
+  loading: o,
+  name: l = '\u603B\u5185\u5BB9\u91CF',
+  color: s = '#4080FF',
 }) {
-  return t.exports.jsxDEV(
-    A,
-    {
-      loading: i,
-      style: { width: '100%' },
-      children: t.exports.jsxDEV(
-        j,
-        {
-          scale: { value: { min: 0 } },
-          padding: [10, 20, 50, 40],
-          autoFit: !0,
-          height: 300,
-          data: a,
-          className: 'chart-wrapper',
-          children: [
-            t.exports.jsxDEV(
-              N,
-              {
-                name: 'count',
-                title: !0,
-                grid: { line: { style: { lineDash: [4, 4] } } },
-                label: {
-                  formatter(l) {
-                    return `${Number(l) / 1e3}k`;
-                  },
-                },
-              },
-              void 0,
-              !1,
-              { fileName: p, lineNumber: 27, columnNumber: 9 },
-              this
-            ),
-            t.exports.jsxDEV(
-              N,
-              {
-                name: 'date',
-                grid: { line: { style: { stroke: '#E5E8EF' } } },
-              },
-              void 0,
-              !1,
-              { fileName: p, lineNumber: 43, columnNumber: 9 },
-              this
-            ),
-            t.exports.jsxDEV(
-              I,
-              {
-                shape: 'smooth',
-                position: 'date*count',
-                size: 3,
-                color: 'l (0) 0:#1EE7FF .57:#249AFF .85:#6F42FB',
-              },
-              void 0,
-              !1,
-              { fileName: p, lineNumber: 44, columnNumber: 9 },
-              this
-            ),
-            t.exports.jsxDEV(
-              U,
-              {
-                position: 'date*count',
-                shape: 'smooth',
-                color:
-                  'l (90) 0:rgba(17, 126, 255, 0.5)  1:rgba(17, 128, 255, 0)',
-              },
-              void 0,
-              !1,
-              { fileName: p, lineNumber: 50, columnNumber: 9 },
-              this
-            ),
-            t.exports.jsxDEV(
-              R,
-              {
-                showCrosshairs: !0,
-                showMarkers: !0,
-                marker: {
-                  lineWidth: 3,
-                  stroke: n,
-                  fill: '#ffffff',
-                  symbol: 'circle',
-                  r: 8,
-                },
-                children: (l, c) =>
-                  t.exports.jsxDEV(
-                    Z,
-                    {
-                      title: l,
-                      data: c,
-                      color: n,
-                      name: o,
-                      formatter: (h) => Number(h).toLocaleString(),
-                    },
-                    void 0,
-                    !1,
-                    { fileName: p, lineNumber: 68, columnNumber: 15 },
-                    this
-                  ),
-              },
-              void 0,
-              !1,
-              { fileName: p, lineNumber: 55, columnNumber: 9 },
-              this
-            ),
-          ],
-        },
-        void 0,
-        !0,
-        { fileName: p, lineNumber: 19, columnNumber: 7 },
-        this
-      ),
-    },
-    void 0,
-    !1,
-    { fileName: p, lineNumber: 18, columnNumber: 5 },
-    this
-  );
+  return t(k, {
+    loading: o,
+    style: { width: '100%' },
+    children: i(U, {
+      scale: { value: { min: 0 } },
+      padding: [10, 20, 50, 40],
+      autoFit: !0,
+      height: 300,
+      data: r,
+      className: 'chart-wrapper',
+      children: [
+        t(v, {
+          name: 'count',
+          title: !0,
+          grid: { line: { style: { lineDash: [4, 4] } } },
+          label: {
+            formatter(a) {
+              return `${Number(a) / 1e3}k`;
+            },
+          },
+        }),
+        t(v, {
+          name: 'date',
+          grid: { line: { style: { stroke: '#E5E8EF' } } },
+        }),
+        t(L, {
+          shape: 'smooth',
+          position: 'date*count',
+          size: 3,
+          color: 'l (0) 0:#1EE7FF .57:#249AFF .85:#6F42FB',
+        }),
+        t(R, {
+          position: 'date*count',
+          shape: 'smooth',
+          color: 'l (90) 0:rgba(17, 126, 255, 0.5)  1:rgba(17, 128, 255, 0)',
+        }),
+        t(Z, {
+          showCrosshairs: !0,
+          showMarkers: !0,
+          marker: {
+            lineWidth: 3,
+            stroke: s,
+            fill: '#ffffff',
+            symbol: 'circle',
+            r: 8,
+          },
+          children: (a, p) =>
+            t(V, {
+              title: a,
+              data: p,
+              color: s,
+              name: l,
+              formatter: (x) => Number(x).toLocaleString(),
+            }),
+        }),
+      ],
+    }),
+  });
 }
-const $ = '_container_1ghec_1',
-  z = '_item_1ghec_10',
-  P = '_icon_1ghec_16',
-  W = '_title_1ghec_26',
-  q = '_count_1ghec_30',
+const j = '_container_1ghec_1',
+  T = '_item_1ghec_10',
+  $ = '_icon_1ghec_16',
+  P = '_title_1ghec_26',
+  z = '_count_1ghec_30',
   J = '_unit_1ghec_35',
-  K = '_divider_1ghec_41',
-  Q = '_ctw_1ghec_44';
-var s = {
-  container: $,
-  item: z,
-  icon: P,
-  title: W,
-  count: q,
+  W = '_divider_1ghec_41',
+  q = '_ctw_1ghec_44';
+var n = {
+  container: j,
+  item: T,
+  icon: $,
+  title: P,
+  count: z,
   unit: J,
-  divider: K,
-  ctw: Q,
+  divider: W,
+  ctw: q,
   'chart-title': '_chart-title_1ghec_49',
   'chart-sub-title': '_chart-sub-title_1ghec_53',
 };
-const X = (a) =>
+const K = (r) =>
     e.exports.createElement(
       'svg',
-      f(
+      c(
         {
           width: 55,
           height: 58,
@@ -290,7 +168,7 @@ const X = (a) =>
           fill: 'none',
           xmlns: 'http://www.w3.org/2000/svg',
         },
-        a
+        r
       ),
       e.exports.createElement(
         'g',
@@ -626,10 +504,10 @@ const X = (a) =>
         )
       )
     ),
-  Y = (a) =>
+  Q = (r) =>
     e.exports.createElement(
       'svg',
-      f(
+      c(
         {
           width: 25,
           height: 24,
@@ -637,7 +515,7 @@ const X = (a) =>
           fill: 'none',
           xmlns: 'http://www.w3.org/2000/svg',
         },
-        a
+        r
       ),
       e.exports.createElement(
         'g',
@@ -908,10 +786,10 @@ const X = (a) =>
         )
       )
     ),
-  ee = (a) =>
+  X = (r) =>
     e.exports.createElement(
       'svg',
-      f(
+      c(
         {
           width: 24,
           height: 24,
@@ -919,7 +797,7 @@ const X = (a) =>
           fill: 'none',
           xmlns: 'http://www.w3.org/2000/svg',
         },
-        a
+        r
       ),
       e.exports.createElement(
         'g',
@@ -1572,10 +1450,10 @@ const X = (a) =>
         )
       )
     ),
-  te = (a) =>
+  Y = (r) =>
     e.exports.createElement(
       'svg',
-      f(
+      c(
         {
           width: 24,
           height: 27,
@@ -1583,7 +1461,7 @@ const X = (a) =>
           fill: 'none',
           xmlns: 'http://www.w3.org/2000/svg',
         },
-        a
+        r
       ),
       e.exports.createElement(
         'mask',
@@ -1883,394 +1761,136 @@ const X = (a) =>
           e.exports.createElement('stop', { offset: 1, stopColor: '#0BA7FF' })
         )
       )
-    );
-var r =
-  '/Users/zhangjie/Space/MoMoGpt/marketing-web/src/pages/dashboard/workplace/overview.tsx';
-const { Row: re, Col: x } = G;
-function u(a) {
-  const { icon: i, title: o, count: n, loading: l, unit: c } = a;
-  return t.exports.jsxDEV(
-    'div',
-    {
-      className: s.item,
-      children: [
-        t.exports.jsxDEV(
-          'div',
-          { className: s.icon, children: i },
-          void 0,
-          !1,
-          { fileName: r, lineNumber: 37, columnNumber: 7 },
-          this
-        ),
-        t.exports.jsxDEV(
-          'div',
-          {
-            children: t.exports.jsxDEV(
-              O,
-              {
-                loading: l,
-                text: { rows: 2, width: 60 },
-                animation: !0,
-                children: [
-                  t.exports.jsxDEV(
-                    'div',
-                    { className: s.title, children: o },
-                    void 0,
-                    !1,
-                    { fileName: r, lineNumber: 40, columnNumber: 11 },
-                    this
-                  ),
-                  t.exports.jsxDEV(
-                    'div',
-                    {
-                      className: s.count,
-                      children: [
-                        n,
-                        t.exports.jsxDEV(
-                          'span',
-                          { className: s.unit, children: c },
-                          void 0,
-                          !1,
-                          { fileName: r, lineNumber: 43, columnNumber: 13 },
-                          this
-                        ),
-                      ],
-                    },
-                    void 0,
-                    !0,
-                    { fileName: r, lineNumber: 41, columnNumber: 11 },
-                    this
-                  ),
-                ],
-              },
-              void 0,
-              !0,
-              { fileName: r, lineNumber: 39, columnNumber: 9 },
-              this
-            ),
-          },
-          void 0,
-          !1,
-          { fileName: r, lineNumber: 38, columnNumber: 7 },
-          this
-        ),
-      ],
-    },
-    void 0,
-    !0,
-    { fileName: r, lineNumber: 36, columnNumber: 5 },
-    this
-  );
+    ),
+  { Row: ee, Col: f } = G;
+function d(r) {
+  const { icon: o, title: l, count: s, loading: a, unit: p } = r;
+  return i('div', {
+    className: n.item,
+    children: [
+      t('div', { className: n.icon, children: o }),
+      t('div', {
+        children: i(D, {
+          loading: a,
+          text: { rows: 2, width: 60 },
+          animation: !0,
+          children: [
+            t('div', { className: n.title, children: l }),
+            i('div', {
+              className: n.count,
+              children: [s, t('span', { className: n.unit, children: p })],
+            }),
+          ],
+        }),
+      }),
+    ],
+  });
 }
-function pe() {
-  const [a, i] = e.exports.useState({}),
-    [o, n] = e.exports.useState(!0),
-    l = H(L),
-    c = b((E) => E.userInfo || { name: '', permissions: {} }),
-    h = () => {
-      n(!0),
-        V.get('/api/workplace/overview-content')
-          .then((E) => {
-            i(E.data);
+function se() {
+  const [r, o] = e.exports.useState({}),
+    [l, s] = e.exports.useState(!0),
+    a = N(H),
+    p = A((h) => h.userInfo || { name: '', permissions: {} }),
+    x = () => {
+      s(!0),
+        I.get('/api/workplace/overview-content')
+          .then((h) => {
+            o(h.data);
           })
           .finally(() => {
-            n(!1);
+            s(!1);
           });
     };
   return (
     e.exports.useEffect(() => {
-      h();
+      x();
     }, []),
-    t.exports.jsxDEV(
-      M,
-      {
-        children: [
-          t.exports.jsxDEV(
-            _.Title,
-            { heading: 5, children: [l['workplace.welcomeBack'], c.name] },
-            void 0,
-            !0,
-            { fileName: r, lineNumber: 91, columnNumber: 7 },
-            this
-          ),
-          t.exports.jsxDEV(
-            d,
-            {},
-            void 0,
-            !1,
-            { fileName: r, lineNumber: 95, columnNumber: 7 },
-            this
-          ),
-          t.exports.jsxDEV(
-            re,
-            {
+    i(M, {
+      children: [
+        i(u.Title, {
+          heading: 5,
+          children: [a['workplace.welcomeBack'], p.name],
+        }),
+        t(m, {}),
+        i(ee, {
+          children: [
+            t(f, {
+              flex: 1,
+              children: t(d, {
+                icon: t(K, {}),
+                title: a['workplace.totalOnlyData'],
+                count: r.allContents,
+                loading: l,
+                unit: a['workplace.pecs'],
+              }),
+            }),
+            t(m, { type: 'vertical', className: n.divider }),
+            t(f, {
+              flex: 1,
+              children: t(d, {
+                icon: t(X, {}),
+                title: a['workplace.contentInMarket'],
+                count: r.liveContents,
+                loading: l,
+                unit: a['workplace.pecs'],
+              }),
+            }),
+            t(m, { type: 'vertical', className: n.divider }),
+            t(f, {
+              flex: 1,
+              children: t(d, {
+                icon: t(Q, {}),
+                title: a['workplace.comments'],
+                count: r.increaseComments,
+                loading: l,
+                unit: a['workplace.pecs'],
+              }),
+            }),
+            t(m, { type: 'vertical', className: n.divider }),
+            t(f, {
+              flex: 1,
+              children: t(d, {
+                icon: t(Y, {}),
+                title: a['workplace.growth'],
+                count: i('span', {
+                  children: [
+                    r.growthRate,
+                    ' ',
+                    t(F, {
+                      style: { fontSize: 18, color: 'rgb(var(--green-6))' },
+                    }),
+                  ],
+                }),
+                loading: l,
+              }),
+            }),
+          ],
+        }),
+        t(m, {}),
+        i('div', {
+          children: [
+            i('div', {
+              className: n.ctw,
               children: [
-                t.exports.jsxDEV(
-                  x,
-                  {
-                    flex: 1,
-                    children: t.exports.jsxDEV(
-                      u,
-                      {
-                        icon: t.exports.jsxDEV(
-                          X,
-                          {},
-                          void 0,
-                          !1,
-                          { fileName: r, lineNumber: 99, columnNumber: 19 },
-                          this
-                        ),
-                        title: l['workplace.totalOnlyData'],
-                        count: a.allContents,
-                        loading: o,
-                        unit: l['workplace.pecs'],
-                      },
-                      void 0,
-                      !1,
-                      { fileName: r, lineNumber: 98, columnNumber: 11 },
-                      this
-                    ),
-                  },
-                  void 0,
-                  !1,
-                  { fileName: r, lineNumber: 97, columnNumber: 9 },
-                  this
-                ),
-                t.exports.jsxDEV(
-                  d,
-                  { type: 'vertical', className: s.divider },
-                  void 0,
-                  !1,
-                  { fileName: r, lineNumber: 106, columnNumber: 9 },
-                  this
-                ),
-                t.exports.jsxDEV(
-                  x,
-                  {
-                    flex: 1,
-                    children: t.exports.jsxDEV(
-                      u,
-                      {
-                        icon: t.exports.jsxDEV(
-                          ee,
-                          {},
-                          void 0,
-                          !1,
-                          { fileName: r, lineNumber: 109, columnNumber: 19 },
-                          this
-                        ),
-                        title: l['workplace.contentInMarket'],
-                        count: a.liveContents,
-                        loading: o,
-                        unit: l['workplace.pecs'],
-                      },
-                      void 0,
-                      !1,
-                      { fileName: r, lineNumber: 108, columnNumber: 11 },
-                      this
-                    ),
-                  },
-                  void 0,
-                  !1,
-                  { fileName: r, lineNumber: 107, columnNumber: 9 },
-                  this
-                ),
-                t.exports.jsxDEV(
-                  d,
-                  { type: 'vertical', className: s.divider },
-                  void 0,
-                  !1,
-                  { fileName: r, lineNumber: 116, columnNumber: 9 },
-                  this
-                ),
-                t.exports.jsxDEV(
-                  x,
-                  {
-                    flex: 1,
-                    children: t.exports.jsxDEV(
-                      u,
-                      {
-                        icon: t.exports.jsxDEV(
-                          Y,
-                          {},
-                          void 0,
-                          !1,
-                          { fileName: r, lineNumber: 119, columnNumber: 19 },
-                          this
-                        ),
-                        title: l['workplace.comments'],
-                        count: a.increaseComments,
-                        loading: o,
-                        unit: l['workplace.pecs'],
-                      },
-                      void 0,
-                      !1,
-                      { fileName: r, lineNumber: 118, columnNumber: 11 },
-                      this
-                    ),
-                  },
-                  void 0,
-                  !1,
-                  { fileName: r, lineNumber: 117, columnNumber: 9 },
-                  this
-                ),
-                t.exports.jsxDEV(
-                  d,
-                  { type: 'vertical', className: s.divider },
-                  void 0,
-                  !1,
-                  { fileName: r, lineNumber: 126, columnNumber: 9 },
-                  this
-                ),
-                t.exports.jsxDEV(
-                  x,
-                  {
-                    flex: 1,
-                    children: t.exports.jsxDEV(
-                      u,
-                      {
-                        icon: t.exports.jsxDEV(
-                          te,
-                          {},
-                          void 0,
-                          !1,
-                          { fileName: r, lineNumber: 129, columnNumber: 19 },
-                          this
-                        ),
-                        title: l['workplace.growth'],
-                        count: t.exports.jsxDEV(
-                          'span',
-                          {
-                            children: [
-                              a.growthRate,
-                              ' ',
-                              t.exports.jsxDEV(
-                                D,
-                                {
-                                  style: {
-                                    fontSize: 18,
-                                    color: 'rgb(var(--green-6))',
-                                  },
-                                },
-                                void 0,
-                                !1,
-                                {
-                                  fileName: r,
-                                  lineNumber: 134,
-                                  columnNumber: 17,
-                                },
-                                this
-                              ),
-                            ],
-                          },
-                          void 0,
-                          !0,
-                          { fileName: r, lineNumber: 132, columnNumber: 15 },
-                          this
-                        ),
-                        loading: o,
-                      },
-                      void 0,
-                      !1,
-                      { fileName: r, lineNumber: 128, columnNumber: 11 },
-                      this
-                    ),
-                  },
-                  void 0,
-                  !1,
-                  { fileName: r, lineNumber: 127, columnNumber: 9 },
-                  this
-                ),
+                i(u.Paragraph, {
+                  className: n['chart-title'],
+                  style: { marginBottom: 0 },
+                  children: [
+                    a['workplace.contentData'],
+                    i('span', {
+                      className: n['chart-sub-title'],
+                      children: ['(', a['workplace.1year'], ')'],
+                    }),
+                  ],
+                }),
+                t(O, { children: a['workplace.seeMore'] }),
               ],
-            },
-            void 0,
-            !0,
-            { fileName: r, lineNumber: 96, columnNumber: 7 },
-            this
-          ),
-          t.exports.jsxDEV(
-            d,
-            {},
-            void 0,
-            !1,
-            { fileName: r, lineNumber: 143, columnNumber: 7 },
-            this
-          ),
-          t.exports.jsxDEV(
-            'div',
-            {
-              children: [
-                t.exports.jsxDEV(
-                  'div',
-                  {
-                    className: s.ctw,
-                    children: [
-                      t.exports.jsxDEV(
-                        _.Paragraph,
-                        {
-                          className: s['chart-title'],
-                          style: { marginBottom: 0 },
-                          children: [
-                            l['workplace.contentData'],
-                            t.exports.jsxDEV(
-                              'span',
-                              {
-                                className: s['chart-sub-title'],
-                                children: ['(', l['workplace.1year'], ')'],
-                              },
-                              void 0,
-                              !0,
-                              {
-                                fileName: r,
-                                lineNumber: 151,
-                                columnNumber: 13,
-                              },
-                              this
-                            ),
-                          ],
-                        },
-                        void 0,
-                        !0,
-                        { fileName: r, lineNumber: 146, columnNumber: 11 },
-                        this
-                      ),
-                      t.exports.jsxDEV(
-                        F,
-                        { children: l['workplace.seeMore'] },
-                        void 0,
-                        !1,
-                        { fileName: r, lineNumber: 155, columnNumber: 11 },
-                        this
-                      ),
-                    ],
-                  },
-                  void 0,
-                  !0,
-                  { fileName: r, lineNumber: 145, columnNumber: 9 },
-                  this
-                ),
-                t.exports.jsxDEV(
-                  T,
-                  { data: a.chartData, loading: o },
-                  void 0,
-                  !1,
-                  { fileName: r, lineNumber: 157, columnNumber: 9 },
-                  this
-                ),
-              ],
-            },
-            void 0,
-            !0,
-            { fileName: r, lineNumber: 144, columnNumber: 7 },
-            this
-          ),
-        ],
-      },
-      void 0,
-      !0,
-      { fileName: r, lineNumber: 90, columnNumber: 5 },
-      this
-    )
+            }),
+            t(b, { data: r.chartData, loading: l }),
+          ],
+        }),
+      ],
+    })
   );
 }
-export { pe as default };
+export { se as default };

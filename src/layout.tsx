@@ -31,11 +31,14 @@ import lazyload from './utils/lazyload';
 import { getRouteIcon } from './utils/routeIcon';
 import {
   getDefaultTenantCode,
+  getResolvedTenantCodeForPath,
+  getResolvedTenantPathPrefix,
   getTenantCodeFromPathname,
   stripTenantFromPathname,
 } from './utils/tenant';
 import {
   RouteTab,
+  ensureTabListTenantPrefix,
   getTabCacheKey,
   getTabIdentity,
   readTabsFromStorage,
@@ -124,8 +127,16 @@ function PageLayout() {
   const showFooter = settings.footer && urlParams.footer !== false;
 
   const flattenRoutes = useMemo(() => getFlattenRoutes(routes) || [], [routes]);
-  const defaultTab = useMemo(() => {
-    const defaultPath = `${pathPrefix}/${defaultRoute}`;
+  const tabPathPrefix = useMemo(
+    () => getResolvedTenantPathPrefix(pathname, userInfo),
+    [pathname, userInfo]
+  );
+  const defaultTab = useMemo((): RouteTab | null => {
+    if (!defaultRoute) {
+      return null;
+    }
+    const prefix = tabPathPrefix.replace(/\/$/, '');
+    const defaultPath = `${prefix}/${defaultRoute}`.replace(/\/+/g, '/');
     return (
       formatTab(defaultPath, '', flattenRoutes) || {
         title: defaultRoute,
@@ -134,7 +145,7 @@ function PageLayout() {
         fullPath: defaultPath,
       }
     );
-  }, [defaultRoute, flattenRoutes, pathPrefix]);
+  }, [defaultRoute, flattenRoutes, tabPathPrefix]);
 
   const currentTab = useMemo(
     () => formatTab(location.pathname, location.search, flattenRoutes),
@@ -142,13 +153,25 @@ function PageLayout() {
   );
 
   useEffect(() => {
-    if (!defaultRoute || !showTabBar) {
+    if (!defaultRoute || !showTabBar || !defaultTab) {
       return;
     }
 
+    const resolvedTenant = getResolvedTenantCodeForPath(pathname, userInfo);
     const storedTabs = readTabsFromStorage(tabIdentity);
-    setTabList(storedTabs?.length ? storedTabs : [defaultTab]);
-  }, [defaultRoute, defaultTab, identityKey, showTabBar, tabIdentity]);
+    const normalizedStored = storedTabs?.length
+      ? ensureTabListTenantPrefix(storedTabs, resolvedTenant)
+      : null;
+    setTabList(normalizedStored?.length ? normalizedStored : [defaultTab]);
+  }, [
+    defaultRoute,
+    defaultTab,
+    identityKey,
+    pathname,
+    showTabBar,
+    tabIdentity,
+    userInfo,
+  ]);
 
   useEffect(() => {
     if (showTabBar || !tabList.length) {
@@ -191,7 +214,11 @@ function PageLayout() {
         return [currentTab];
       }
 
-      const nextList = list.length ? list : [defaultTab];
+      const fallback = defaultTab ? [defaultTab] : [];
+      const nextList = list.length ? list : fallback;
+      if (!nextList.length) {
+        return [currentTab];
+      }
       if (nextList.some((tab) => tab.fullPath === currentTab.fullPath)) {
         return nextList;
       }
@@ -209,7 +236,15 @@ function PageLayout() {
 
   const handleTabsChange = useCallback(
     (tabs: RouteTab[]) => {
-      setTabList(tabs.length ? tabs : [defaultTab]);
+      if (tabs.length) {
+        setTabList(tabs);
+        return;
+      }
+      if (defaultTab) {
+        setTabList([defaultTab]);
+      } else {
+        setTabList([]);
+      }
     },
     [defaultTab]
   );
@@ -380,7 +415,7 @@ function PageLayout() {
             </Sider>
           )}
           <Layout className={styles['layout-content']} style={paddingStyle}>
-            {showTabBar && (
+            {showTabBar && defaultTab && (
               <TabBar
                 defaultTab={defaultTab}
                 tabList={tabList.length ? tabList : [defaultTab]}
@@ -393,7 +428,8 @@ function PageLayout() {
             )}
             <div
               className={cs(styles['layout-content-wrapper'], {
-                [styles['layout-content-wrapper-with-tab']]: showTabBar,
+                [styles['layout-content-wrapper-with-tab']]:
+                  showTabBar && !!defaultTab,
               })}
             >
               {!!breadcrumb.length && (
@@ -420,7 +456,13 @@ function PageLayout() {
                     );
                   })}
                   <Route exact path={pathPrefix || '/'}>
-                    <Redirect to={`${pathPrefix}/${defaultRoute}`} />
+                    {defaultRoute ? (
+                      <Redirect to={`${pathPrefix}/${defaultRoute}`} />
+                    ) : (
+                      <Redirect
+                        to={pathPrefix ? `${pathPrefix}/403` : '/403'}
+                      />
+                    )}
                   </Route>
                   <Route
                     path="*"

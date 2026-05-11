@@ -1,3 +1,5 @@
+import { getTenantCodeFromPathname } from './tenant';
+
 export interface RouteTab {
   title: string;
   name: string;
@@ -105,4 +107,33 @@ export function removeTabsFromStorage(identity: TabIdentity) {
   } catch {
     // ignore
   }
+}
+
+/** 将缺少租户前缀的页签路径补全为 /{tenant}/... */
+export function ensureTabPathsHaveTenantPrefix(
+  tab: RouteTab,
+  tenantCode: string
+): RouteTab {
+  if (!tenantCode) {
+    return tab;
+  }
+  if (getTenantCodeFromPathname(tab.path)) {
+    return tab;
+  }
+  const prefix = `/${tenantCode}`.replace(/\/$/, '');
+  const normalized = tab.path.startsWith('/') ? tab.path : `/${tab.path}`;
+  const path = `${prefix}${normalized}`.replace(/\/+/g, '/');
+  const queryIndex = tab.fullPath.indexOf('?');
+  const search = queryIndex >= 0 ? tab.fullPath.slice(queryIndex) : '';
+  return { ...tab, path, fullPath: `${path}${search}` };
+}
+
+export function ensureTabListTenantPrefix(
+  tabs: RouteTab[],
+  tenantCode: string
+): RouteTab[] {
+  if (!tenantCode || !tabs.length) {
+    return tabs;
+  }
+  return tabs.map((t) => ensureTabPathsHaveTenantPrefix(t, tenantCode));
 }

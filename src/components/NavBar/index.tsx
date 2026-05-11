@@ -42,6 +42,7 @@ import {
 import { getAuthResourceCacheKey } from '@/api/auth';
 import { patchUserThemeItem } from '@/api/userTheme';
 import { patchLocalUserTheme } from '@/utils/userTheme';
+import { getSystemName, removeSystemProfile } from '@/utils/systemConfig';
 
 function Navbar({
   show,
@@ -60,7 +61,10 @@ function Navbar({
   const [, setUserStatus] = useStorage('userStatus');
   const [role, setRole] = useStorage('userRole', 'admin');
 
-  const { setLang, lang, theme, setTheme } = useContext(GlobalContext);
+  const { setLang, lang, theme, setTheme, systemProfile } =
+    useContext(GlobalContext);
+  const systemName = getSystemName(systemProfile, lang);
+  const logoUrl = systemProfile?.logoUrl;
 
   function clearLoginState() {
     const tenantCode = getTenantCodeFromPathname();
@@ -75,6 +79,7 @@ function Navbar({
     localStorage.removeItem('accessToken');
     localStorage.removeItem('organization');
     localStorage.removeItem('user-theme');
+    removeSystemProfile();
   }
 
   function logout() {
@@ -162,8 +167,16 @@ function Navbar({
     <div className={styles.navbar}>
       <div className={styles.left}>
         <div className={styles.logo}>
-          <Logo />
-          <div className={styles['logo-name']}>Arco Pro</div>
+          {logoUrl ? (
+            <img
+              className={styles['logo-image']}
+              src={logoUrl}
+              alt={systemName}
+            />
+          ) : (
+            <Logo />
+          )}
+          <div className={styles['logo-name']}>{systemName}</div>
         </div>
       </div>
       <div className={styles.center}>{menu && topMenu}</div>

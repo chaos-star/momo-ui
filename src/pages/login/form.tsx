@@ -9,15 +9,22 @@ import {
 } from '@arco-design/web-react';
 import { FormInstance } from '@arco-design/web-react/es/Form';
 import { IconLock, IconUser, IconSafe } from '@arco-design/web-react/icon';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useContext } from 'react';
 import useStorage from '@/utils/useStorage';
 import useLocale from '@/utils/useLocale';
 import { ACCESS_TOKEN_KEY, ORGANIZATION_KEY } from '@/api/request';
 import { getCaptcha } from '@/api/system';
 import { login as userLogin, LoginParams, LoginResult } from '@/api/user';
 import { getAuthContextResource } from '@/api/auth';
+import { pickDefaultMenuPath } from '@/routes';
 import { USER_PROFILE_KEY } from '@/utils/tenant';
 import { writeUserTheme } from '@/utils/userTheme';
+import { GlobalContext } from '@/context';
+import {
+  getSystemDescription,
+  getSystemName,
+  writeSystemProfile,
+} from '@/utils/systemConfig';
 import locale from './locale';
 import styles from './style/index.module.less';
 
@@ -32,6 +39,10 @@ export default function LoginForm() {
     useStorage('loginParams');
 
   const t = useLocale(locale);
+  const { lang, systemProfile, refreshSystemProfile } =
+    useContext(GlobalContext);
+  const systemName = getSystemName(systemProfile, lang);
+  const systemDescription = getSystemDescription(systemProfile, lang);
 
   const [rememberPassword, setRememberPassword] = useState(!!loginParams);
 
@@ -73,6 +84,11 @@ export default function LoginForm() {
     );
     localStorage.setItem('userStatus', 'login');
     writeUserTheme(result.theme_setting);
+    refreshSystemProfile?.().then((profile) => {
+      if (profile) {
+        writeSystemProfile(profile);
+      }
+    });
 
     const resource = await getAuthContextResource(tenantCode);
     localStorage.setItem(
@@ -82,13 +98,11 @@ export default function LoginForm() {
         defaultTenant: result.defaultTenant,
       })
     );
-    const firstMenu = resource.menus?.[0];
-    const defaultPath =
-      firstMenu?.children?.[0]?.routerPath ||
-      firstMenu?.children?.[0]?.resourcePath ||
-      firstMenu?.routerPath ||
-      firstMenu?.resourcePath ||
-      '/dashboard/workplace';
+    const defaultPath = pickDefaultMenuPath(resource.menus || []);
+    if (!defaultPath) {
+      window.location.href = '/403';
+      return;
+    }
     window.location.href = `/${tenantCode}/${defaultPath.replace(/^\/+/, '')}`;
   }
 
@@ -138,10 +152,10 @@ export default function LoginForm() {
 
   return (
     <div className={styles['login-form-wrapper']}>
-      <div className={styles['login-form-title']}>{t['login.form.title']}</div>
-      <div className={styles['login-form-sub-title']}>
-        {t['login.form.title']}
+      <div className={styles['login-form-title']}>
+        {t['login.form.title']} {systemName}
       </div>
+      <div className={styles['login-form-sub-title']}>{systemDescription}</div>
       <div className={styles['login-form-error-msg']}>{errorMessage}</div>
       <Form
         className={styles['login-form']}
@@ -213,13 +227,6 @@ export default function LoginForm() {
           </div>
           <Button type="primary" long onClick={onSubmitClick} loading={loading}>
             {t['login.form.login']}
-          </Button>
-          <Button
-            type="text"
-            long
-            className={styles['login-form-register-btn']}
-          >
-            {t['login.form.register']}
           </Button>
         </Space>
       </Form>

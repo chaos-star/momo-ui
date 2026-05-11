@@ -68,3 +68,57 @@ export function getDefaultTenantCode() {
     readTenantCode(profile)
   );
 }
+
+const LS_ORG_KEYS = ['X-Organization', 'organization'] as const;
+
+function readOrganizationFromStorage(): string {
+  if (typeof localStorage === 'undefined') {
+    return '';
+  }
+  for (const key of LS_ORG_KEYS) {
+    const value = localStorage.getItem(key);
+    if (value) {
+      return value;
+    }
+  }
+  return '';
+}
+
+/**
+ * 多页签等场景：URL 尚未带上 tenant 时，从路径 / 用户档案 / 登录写入的组织上下文解析租户编码。
+ */
+export function getResolvedTenantCodeForPath(
+  pathname: string = typeof window !== 'undefined'
+    ? window.location.pathname
+    : '',
+  userInfo?: Record<string, unknown> | null
+): string {
+  const fromPath = getTenantCodeFromPathname(pathname);
+  if (fromPath) {
+    return fromPath;
+  }
+  const fromProfile = getDefaultTenantCode();
+  if (fromProfile) {
+    return fromProfile;
+  }
+  const fromOrg = readOrganizationFromStorage();
+  if (fromOrg) {
+    return fromOrg;
+  }
+  const currentTenant = userInfo?.currentTenant as
+    | Record<string, unknown>
+    | undefined;
+  const fromUser = readTenantCode(currentTenant);
+  if (fromUser) {
+    return fromUser;
+  }
+  return '';
+}
+
+export function getResolvedTenantPathPrefix(
+  pathname?: string,
+  userInfo?: Record<string, unknown> | null
+): string {
+  const code = getResolvedTenantCodeForPath(pathname, userInfo);
+  return code ? `/${code}` : '';
+}

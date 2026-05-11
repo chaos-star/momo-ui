@@ -1,5 +1,5 @@
 import './style/global.less';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { createStore } from 'redux';
 import { Provider, useDispatch, useSelector } from 'react-redux';
@@ -27,6 +27,15 @@ import {
   writeUserTheme,
   UserThemeConfig,
 } from './utils/userTheme';
+import {
+  DEFAULT_SYSTEM_PROFILE,
+  SystemConfigProfile,
+  normalizeSystemProfile,
+  readSystemProfile,
+  writeSystemProfile,
+  getSystemTitle,
+} from './utils/systemConfig';
+import { getPublicSystemConfig } from './api/system';
 import './mock';
 
 const store = createStore(rootReducer);
@@ -36,6 +45,37 @@ function AppContent() {
   const [lang, setLangStorage] = useStorage('arco-lang', 'en-US');
   const [theme, setThemeStorage] = useStorage('arco-theme', 'light');
   const settings = useSelector((state: GlobalState) => state.settings);
+  const [systemProfile, setSystemProfileState] = useState<SystemConfigProfile>(
+    () => normalizeSystemProfile(readSystemProfile() || DEFAULT_SYSTEM_PROFILE)
+  );
+  const refreshSystemProfileRef =
+    React.useRef<Promise<SystemConfigProfile | undefined>>();
+
+  function setSystemProfile(value: SystemConfigProfile) {
+    setSystemProfileState(normalizeSystemProfile(value));
+  }
+
+  const refreshSystemProfile = useCallback(async () => {
+    if (refreshSystemProfileRef.current) {
+      return refreshSystemProfileRef.current;
+    }
+
+    refreshSystemProfileRef.current = getPublicSystemConfig()
+      .then((value) => {
+        const profile = normalizeSystemProfile(value);
+        setSystemProfile(profile);
+        if (checkLogin()) {
+          writeSystemProfile(profile);
+        }
+        return profile;
+      })
+      .catch(() => undefined)
+      .finally(() => {
+        refreshSystemProfileRef.current = undefined;
+      });
+
+    return refreshSystemProfileRef.current;
+  }, []);
 
   function applyUserTheme(userTheme: UserThemeConfig) {
     writeUserTheme(userTheme);
@@ -142,12 +182,19 @@ function AppContent() {
       });
       changeTheme(userTheme.theme, userTheme.settings.themeColor);
       fetchUserInfo();
-    } else if (!isLoginPage && !is403Page) {
-      window.location.pathname = '/login';
+    } else {
+      refreshSystemProfile();
+      if (!isLoginPage && !is403Page) {
+        window.location.pathname = '/login';
+      }
     }
     // 初始化逻辑只应在应用启动时执行一次。
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    document.title = getSystemTitle(systemProfile, lang);
+  }, [lang, systemProfile]);
 
   useEffect(() => {
     changeTheme(theme, settings.themeColor);
@@ -163,6 +210,9 @@ function AppContent() {
     theme,
     setTheme,
     applyUserTheme,
+    systemProfile,
+    setSystemProfile,
+    refreshSystemProfile,
   };
 
   return (

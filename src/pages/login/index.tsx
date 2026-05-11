@@ -1,11 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Footer from '@/components/Footer';
 import Logo from '@/assets/logo.svg';
+import { GlobalContext } from '@/context';
+import { getSystemName } from '@/utils/systemConfig';
 import LoginForm from './form';
 import LoginBanner from './banner';
 import styles from './style/index.module.less';
 
 function Login() {
+  const { lang, systemProfile } = useContext(GlobalContext);
+  const systemName = getSystemName(systemProfile, lang);
+  const logoUrl = systemProfile?.logoUrl;
+
   useEffect(() => {
     document.body.setAttribute('arco-theme', 'light');
   }, []);
@@ -13,8 +19,16 @@ function Login() {
   return (
     <div className={styles.container}>
       <div className={styles.logo}>
-        <Logo />
-        <div className={styles['logo-text']}>Arco Design Pro</div>
+        {logoUrl ? (
+          <img
+            className={styles['logo-image']}
+            src={logoUrl}
+            alt={systemName}
+          />
+        ) : (
+          <Logo />
+        )}
+        <div className={styles['logo-text']}>{systemName}</div>
       </div>
       <div className={styles.banner}>
         <div className={styles['banner-inner']}>

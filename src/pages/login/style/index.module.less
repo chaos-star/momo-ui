@@ -29,6 +29,13 @@
   align-items: center;
   z-index: 1;
 
+  &-image {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+
   &-text {
     margin-left: 4px;
     margin-right: 4px;
@@ -138,9 +145,5 @@
     height: 28px;
     cursor: pointer;
     mix-blend-mode: multiply;
-  }
-
-  &-register-btn {
-    color: var(--color-text-3) !important;
   }
 }

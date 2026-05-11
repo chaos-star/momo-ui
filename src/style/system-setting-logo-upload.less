@@ -1,0 +1,64 @@
+// 系统配置 / Logo 上传：picture-card（经入口 global.less 引入）
+// 240×240：比 Arco 默认 80px 更易预览 Logo，又不会占满侧栏
+@system-logo-upload-card-size: 240px;
+@system-logo-upload-list-gap: 12px;
+@system-logo-upload-trigger-icon-size: 28px;
+@system-logo-upload-mask-icon-size: 16px;
+@system-logo-upload-overlay-icon-size: 18px;
+
+.system-config-logo-upload {
+  .arco-upload-list-type-picture-card {
+    display: flex;
+    flex-wrap: wrap;
+    gap: @system-logo-upload-list-gap;
+    justify-content: flex-start;
+  }
+
+  .arco-upload-list-type-picture-card .arco-upload-list-item,
+  .arco-upload-list-type-picture-card .arco-upload-list-item-picture,
+  .arco-upload-type-picture-card .arco-upload-trigger-picture-wrapper,
+  .arco-upload-type-picture-card .arco-upload-trigger-picture {
+    width: @system-logo-upload-card-size !important;
+    height: @system-logo-upload-card-size !important;
+    min-width: @system-logo-upload-card-size !important;
+    margin: 0;
+  }
+
+  .arco-upload-type-picture-card .arco-upload-trigger-picture-text .arco-icon {
+    font-size: @system-logo-upload-trigger-icon-size !important;
+  }
+
+  .arco-upload-list-type-picture-card .arco-upload-list-item-picture-mask {
+    line-height: @system-logo-upload-card-size !important;
+    font-size: @system-logo-upload-mask-icon-size !important;
+  }
+
+  .arco-upload-list-type-picture-card .arco-upload-list-item-picture-operation {
+    position: absolute;
+    inset: 0;
+    display: block;
+    font-size: @system-logo-upload-overlay-icon-size !important;
+    line-height: normal;
+  }
+
+  .arco-upload-list-type-picture-card .arco-upload-list-preview-icon {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .arco-upload-list-type-picture-card
+    .arco-upload-list-item-operation
+    .arco-icon-delete,
+  .arco-upload-list-type-picture-card
+    .arco-upload-list-item-operation
+    [class*='delete'] {
+    display: none;
+  }
+
+  .arco-upload-list-type-picture-card
+    .arco-upload-list-preview-icon
+    .arco-icon {
+    font-size: @system-logo-upload-overlay-icon-size !important;
+  }
+}
