@@ -34,6 +34,7 @@ import {
   readSystemProfile,
   writeSystemProfile,
   getSystemTitle,
+  applySystemFavicon,
 } from './utils/systemConfig';
 import { getPublicSystemConfig } from './api/system';
 import './mock';
@@ -194,6 +195,7 @@ function AppContent() {
 
   useEffect(() => {
     document.title = getSystemTitle(systemProfile, lang);
+    applySystemFavicon(systemProfile);
   }, [lang, systemProfile]);
 
   useEffect(() => {

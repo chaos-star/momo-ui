@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import Footer from '@/components/Footer';
-import Logo from '@/assets/logo.svg';
+import SystemLogo from '@/components/SystemLogo';
 import { GlobalContext } from '@/context';
 import { getSystemName } from '@/utils/systemConfig';
 import LoginForm from './form';
@@ -10,7 +10,6 @@ import styles from './style/index.module.less';
 function Login() {
   const { lang, systemProfile } = useContext(GlobalContext);
   const systemName = getSystemName(systemProfile, lang);
-  const logoUrl = systemProfile?.logoUrl;
 
   useEffect(() => {
     document.body.setAttribute('arco-theme', 'light');
@@ -19,15 +18,11 @@ function Login() {
   return (
     <div className={styles.container}>
       <div className={styles.logo}>
-        {logoUrl ? (
-          <img
-            className={styles['logo-image']}
-            src={logoUrl}
-            alt={systemName}
-          />
-        ) : (
-          <Logo />
-        )}
+        <SystemLogo
+          profile={systemProfile}
+          className={styles['logo-image']}
+          alt={systemName}
+        />
         <div className={styles['logo-text']}>{systemName}</div>
       </div>
       <div className={styles.banner}>

@@ -53,17 +53,34 @@ const SubMenu = Menu.SubMenu;
 const Sider = Layout.Sider;
 const Content = Layout.Content;
 
+const routeModules = import.meta.glob('./pages/**/[a-z[]*.tsx');
+const routeComponentCache = new Map<string, React.ComponentType>();
+
+function getRouteComponent(routeKey: string) {
+  const cachedComponent = routeComponentCache.get(routeKey);
+
+  if (cachedComponent) {
+    return cachedComponent;
+  }
+
+  const loader =
+    routeModules[`./pages/${routeKey}/index.tsx`] ||
+    (() => import('./pages/exception/403'));
+  const component = lazyload(loader);
+
+  routeComponentCache.set(routeKey, component);
+  return component;
+}
+
 function getFlattenRoutes(routes) {
-  const mod = import.meta.glob('./pages/**/[a-z[]*.tsx');
   const res = [];
   function travel(_routes) {
     _routes.forEach((route) => {
       if (route.key && !route.children) {
-        const loader =
-          mod[`./pages/${route.key}/index.tsx`] ||
-          (() => import('./pages/exception/403'));
-        route.component = lazyload(loader);
-        res.push(route);
+        res.push({
+          ...route,
+          component: getRouteComponent(route.key),
+        });
       } else if (isArray(route.children) && route.children.length) {
         travel(route.children);
       }

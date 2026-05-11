@@ -24,7 +24,7 @@ export function getCaptcha() {
 
 export function getPublicSystemConfig() {
   return publicRequest<SystemConfigProfile>({
-    url: '/api/system/config/public',
+    url: '/api/system/setting/public',
     method: 'GET',
     skipErrorMessage: true,
   });
@@ -32,14 +32,14 @@ export function getPublicSystemConfig() {
 
 export function getManageSystemConfig() {
   return authRequest<SystemConfigProfile>({
-    url: '/api/system/config/manage',
+    url: '/api/system/setting/manage',
     method: 'GET',
   });
 }
 
 export function updateManageSystemConfig(config: SystemConfigJson) {
   return authRequest<SystemConfigProfile, { config: SystemConfigJson }>({
-    url: '/api/system/config/manage',
+    url: '/api/system/setting/manage',
     method: 'PUT',
     data: { config },
   });

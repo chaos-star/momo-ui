@@ -2,8 +2,12 @@ export const SYSTEM_PROFILE_KEY = 'system-profile';
 
 export type SystemLanguage = 'zh-CN' | 'en-US' | 'es-ES';
 
+export type SystemLogoType = '1' | '2';
+
 export interface SystemConfigJson {
+  logoType?: SystemLogoType;
   logoPath?: string;
+  logoSvgElement?: string;
   systemName?: Partial<Record<SystemLanguage | string, string>>;
   companyName?: Partial<Record<SystemLanguage | string, string>>;
   systemDescription?: Partial<Record<SystemLanguage | string, string>>;
@@ -18,7 +22,9 @@ export interface SystemConfigProfile {
 
 export const DEFAULT_SYSTEM_PROFILE: SystemConfigProfile = {
   config: {
+    logoType: '2',
     logoPath: '',
+    logoSvgElement: '',
     systemName: {
       'zh-CN': '营销中心',
       'en-US': 'Marketing Center',
@@ -42,21 +48,36 @@ export const DEFAULT_SYSTEM_PROFILE: SystemConfigProfile = {
 export function normalizeSystemProfile(
   profile?: Partial<SystemConfigProfile> | null
 ): SystemConfigProfile {
+  const topLevelConfig = profile as
+    | Partial<SystemConfigJson>
+    | null
+    | undefined;
+  const config = {
+    ...DEFAULT_SYSTEM_PROFILE.config,
+    ...(topLevelConfig?.logoType ? { logoType: topLevelConfig.logoType } : {}),
+    ...(topLevelConfig?.logoPath !== undefined
+      ? { logoPath: topLevelConfig.logoPath }
+      : {}),
+    ...(topLevelConfig?.logoSvgElement !== undefined
+      ? { logoSvgElement: topLevelConfig.logoSvgElement }
+      : {}),
+    ...(profile?.config || {}),
+  };
+
   return {
     config: {
-      ...DEFAULT_SYSTEM_PROFILE.config,
-      ...(profile?.config || {}),
+      ...config,
       systemName: {
         ...DEFAULT_SYSTEM_PROFILE.config.systemName,
-        ...(profile?.config?.systemName || {}),
+        ...(config.systemName || {}),
       },
       companyName: {
         ...DEFAULT_SYSTEM_PROFILE.config.companyName,
-        ...(profile?.config?.companyName || {}),
+        ...(config.companyName || {}),
       },
       systemDescription: {
         ...DEFAULT_SYSTEM_PROFILE.config.systemDescription,
-        ...(profile?.config?.systemDescription || {}),
+        ...(config.systemDescription || {}),
       },
     },
     logoUrl: profile?.logoUrl || '',
@@ -115,6 +136,75 @@ export function getCopyrightText(
 ) {
   const year = new Date().getFullYear();
   return `© 2026-${year} ${getCompanyName(profile, lang)}`;
+}
+
+export function getSystemLogoSvgElement(profile?: SystemConfigProfile | null) {
+  const config = normalizeSystemProfile(profile).config;
+  if (config.logoType !== '1') {
+    return '';
+  }
+
+  const svgElement = config.logoSvgElement;
+  return typeof svgElement === 'string' ? svgElement.trim() : '';
+}
+
+export function svgElementToDataUrl(svgElement: string) {
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgElement)}`;
+}
+
+export function getSystemLogoUrl(profile?: SystemConfigProfile | null) {
+  const normalized = normalizeSystemProfile(profile);
+  const logoPath = normalized.config.logoPath || '';
+
+  if (normalized.logoUrl) {
+    return normalized.logoUrl;
+  }
+
+  if (!logoPath) {
+    return '';
+  }
+
+  if (logoPath.startsWith('http://') || logoPath.startsWith('https://')) {
+    return logoPath;
+  }
+
+  if (!normalized.obsCloudBase) {
+    return logoPath;
+  }
+
+  return `${normalized.obsCloudBase.replace(/\/$/, '')}/${logoPath.replace(
+    /^\//,
+    ''
+  )}`;
+}
+
+export function applySystemFavicon(profile?: SystemConfigProfile | null) {
+  const svgElement = getSystemLogoSvgElement(profile);
+  const faviconUrl = svgElement
+    ? svgElementToDataUrl(svgElement)
+    : getSystemLogoUrl(profile);
+  if (!faviconUrl) {
+    return;
+  }
+
+  const isDataUrl = faviconUrl.startsWith('data:');
+  const href = isDataUrl
+    ? faviconUrl
+    : faviconUrl.includes('?')
+    ? `${faviconUrl}&favicon=${Date.now()}`
+    : `${faviconUrl}?favicon=${Date.now()}`;
+  let link = document.querySelector<HTMLLinkElement>(
+    'link[rel="icon"], link[rel="shortcut icon"]'
+  );
+
+  if (!link) {
+    link = document.createElement('link');
+    document.head.appendChild(link);
+  }
+
+  link.rel = 'icon';
+  link.type = svgElement ? 'image/svg+xml' : 'image/x-icon';
+  link.href = href;
 }
 
 export function readSystemProfile() {

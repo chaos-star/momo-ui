@@ -25,7 +25,7 @@ import { useSelector } from 'react-redux';
 import { GlobalState } from '@/store';
 import { GlobalContext } from '@/context';
 import useLocale from '@/utils/useLocale';
-import Logo from '@/assets/logo.svg';
+import SystemLogo from '@/components/SystemLogo';
 import MessageBox from '@/components/MessageBox';
 import IconButton from './IconButton';
 import Settings from '../Settings';
@@ -64,7 +64,6 @@ function Navbar({
   const { setLang, lang, theme, setTheme, systemProfile } =
     useContext(GlobalContext);
   const systemName = getSystemName(systemProfile, lang);
-  const logoUrl = systemProfile?.logoUrl;
 
   function clearLoginState() {
     const tenantCode = getTenantCodeFromPathname();
@@ -167,15 +166,11 @@ function Navbar({
     <div className={styles.navbar}>
       <div className={styles.left}>
         <div className={styles.logo}>
-          {logoUrl ? (
-            <img
-              className={styles['logo-image']}
-              src={logoUrl}
-              alt={systemName}
-            />
-          ) : (
-            <Logo />
-          )}
+          <SystemLogo
+            profile={systemProfile}
+            className={styles['logo-image']}
+            alt={systemName}
+          />
           <div className={styles['logo-name']}>{systemName}</div>
         </div>
       </div>
