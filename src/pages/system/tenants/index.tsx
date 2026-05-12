@@ -80,15 +80,22 @@ export default function TenantManagePage() {
   const [editForm] = Form.useForm();
 
   const [data, setData] = useState<TenantRecord[]>([]);
-  const [pagination, setPagination] = useState<PaginationProps>({
-    sizeCanChange: true,
-    showTotal: true,
-    pageSize: 10,
-    current: 1,
-    pageSizeChangeResetCurrent: true,
-    showJumper: true,
-    pageSizeOptions: [10, 20, 50, 100],
-  });
+  const [listCurrent, setListCurrent] = useState(1);
+  const [listPageSize, setListPageSize] = useState(10);
+  const [listTotal, setListTotal] = useState(0);
+  const pagination = useMemo<PaginationProps>(
+    () => ({
+      sizeCanChange: true,
+      showTotal: true,
+      pageSize: listPageSize,
+      current: listCurrent,
+      total: listTotal,
+      pageSizeChangeResetCurrent: true,
+      showJumper: true,
+      pageSizeOptions: [10, 20, 50, 100],
+    }),
+    [listCurrent, listPageSize, listTotal]
+  );
   const [loading, setLoading] = useState(true);
   const [formParams, setFormParams] = useState<TenantSearchValues>({});
   const [listTick, setListTick] = useState(0);
@@ -101,18 +108,14 @@ export default function TenantManagePage() {
 
   useEffect(() => {
     let canceled = false;
-    const { current = 1, pageSize = 10 } = pagination;
     setLoading(true);
-    void fetchTenantPage(toListParams(formParams, current, Number(pageSize)))
+    void fetchTenantPage(toListParams(formParams, listCurrent, listPageSize))
       .then((res) => {
         if (canceled) {
           return;
         }
         setData(res.list || []);
-        setPagination((prev) => ({
-          ...prev,
-          total: res.total,
-        }));
+        setListTotal(res.total ?? 0);
       })
       .finally(() => {
         if (!canceled) {
@@ -122,21 +125,18 @@ export default function TenantManagePage() {
     return () => {
       canceled = true;
     };
-  }, [pagination.current, pagination.pageSize, formParams, listTick]);
+  }, [listCurrent, listPageSize, formParams, listTick]);
 
   const bumpList = useCallback(() => setListTick((x) => x + 1), []);
 
   const handleSearch = (params: TenantSearchValues) => {
-    setPagination((prev) => ({ ...prev, current: 1 }));
+    setListCurrent(1);
     setFormParams(params);
   };
 
   const onChangeTable = (pag: PaginationProps) => {
-    setPagination((prev) => ({
-      ...prev,
-      current: pag.current ?? prev.current,
-      pageSize: pag.pageSize ?? prev.pageSize,
-    }));
+    setListCurrent((c) => pag.current ?? c);
+    setListPageSize((s) => (pag.pageSize != null ? Number(pag.pageSize) : s));
   };
 
   const tableCallback = useMemo(
