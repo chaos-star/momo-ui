@@ -393,7 +393,6 @@ function SystemConfigPage() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [logoType, setLogoType] = useState<SystemLogoType>(LOGO_TYPE_IMAGE);
-  const [logoPath, setLogoPath] = useState('');
   const [svgPreview, setSvgPreview] = useState('');
   const uploadRef = useRef<
     UploadInstance & { getRootDOMNode?: () => HTMLElement | null }
@@ -426,7 +425,6 @@ function SystemConfigPage() {
       const formValues = profileToFormValues(result);
       setProfile(result);
       setLogoType(formValues.logoType || LOGO_TYPE_IMAGE);
-      setLogoPath(formValues.logoPath || '');
       setSvgPreview(formValues.logoSvgElement || '');
       form.setFieldsValue(formValues);
       setSystemProfile?.(result);
@@ -491,7 +489,6 @@ function SystemConfigPage() {
       form.setFieldValue('logoType', LOGO_TYPE_IMAGE);
       form.setFieldValue('logoPath', uploadResult.objectPath || '');
       setLogoType(LOGO_TYPE_IMAGE);
-      setLogoPath(uploadResult.objectPath || '');
       setProfile(nextProfile);
       setSystemProfile?.(nextProfile);
       writeSystemProfile(nextProfile);
@@ -552,7 +549,6 @@ function SystemConfigPage() {
       const formValues = profileToFormValues(result);
       setProfile(result);
       setLogoType(formValues.logoType || LOGO_TYPE_IMAGE);
-      setLogoPath(formValues.logoPath || '');
       setSvgPreview(formValues.logoSvgElement || '');
       form.setFieldsValue(formValues);
       setSystemProfile?.(result);
