@@ -95,7 +95,7 @@ const i18n = {
     'tenantSearch.dataStatus.normal': '正常',
     'tenantSearch.dataStatus.deleted': '删除',
     'tenantSearch.activeStatus.enabled': '启用',
-    'tenantSearch.activeStatus.disabled': '禁用',
+    'tenantSearch.activeStatus.disabled': '停用',
     'tenantSearch.activeStatus.expired': '过期',
     'tenantSearch.modal.createTitle': '新增租户',
     'tenantSearch.modal.editTitle': '编辑租户',

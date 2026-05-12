@@ -10,8 +10,8 @@ import {
 import type { ColumnProps } from '@arco-design/web-react/es/Table';
 import type { TenantRecord } from '@/api/tenant';
 import {
+  activeStatusLabel,
   businessTypeLabel,
-  dataStatusLabel,
   formatEpochMs,
   parseEncryptionKey,
   tenantTypeToBusinessType,
@@ -75,13 +75,20 @@ export function getColumns(
     },
     {
       title: t['tenantSearch.columns.tenantStatus'],
-      dataIndex: 'status',
+      dataIndex: 'activeStatus',
       width: 100,
       render: (v: number) => {
-        if (v === 2) {
-          return <Badge status="error" text={dataStatusLabel(t, v)} />;
+        const text = activeStatusLabel(t, v);
+        if (v === 1) {
+          return <Badge status="success" text={text} />;
         }
-        return <Badge status="success" text={dataStatusLabel(t, v)} />;
+        if (v === 2) {
+          return <Badge status="error" text={text} />;
+        }
+        if (v === 3) {
+          return <Badge status="warning" text={text} />;
+        }
+        return <Badge status="default" text={text} />;
       },
     },
     {

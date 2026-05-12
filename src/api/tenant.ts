@@ -41,7 +41,6 @@ export function createTenant(data: {
   businessType: number;
   tenantZone: string;
   eventSecret?: string;
-  activeStatus?: number;
   expireAt?: number;
 }) {
   return authRequest<{ id: number }>({

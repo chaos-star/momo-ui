@@ -241,7 +241,6 @@ export default function TenantManagePage() {
                 createForm.setFieldsValue({
                   businessType: 2,
                   tenantZone: 'Asia/Shanghai',
-                  activeStatus: 1,
                 });
                 setCreateVisible(true);
               }}
@@ -281,7 +280,6 @@ export default function TenantManagePage() {
               businessType: v.businessType,
               tenantZone: v.tenantZone,
               eventSecret: v.eventSecret?.trim() || undefined,
-              activeStatus: v.activeStatus ?? 1,
               expireAt: v.expireAt ?? 0,
             });
             Message.success(t['tenantSearch.msg.createOk']);
@@ -397,17 +395,6 @@ export default function TenantManagePage() {
             ]}
           >
             <Input.Password autoComplete="new-password" />
-          </Form.Item>
-          <Form.Item
-            label={t['tenantSearch.columns.enableStatus']}
-            field="activeStatus"
-            initialValue={1}
-          >
-            <Radio.Group>
-              <Radio value={1}>{t['tenantSearch.activeStatus.enabled']}</Radio>
-              <Radio value={2}>{t['tenantSearch.activeStatus.disabled']}</Radio>
-              <Radio value={3}>{t['tenantSearch.activeStatus.expired']}</Radio>
-            </Radio.Group>
           </Form.Item>
         </Form>
       </Modal>
