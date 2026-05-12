@@ -231,6 +231,7 @@ const TEXT: Record<
     noLogoUrl: 'No Logo URL to copy',
     logoUrlCopied: 'Logo URL copied',
     logoUploadSuccess: 'Logo uploaded successfully',
+    logoSizeExceeded: 'Logo image size cannot exceed 500KB',
     saveSuccess: 'System settings saved successfully',
   },
   'es-ES': {
@@ -460,8 +461,8 @@ function SystemConfigPage() {
   const handleLogoTypeChange = (value: SystemLogoType) => {
     setLogoType(value);
     form.setFieldValue('logoType', value);
-    const logoSvgElement = form.getFieldValue('logoSvgElement') || '';
-    setSvgPreview(logoSvgElement);
+    const rawSvg = form.getFieldValue('logoSvgElement');
+    setSvgPreview(typeof rawSvg === 'string' ? rawSvg : '');
   };
 
   const handleBeforeUploadLogo = (file: File) => {
