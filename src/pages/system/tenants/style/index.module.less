@@ -42,6 +42,31 @@
   }
 }
 
+/** Mimic Form labelCol 5 / wrapperCol 19 for fields that use native <label htmlFor> */
+.formLikeField {
+  display: flex;
+  width: 100%;
+  margin-bottom: 20px;
+  align-items: flex-start;
+}
+
+.formLikeFieldLabel {
+  flex: 0 0 20.8333%;
+  max-width: 20.8333%;
+  padding-right: 16px;
+  box-sizing: border-box;
+  line-height: 32px;
+  font-size: 14px;
+  color: var(--color-text-2);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.formLikeFieldControl {
+  flex: 1;
+  min-width: 0;
+}
+
 .secretRow {
   display: flex;
   align-items: center;

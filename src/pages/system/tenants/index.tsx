@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   Button,
   Card,
@@ -26,6 +32,10 @@ import {
 } from '@/api/tenant';
 import SearchForm from './form';
 import type { TenantSearchValues } from './form';
+import ArcoSelectInputIds, {
+  arcoSelectPrimaryInputId,
+} from './ArcoSelectInputIds';
+import { useArcoPaginationFieldIds } from './useArcoPaginationFieldIds';
 import locale from './locale';
 import styles from './style/index.module.less';
 import { getColumns } from './constants';
@@ -52,6 +62,11 @@ const TIMEZONES = [
   'America/New_York',
   'America/Los_Angeles',
 ];
+
+const MODAL_CREATE_ZONE_BASE = 'tenant-modal-create-tenantZone';
+const MODAL_CREATE_ZONE_LABEL_ID = `${MODAL_CREATE_ZONE_BASE}-field-label`;
+const MODAL_EDIT_ZONE_BASE = 'tenant-modal-edit-tenantZone';
+const MODAL_EDIT_ZONE_LABEL_ID = `${MODAL_EDIT_ZONE_BASE}-field-label`;
 
 function toListParams(
   formParams: TenantSearchValues,
@@ -105,6 +120,16 @@ export default function TenantManagePage() {
   const [viewRecord, setViewRecord] = useState<TenantRecord | null>(null);
   const [editInitialSecret, setEditInitialSecret] = useState('');
   const [editTenantCode, setEditTenantCode] = useState('');
+
+  const tableBlockRef = useRef<HTMLDivElement>(null);
+  useArcoPaginationFieldIds(
+    tableBlockRef,
+    'tenant-list-pagination',
+    listCurrent,
+    listPageSize,
+    listTotal,
+    loading
+  );
 
   useEffect(() => {
     let canceled = false;
@@ -210,16 +235,18 @@ export default function TenantManagePage() {
         </div>
       </PermissionWrapper>
 
-      <Table
-        rowKey="id"
-        loading={loading}
-        onChange={onChangeTable}
-        pagination={pagination}
-        columns={columns}
-        data={data}
-        border
-        scroll={{ x: 1680 }}
-      />
+      <div ref={tableBlockRef}>
+        <Table
+          rowKey="id"
+          loading={loading}
+          onChange={onChangeTable}
+          pagination={pagination}
+          columns={columns}
+          data={data}
+          border
+          scroll={{ x: 1680 }}
+        />
+      </div>
 
       <Modal
         title={t['tenantSearch.modal.createTitle']}
@@ -298,26 +325,40 @@ export default function TenantManagePage() {
               <Radio value={2}>{t['tenantSearch.businessType.ops']}</Radio>
             </Radio.Group>
           </Form.Item>
-          <Form.Item label={t['tenantSearch.columns.tenantZone']}>
-            <Form.Item
-              field="tenantZone"
-              rules={[
-                {
-                  required: true,
-                  message: t['tenantSearch.validation.required'],
-                },
-              ]}
-              noStyle
+          <div className={styles.formLikeField}>
+            <label
+              id={MODAL_CREATE_ZONE_LABEL_ID}
+              className={styles.formLikeFieldLabel}
+              htmlFor={arcoSelectPrimaryInputId(MODAL_CREATE_ZONE_BASE)}
             >
-              <Select allowCreate placeholder="IANA">
-                {TIMEZONES.map((z) => (
-                  <Select.Option key={z} value={z}>
-                    {z}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Form.Item>
+              {t['tenantSearch.columns.tenantZone']}
+            </label>
+            <div className={styles.formLikeFieldControl}>
+              <Form.Item
+                field="tenantZone"
+                rules={[
+                  {
+                    required: true,
+                    message: t['tenantSearch.validation.required'],
+                  },
+                ]}
+                noStyle
+              >
+                <ArcoSelectInputIds
+                  baseId={MODAL_CREATE_ZONE_BASE}
+                  ariaLabelledBy={MODAL_CREATE_ZONE_LABEL_ID}
+                >
+                  <Select allowCreate placeholder="IANA">
+                    {TIMEZONES.map((z) => (
+                      <Select.Option key={z} value={z}>
+                        {z}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </ArcoSelectInputIds>
+              </Form.Item>
+            </div>
+          </div>
           <Form.Item
             label="encryption_key"
             field="eventSecret"
@@ -429,26 +470,40 @@ export default function TenantManagePage() {
               <Radio value={2}>{t['tenantSearch.businessType.ops']}</Radio>
             </Radio.Group>
           </Form.Item>
-          <Form.Item label={t['tenantSearch.columns.tenantZone']}>
-            <Form.Item
-              field="tenantZone"
-              rules={[
-                {
-                  required: true,
-                  message: t['tenantSearch.validation.required'],
-                },
-              ]}
-              noStyle
+          <div className={styles.formLikeField}>
+            <label
+              id={MODAL_EDIT_ZONE_LABEL_ID}
+              className={styles.formLikeFieldLabel}
+              htmlFor={arcoSelectPrimaryInputId(MODAL_EDIT_ZONE_BASE)}
             >
-              <Select allowCreate>
-                {TIMEZONES.map((z) => (
-                  <Select.Option key={z} value={z}>
-                    {z}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Form.Item>
+              {t['tenantSearch.columns.tenantZone']}
+            </label>
+            <div className={styles.formLikeFieldControl}>
+              <Form.Item
+                field="tenantZone"
+                rules={[
+                  {
+                    required: true,
+                    message: t['tenantSearch.validation.required'],
+                  },
+                ]}
+                noStyle
+              >
+                <ArcoSelectInputIds
+                  baseId={MODAL_EDIT_ZONE_BASE}
+                  ariaLabelledBy={MODAL_EDIT_ZONE_LABEL_ID}
+                >
+                  <Select allowCreate>
+                    {TIMEZONES.map((z) => (
+                      <Select.Option key={z} value={z}>
+                        {z}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </ArcoSelectInputIds>
+              </Form.Item>
+            </div>
+          </div>
           <Form.Item
             label="encryption_key"
             field="eventSecret"

@@ -3,10 +3,10 @@ name: arco-pro-search-table
 description: >-
   Standard layout for marketing-web list pages: Arco Pro-style query table
   (Card + search strip + toolbar + Table + pagination), split files, shared
-  form label alignment, modal forms matching the search row, and nested
-  Form.Item for Select/DatePicker so label htmlFor passes a11y checks. Use when
-  adding or refactoring a table list page, search-table, CRUD list, or
-  Arco Design Table under marketing-web/src/pages.
+  form label alignment, native label htmlFor on Arco Select primary input id,
+  ArcoSelectInputIds helper, and Pagination field id/name for audits. Use when
+  adding or refactoring a table list page, search-table, CRUD list, or Arco
+  Design Table under marketing-web/src/pages.
 ---
 
 # Arco Pro 检索表格页（marketing-web）
@@ -27,24 +27,49 @@ description: >-
 - 栅格：`Grid.Row` + `Grid.Col`，`gutter={24}`；`Col span` 可按语言在 `zh-CN` 与 `en-US` 下区分（与 tenants 一致）。
 - 右侧按钮区容器：`className={styles['right-button']}`，内放查询、重置等。
 
-## `Form.Item` 与 `label for`（无障碍 / 审计）
+## `Form.Item`、Select 与「标签关联」（无障碍 / 国内审计）
 
-Arco `Form.Item` 在同时有 `label` 与 `field` 时，会为 `<label>` 生成 `htmlFor="{field}_input"`。**`Select`、`DatePicker`、`Cascader` 等**的可见焦点在自定义容器（如 `role="combobox"` 的 `div`）上，**不是 HTML 规范中的 labelable 控件**，浏览器/审计工具会报：`label for` 与可填充字段不匹配。
+Arco `Form.Item` 在同时有 `label` 与 `field` 时，会为 `<label>` 生成 `htmlFor="{field}_input"`。**`Select`** 的根节点多为 `role="combobox"` 的 `div`，**不是** HTML 里 `label[for]` 合法指向的 labelable 控件，易触发 **`label for` 不匹配**。
 
-**约定**：上述控件在检索区、弹窗中与 Arco 文档一致，使用**嵌套 `Form.Item`**：
+若改用 **外层 `Form.Item` 只写 `label`、内层再包一层带 `field` 的 `Form.Item` + `Select`**，外层会变成**没有 `htmlFor` 的 `<label>`**，部分审计（含「没有与表单字段关联的标签」）仍不通过：它们要求 **`htmlFor` 指向真实 `input`/`select`/`textarea` 的 `id`**，仅靠 `aria-labelledby` 或 Arco 的 `htmlDataAttributes` 可能**仍被判无效**。
 
-- **外层**：只写 `label`（不写 `field`），负责布局与展示标签 → 外层不生成错误的 `for`。
-- **内层**：`field="..."`、`rules={...}`（如需）、`noStyle`，内层子节点为 `Select` 等。
+**推荐做法（与 `system/tenants` 检索区、弹窗时区 Select 一致）**：
+
+1. **不要用 Arco 外层 `Form.Item` 的 `label` 包一层 `<label>`**：对该 `Select` 单独用 **`div.formLikeField`**（样式见 `style/index.module.less`：`formLikeField` / `formLikeFieldLabel` / `formLikeFieldControl`），比例对齐原 `labelCol` 5 / `wrapperCol` 19（约 **20.83%** 标签宽）。
+2. 使用**原生** **`<label id="{baseId}-field-label" htmlFor={arcoSelectPrimaryInputId(baseId)}>`** 作为可见标题；`htmlFor` 必须等于 **`ArcoSelectInputIds`** 给主输入框写入的 id：**`arcoSelectPrimaryInputId(baseId)`** → 即 **`${baseId}-view-input-main`**（主输入为第一个非 `aria-hidden` 的 `input.arco-select-view-input`）。
+3. 控件区放 **`<Form.Item field="..." noStyle>`** + **`ArcoSelectInputIds`**（`baseId` 与上式一致）；可选传入 **`ariaLabelledBy`** 为上述 **`label` 的 `id`**，组件会在 **`role="combobox"`** 上同步 **`aria-labelledby`**（双保险）。
 
 ```tsx
-<Form.Item label={t['...']}>
-  <Form.Item field="businessType" noStyle>
-    <Select ... />
-  </Form.Item>
-</Form.Item>
+import ArcoSelectInputIds, { arcoSelectPrimaryInputId } from '@/pages/.../ArcoSelectInputIds';
+
+const BASE = 'tenant-search-businessType';
+const LABEL_ID = `${BASE}-field-label`;
+
+<div className={styles.formLikeField}>
+  <label
+    id={LABEL_ID}
+    className={styles.formLikeFieldLabel}
+    htmlFor={arcoSelectPrimaryInputId(BASE)}
+  >
+    {t['...']}
+  </label>
+  <div className={styles.formLikeFieldControl}>
+    <Form.Item field="businessType" noStyle>
+      <ArcoSelectInputIds baseId={BASE} ariaLabelledBy={LABEL_ID}>
+        <Select ... />
+      </ArcoSelectInputIds>
+    </Form.Item>
+  </div>
+</div>
 ```
 
-原生 **`Input` / `Input.TextArea` / `Input.Password`** 等与 `field` 同层即可，无需嵌套。
+原生 **`Input` / `Input.Password`** 等仍用普通 **`Form.Item` + `label` + `field`** 即可。
+
+## 表单控件 `id` / `name` 与分页（自动填充 / Lighthouse）
+
+Arco **`Select`** 内部 `input.arco-select-view-input` 默认**不带** `id` 或 `name`**；**`Table` 分页**的跳转框、每页条数下拉的内部 input 亦同。由 **`ArcoSelectInputIds`**（主框 id 为 **`arcoSelectPrimaryInputId(baseId)`**，辅输入为 **`${baseId}-view-input-aux-*`**）与 **`useArcoPaginationFieldIds`\*\* 在挂载及 DOM 变更后补全。
+
+新页面若不便抽公共组件，至少为 **`Select` 主输入** 提供与 **`<label htmlFor>`** 一致的 **`id`**，并处理分页内部 input。
 
 ## 样式（`style/index.module.less`）
 
@@ -54,18 +79,20 @@ Arco `Form.Item` 在同时有 `label` 与 `field` 时，会为 `<label>` 生成 
 - `search-form`：`flex:1`、`min-width:0`、`padding-right`；内嵌 `:global(.arco-form-label-item-left) > label { white-space: nowrap; }`
 - `right-button`：右侧列、左边框、竖向 `space-between` 对齐按钮组
 - `button-group`：工具栏左右分布
-- `operations`：表格操作列内按钮横向排列（按需）
+- `formLikeField` / `formLikeFieldLabel` / `formLikeFieldControl`：与 `labelCol` 5 / `wrapperCol` 19 对齐的 **Select 专用行**（配合原生 `<label htmlFor>`）
 
 ## 文件拆分
 
-| 文件                      | 职责                                             |
-| ------------------------- | ------------------------------------------------ |
-| `index.tsx`               | 页面组合、状态、请求、Modal、Table               |
-| `form.tsx`                | 检索表单与 `onSearch`                            |
-| `constants.tsx`           | `getColumns(t, callbacks)` 导出列定义            |
-| `locale/index.ts`         | 多语言文案                                       |
-| `utils.ts`                | 列 render 用到的纯函数（标签映射、时间格式化等） |
-| `style/index.module.less` | 上述布局类                                       |
+| 文件                           | 职责                                                                                              |
+| ------------------------------ | ------------------------------------------------------------------------------------------------- |
+| `index.tsx`                    | 页面组合、状态、请求、Modal、Table                                                                |
+| `form.tsx`                     | 检索表单与 `onSearch`                                                                             |
+| `ArcoSelectInputIds.tsx`       | Select：主/辅 `input` 的 `id`/`name`，`arcoSelectPrimaryInputId`，`combobox` 的 `aria-labelledby` |
+| `useArcoPaginationFieldIds.ts` | 表格分页内部 input 的 `id` / `name`                                                               |
+| `constants.tsx`                | `getColumns(t, callbacks)` 导出列定义                                                             |
+| `locale/index.ts`              | 多语言文案                                                                                        |
+| `utils.ts`                     | 列 render 用到的纯函数（标签映射、时间格式化等）                                                  |
+| `style/index.module.less`      | 上述布局类                                                                                        |
 
 ## 表格列约定（与租户页一致时可沿用）
 
@@ -89,7 +116,7 @@ Arco `Form.Item` 在同时有 `label` 与 `field` 时，会为 `<label>` 生成 
 
 ## 数据与副作用
 
-- 列表请求依赖 `pagination.current`、`pagination.pageSize`、检索条件；**不要在 `useEffect` 依赖整个 `pagination` 对象**（易与 `setPagination` 更新 `total` 形成循环），可拆依赖或使用显式 `listTick` / `bumpList()` 在变更后触发刷新。
+- 列表分页推荐 **`listCurrent` / `listPageSize` / `listTotal` + `useMemo` 拼 `paginationProps`**；`useEffect` 拉列表时依赖上述**原始值**（及检索条件、`listTick`），**不要**依赖整个 `pagination` 对象，也不要只写 `pagination.current` 等点访问（易触发 `react-hooks/exhaustive-deps` 或与更新 `total` 的逻辑打架）。
 - 类型与 API 放在 `src/api/` 对应模块；表格 `dataIndex` 与后端字段对齐。
 
 ## 自检清单
@@ -98,4 +125,5 @@ Arco `Form.Item` 在同时有 `label` 与 `field` 时，会为 `<label>` 生成 
 - [ ] 检索区 `search-form-wrapper` / `search-form` / `right-button` 三类名齐全
 - [ ] 弹窗 Form 与检索区 label 左右布局一致
 - [ ] 列定义集中在 `constants.tsx`，文案走 `locale`
-- [ ] 含 `Select` / `DatePicker` 等时，检索区与弹窗使用**嵌套 Form.Item**（外层仅 `label`，内层 `field` + `noStyle`），避免 `label for` 审计报错
+- [ ] **`Select` 且审计要求 `label`↔`input`**：使用 **`formLikeField` + `<label id htmlFor={arcoSelectPrimaryInputId(baseId)}>`** + **`ArcoSelectInputIds`**，勿仅依赖嵌套 `Form.Item` 的 Arco `<label>` 或仅 `aria-labelledby`
+- [ ] `Select` 与表格**分页区**对内部 input 补全 **`id` / `name`**（`ArcoSelectInputIds` + `useArcoPaginationFieldIds` 或等价实现），避免自动填充类审计报错
