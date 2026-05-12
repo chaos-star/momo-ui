@@ -927,10 +927,3 @@ body[arco-theme='dark']
   .arco-table-td {
   background-color: var(--color-bg-3);
 }
-._symbol_okjyb_1 {
-  font-size: 10px;
-  margin-left: 4px;
-}
-._symbol_okjyb_1 > svg {
-  vertical-align: 0;
-}
