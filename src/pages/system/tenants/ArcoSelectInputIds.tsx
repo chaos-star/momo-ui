@@ -19,10 +19,19 @@ type Props = {
 /**
  * Arco Select: inner inputs lack id/name; strict audits want `<label htmlFor>` → real input id.
  * Assigns `${baseId}-view-input-main` to the primary inner input (first non-aria-hidden).
+ *
+ * When used under `<Form.Item><ArcoSelectInputIds><Select/></ArcoSelectInputIds></Form.Item>`,
+ * Form injects `value` / `onChange` / etc. onto this component; they must be forwarded to
+ * `<Select>` or the field stays uncontrolled and reset will not clear the UI.
  */
-export default function ArcoSelectInputIds(props: Props) {
-  const { baseId, ariaLabelledBy, children } = props;
+export default function ArcoSelectInputIds(
+  props: Props & Record<string, unknown>
+) {
+  const { baseId, ariaLabelledBy, children, ...formInjected } = props;
   const ref = useRef<HTMLDivElement>(null);
+  const onlyChild = React.Children.only(children) as React.ReactElement<
+    Record<string, unknown>
+  >;
 
   useLayoutEffect(() => {
     const root = ref.current;
@@ -58,7 +67,10 @@ export default function ArcoSelectInputIds(props: Props) {
 
   return (
     <div ref={ref} style={{ display: 'contents' }}>
-      {children}
+      {React.cloneElement(onlyChild, {
+        ...(onlyChild.props as Record<string, unknown>),
+        ...formInjected,
+      })}
     </div>
   );
 }

@@ -24,6 +24,14 @@ export type TenantSearchValues = {
   status?: number;
 };
 
+/** 与接口「无条件」一致：空串经 toListParams 会变成 undefined */
+const SEARCH_FORM_INITIAL_VALUES: TenantSearchValues = {
+  tenantName: '',
+  tenantCode: '',
+  businessType: undefined,
+  status: undefined,
+};
+
 function SearchForm(props: { onSearch: (values: TenantSearchValues) => void }) {
   const { lang } = useContext(GlobalContext);
   const t = useLocale(locale);
@@ -36,7 +44,7 @@ function SearchForm(props: { onSearch: (values: TenantSearchValues) => void }) {
 
   const handleReset = () => {
     form.resetFields();
-    props.onSearch({});
+    props.onSearch({ ...SEARCH_FORM_INITIAL_VALUES });
   };
 
   const colSpan = lang === 'zh-CN' ? 8 : 12;
@@ -45,6 +53,7 @@ function SearchForm(props: { onSearch: (values: TenantSearchValues) => void }) {
     <div className={styles['search-form-wrapper']}>
       <Form
         form={form}
+        initialValues={SEARCH_FORM_INITIAL_VALUES}
         className={styles['search-form']}
         labelAlign="left"
         labelCol={{ span: 5 }}

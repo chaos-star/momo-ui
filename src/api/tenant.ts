@@ -56,13 +56,24 @@ export function updateTenant(data: {
   tenantName?: string;
   businessType?: number;
   tenantZone?: string;
-  activeStatus?: number;
   eventSecret?: string | null;
   expireAt?: number;
 }) {
   return authRequest<Record<string, never>>({
     url: '/api/system/tenants/manage',
     method: 'PUT',
+    data,
+  });
+}
+
+/** 启用状态：1 启用 / 2 停用（与列表 activeStatus 一致） */
+export function updateTenantActiveStatus(data: {
+  id: number;
+  activeStatus: 1 | 2;
+}) {
+  return authRequest<Record<string, never>>({
+    url: '/api/system/tenants/manage/active-status',
+    method: 'PATCH',
     data,
   });
 }

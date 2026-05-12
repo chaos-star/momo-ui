@@ -1,14 +1,13 @@
 import React from 'react';
+import { Badge, Button, Space, Typography } from '@arco-design/web-react';
 import {
-  Badge,
-  Button,
-  Message,
-  Space,
-  Typography,
-} from '@arco-design/web-react';
-import { IconCopy } from '@arco-design/web-react/icon';
+  IconDelete,
+  IconEdit,
+  IconEye,
+  IconLock,
+  IconUnlock,
+} from '@arco-design/web-react/icon';
 import type { ColumnProps } from '@arco-design/web-react/es/Table';
-import copy from 'copy-to-clipboard';
 import type { TenantRecord } from '@/api/tenant';
 import {
   businessTypeLabel,
@@ -25,6 +24,8 @@ export type TenantColumnCallbacks = {
   onView: (record: TenantRecord) => void;
   onEdit: (record: TenantRecord) => void;
   onDelete: (record: TenantRecord) => void;
+  onEnable: (record: TenantRecord) => void;
+  onDisable: (record: TenantRecord) => void;
 };
 
 export function getColumns(
@@ -69,22 +70,7 @@ export function getColumns(
         if (!secret) {
           return '—';
         }
-        return (
-          <Space size={4} className={styles.secretRow}>
-            <Text ellipsis style={{ maxWidth: 132 }}>
-              {secret}
-            </Text>
-            <Button
-              type="text"
-              size="mini"
-              icon={<IconCopy />}
-              onClick={() => {
-                copy(secret);
-                Message.success(t['tenantSearch.msg.copied']);
-              }}
-            />
-          </Space>
-        );
+        return <Text copyable>{secret}</Text>;
       },
     },
     {
@@ -112,12 +98,6 @@ export function getColumns(
       },
     },
     {
-      title: t['tenantSearch.columns.createdAt'],
-      dataIndex: 'createdAt',
-      width: 168,
-      render: (v: number) => formatEpochMs(v),
-    },
-    {
       title: t['tenantSearch.columns.updatedAt'],
       dataIndex: 'updatedAt',
       width: 168,
@@ -126,37 +106,68 @@ export function getColumns(
     {
       title: t['tenantSearch.columns.operations'],
       dataIndex: 'operations',
-      width: 220,
+      width: 306,
       fixed: 'right',
-      headerCellStyle: { paddingLeft: '15px' },
-      render: (_, record) => (
-        <Space className={styles.operations}>
-          <Button
-            type="text"
-            size="small"
-            onClick={() => callbacks.onView(record)}
-          >
-            {t['tenantSearch.columns.operations.view']}
-          </Button>
-          <Button
-            type="text"
-            size="small"
-            disabled={record.status === 2}
-            onClick={() => callbacks.onEdit(record)}
-          >
-            {t['tenantSearch.columns.operations.edit']}
-          </Button>
-          <Button
-            type="text"
-            size="small"
-            status="danger"
-            disabled={record.status === 2}
-            onClick={() => callbacks.onDelete(record)}
-          >
-            {t['tenantSearch.columns.operations.delete']}
-          </Button>
-        </Space>
-      ),
+      headerCellStyle: { paddingLeft: '12px' },
+      render: (_, record) => {
+        const deleted = record.status === 2;
+        const canToggleActive = !deleted;
+        const showEnable = record.activeStatus !== 1;
+        const showDisable = record.activeStatus === 1;
+        return (
+          <Space className={styles.operations} size={10} wrap>
+            <Button
+              type="text"
+              size="small"
+              icon={<IconEye />}
+              onClick={() => callbacks.onView(record)}
+            >
+              {t['tenantSearch.columns.operations.view']}
+            </Button>
+            <Button
+              type="text"
+              size="small"
+              icon={<IconEdit />}
+              disabled={deleted}
+              onClick={() => callbacks.onEdit(record)}
+            >
+              {t['tenantSearch.columns.operations.edit']}
+            </Button>
+            {showEnable ? (
+              <Button
+                type="text"
+                size="small"
+                icon={<IconUnlock />}
+                disabled={!canToggleActive}
+                onClick={() => callbacks.onEnable(record)}
+              >
+                {t['tenantSearch.columns.operations.enable']}
+              </Button>
+            ) : null}
+            {showDisable ? (
+              <Button
+                type="text"
+                size="small"
+                icon={<IconLock />}
+                disabled={!canToggleActive}
+                onClick={() => callbacks.onDisable(record)}
+              >
+                {t['tenantSearch.columns.operations.disable']}
+              </Button>
+            ) : null}
+            <Button
+              type="text"
+              size="small"
+              icon={<IconDelete />}
+              status="danger"
+              disabled={deleted}
+              onClick={() => callbacks.onDelete(record)}
+            >
+              {t['tenantSearch.columns.operations.delete']}
+            </Button>
+          </Space>
+        );
+      },
     },
   ];
 }

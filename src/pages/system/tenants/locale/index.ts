@@ -18,7 +18,11 @@ const i18n = {
     'tenantSearch.columns.operations': 'Actions',
     'tenantSearch.columns.operations.view': 'View',
     'tenantSearch.columns.operations.edit': 'Edit',
+    'tenantSearch.columns.operations.enable': 'Enable',
+    'tenantSearch.columns.operations.disable': 'Disable',
     'tenantSearch.columns.operations.delete': 'Delete',
+    'tenantSearch.columns.expireAt': 'Expire at (ms)',
+    'tenantSearch.columns.config': 'Extension config',
     'tenantSearch.operations.add': 'New tenant',
     'tenantSearch.validation.required': 'This field is required',
     'tenantSearch.validation.tenantCode':
@@ -45,6 +49,13 @@ const i18n = {
     'tenantSearch.confirm.deleteTitle': 'Confirm delete',
     'tenantSearch.confirm.deleteContent':
       'The tenant will be marked as deleted. Continue?',
+    'tenantSearch.confirm.enableTitle': 'Enable tenant',
+    'tenantSearch.confirm.enableContent':
+      'Set this tenant to enabled. Continue?',
+    'tenantSearch.confirm.disableTitle': 'Disable tenant',
+    'tenantSearch.confirm.disableContent':
+      'Set this tenant to disabled. Continue?',
+    'tenantSearch.msg.activeStatusOk': 'Activation status updated',
   },
   'zh-CN': {
     'tenantSearch.title': '租户管理',
@@ -65,7 +76,11 @@ const i18n = {
     'tenantSearch.columns.operations': '操作',
     'tenantSearch.columns.operations.view': '查看',
     'tenantSearch.columns.operations.edit': '编辑',
+    'tenantSearch.columns.operations.enable': '启用',
+    'tenantSearch.columns.operations.disable': '停用',
     'tenantSearch.columns.operations.delete': '删除',
+    'tenantSearch.columns.expireAt': '过期时间（毫秒）',
+    'tenantSearch.columns.config': '扩展配置',
     'tenantSearch.operations.add': '新建',
     'tenantSearch.validation.required': '此项为必填',
     'tenantSearch.validation.tenantCode':
@@ -91,6 +106,11 @@ const i18n = {
     'tenantSearch.msg.copied': '已复制',
     'tenantSearch.confirm.deleteTitle': '确认删除',
     'tenantSearch.confirm.deleteContent': '将标记该租户为删除状态，是否继续？',
+    'tenantSearch.confirm.enableTitle': '确认启用',
+    'tenantSearch.confirm.enableContent': '将启用该租户，是否继续？',
+    'tenantSearch.confirm.disableTitle': '确认停用',
+    'tenantSearch.confirm.disableContent': '将停用该租户，是否继续？',
+    'tenantSearch.msg.activeStatusOk': '启用状态已更新',
   },
   'es-ES': {
     'tenantSearch.title': 'Gestión de inquilinos',
@@ -111,7 +131,11 @@ const i18n = {
     'tenantSearch.columns.operations': 'Acciones',
     'tenantSearch.columns.operations.view': 'Ver',
     'tenantSearch.columns.operations.edit': 'Editar',
+    'tenantSearch.columns.operations.enable': 'Habilitar',
+    'tenantSearch.columns.operations.disable': 'Deshabilitar',
     'tenantSearch.columns.operations.delete': 'Eliminar',
+    'tenantSearch.columns.expireAt': 'Caduca (ms)',
+    'tenantSearch.columns.config': 'Config. ampliada',
     'tenantSearch.operations.add': 'Nuevo',
     'tenantSearch.validation.required': 'Campo obligatorio',
     'tenantSearch.validation.tenantCode':
@@ -138,6 +162,12 @@ const i18n = {
     'tenantSearch.confirm.deleteTitle': 'Confirmar eliminación',
     'tenantSearch.confirm.deleteContent':
       'El inquilino se marcará como eliminado. ¿Continuar?',
+    'tenantSearch.confirm.enableTitle': 'Habilitar inquilino',
+    'tenantSearch.confirm.enableContent': '¿Activar este inquilino ahora?',
+    'tenantSearch.confirm.disableTitle': 'Deshabilitar inquilino',
+    'tenantSearch.confirm.disableContent':
+      '¿Marcar este inquilino como deshabilitado?',
+    'tenantSearch.msg.activeStatusOk': 'Estado de activación actualizado',
   },
 };
 

@@ -6,6 +6,18 @@
 
 .operations {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  row-gap: 4px;
+
+  :global(.arco-btn-size-small.arco-btn-text) {
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+
+  :global(.arco-btn-size-small.arco-btn-text > svg + span) {
+    margin-left: 2px;
+  }
 }
 
 .search-form-wrapper {
@@ -67,10 +79,26 @@
   min-width: 0;
 }
 
-.secretRow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 1;
-  min-width: 0;
+.tenant-view-modal {
+  :global(.arco-modal-content) {
+    padding-top: 8px;
+  }
+}
+
+/** 单列描述列表，对齐 Arco Pro / demo 中 profile Descriptions 的排版习惯 */
+.tenant-view-descriptions {
+  :global(.arco-descriptions-table) {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  :global(.arco-descriptions-item-label) {
+    width: 152px;
+    box-sizing: border-box;
+  }
+
+  :global(.arco-descriptions-item-value) {
+    width: auto;
+    min-width: 0;
+  }
 }

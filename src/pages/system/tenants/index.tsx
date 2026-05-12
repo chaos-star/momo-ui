@@ -8,6 +8,7 @@ import React, {
 import {
   Button,
   Card,
+  Descriptions,
   Form,
   Input,
   Message,
@@ -20,8 +21,7 @@ import {
   PaginationProps,
 } from '@arco-design/web-react';
 import PermissionWrapper from '@/components/PermissionWrapper';
-import { IconCopy, IconPlus, IconRefresh } from '@arco-design/web-react/icon';
-import copy from 'copy-to-clipboard';
+import { IconPlus, IconRefresh } from '@arco-design/web-react/icon';
 import useLocale from '@/utils/useLocale';
 import {
   createTenant,
@@ -29,6 +29,7 @@ import {
   fetchTenantPage,
   TenantRecord,
   updateTenant,
+  updateTenantActiveStatus,
 } from '@/api/tenant';
 import SearchForm from './form';
 import type { TenantSearchValues } from './form';
@@ -45,7 +46,6 @@ import {
   businessTypeLabel,
   activeStatusLabel,
   dataStatusLabel,
-  formatConfigPreview,
   formatEpochMs,
 } from './utils';
 
@@ -176,9 +176,7 @@ export default function TenantManagePage() {
           tenantName: record.tenantName,
           businessType: tenantTypeToBusinessType(record.tenantType),
           tenantZone: record.tenantZone,
-          activeStatus: record.activeStatus,
           eventSecret: sec,
-          expireAt: record.expireAt,
         });
         setEditVisible(true);
       },
@@ -189,6 +187,28 @@ export default function TenantManagePage() {
           onOk: async () => {
             await deleteTenant(record.id);
             Message.success(t['tenantSearch.msg.deleteOk']);
+            bumpList();
+          },
+        });
+      },
+      onEnable: (record: TenantRecord) => {
+        Modal.confirm({
+          title: t['tenantSearch.confirm.enableTitle'],
+          content: t['tenantSearch.confirm.enableContent'],
+          onOk: async () => {
+            await updateTenantActiveStatus({ id: record.id, activeStatus: 1 });
+            Message.success(t['tenantSearch.msg.activeStatusOk']);
+            bumpList();
+          },
+        });
+      },
+      onDisable: (record: TenantRecord) => {
+        Modal.confirm({
+          title: t['tenantSearch.confirm.disableTitle'],
+          content: t['tenantSearch.confirm.disableContent'],
+          onOk: async () => {
+            await updateTenantActiveStatus({ id: record.id, activeStatus: 2 });
+            Message.success(t['tenantSearch.msg.activeStatusOk']);
             bumpList();
           },
         });
@@ -244,7 +264,7 @@ export default function TenantManagePage() {
           columns={columns}
           data={data}
           border
-          scroll={{ x: 1680 }}
+          scroll={{ x: 1598 }}
         />
       </div>
 
@@ -410,8 +430,6 @@ export default function TenantManagePage() {
               tenantName: v.tenantName?.trim(),
               businessType: v.businessType,
               tenantZone: v.tenantZone,
-              activeStatus: v.activeStatus,
-              expireAt: v.expireAt,
             };
             if (nextSecret !== (editInitialSecret || '').trim()) {
               payload.eventSecret = nextSecret;
@@ -523,16 +541,6 @@ export default function TenantManagePage() {
           >
             <Input.Password autoComplete="new-password" />
           </Form.Item>
-          <Form.Item
-            label={t['tenantSearch.columns.enableStatus']}
-            field="activeStatus"
-          >
-            <Radio.Group>
-              <Radio value={1}>{t['tenantSearch.activeStatus.enabled']}</Radio>
-              <Radio value={2}>{t['tenantSearch.activeStatus.disabled']}</Radio>
-              <Radio value={3}>{t['tenantSearch.activeStatus.expired']}</Radio>
-            </Radio.Group>
-          </Form.Item>
         </Form>
       </Modal>
 
@@ -542,86 +550,83 @@ export default function TenantManagePage() {
         footer={null}
         onCancel={() => setViewRecord(null)}
         unmountOnExit
-        style={{ width: 600 }}
+        style={{ width: 560 }}
+        className={styles['tenant-view-modal']}
       >
-        {viewRecord && (
-          <Form
+        {viewRecord ? (
+          <Descriptions
+            className={styles['tenant-view-descriptions']}
+            column={1}
             layout="horizontal"
-            labelAlign="left"
-            labelCol={{ span: 5 }}
-            wrapperCol={{ span: 19 }}
-            className={styles['search-form']}
-          >
-            <Form.Item label={t['tenantSearch.columns.tenantName']}>
-              <Typography.Text>{viewRecord.tenantName}</Typography.Text>
-            </Form.Item>
-            <Form.Item label={t['tenantSearch.columns.tenantCode']}>
-              <Typography.Text copyable>
-                {viewRecord.tenantCode}
-              </Typography.Text>
-            </Form.Item>
-            <Form.Item label={t['tenantSearch.columns.businessType']}>
-              <Typography.Text>
-                {businessTypeLabel(
+            colon=":"
+            labelStyle={{
+              textAlign: 'right',
+              width: 152,
+              minWidth: 152,
+              paddingRight: 12,
+              color: 'var(--color-text-2)',
+              verticalAlign: 'top',
+            }}
+            valueStyle={{
+              color: 'var(--color-text-1)',
+              wordBreak: 'break-word',
+              verticalAlign: 'top',
+            }}
+            data={[
+              {
+                label: t['tenantSearch.columns.tenantName'],
+                value: viewRecord.tenantName,
+              },
+              {
+                label: t['tenantSearch.columns.tenantCode'],
+                value: (
+                  <Typography.Text copyable>
+                    {viewRecord.tenantCode}
+                  </Typography.Text>
+                ),
+              },
+              {
+                label: t['tenantSearch.columns.businessType'],
+                value: businessTypeLabel(
                   t,
                   tenantTypeToBusinessType(viewRecord.tenantType)
-                )}
-              </Typography.Text>
-            </Form.Item>
-            <Form.Item label={t['tenantSearch.columns.tenantZone']}>
-              <Typography.Text>{viewRecord.tenantZone}</Typography.Text>
-            </Form.Item>
-            <Form.Item label={t['tenantSearch.columns.enableStatus']}>
-              <Typography.Text>
-                {activeStatusLabel(t, viewRecord.activeStatus)}
-              </Typography.Text>
-            </Form.Item>
-            <Form.Item label={t['tenantSearch.columns.tenantStatus']}>
-              <Typography.Text>
-                {dataStatusLabel(t, viewRecord.status)}
-              </Typography.Text>
-            </Form.Item>
-            <Form.Item label={t['tenantSearch.columns.lastOperator']}>
-              <Typography.Text>
-                {viewRecord.operatorUsername?.trim() || '—'}
-              </Typography.Text>
-            </Form.Item>
-            <Form.Item label="encryption_key">
-              <div className={styles.secretRow}>
-                <Typography.Text>{viewSecret || '—'}</Typography.Text>
-                {viewSecret ? (
-                  <Button
-                    type="text"
-                    size="mini"
-                    icon={<IconCopy />}
-                    onClick={() => {
-                      copy(viewSecret);
-                      Message.success(t['tenantSearch.msg.copied']);
-                    }}
-                  />
-                ) : null}
-              </div>
-            </Form.Item>
-            <Form.Item label="config">
-              <Typography.Text style={{ wordBreak: 'break-all' }}>
-                {formatConfigPreview(viewRecord)}
-              </Typography.Text>
-            </Form.Item>
-            <Form.Item label="expireAt">
-              <Typography.Text>{String(viewRecord.expireAt)}</Typography.Text>
-            </Form.Item>
-            <Form.Item label={t['tenantSearch.columns.createdAt']}>
-              <Typography.Text>
-                {formatEpochMs(viewRecord.createdAt)}
-              </Typography.Text>
-            </Form.Item>
-            <Form.Item label={t['tenantSearch.columns.updatedAt']}>
-              <Typography.Text>
-                {formatEpochMs(viewRecord.updatedAt)}
-              </Typography.Text>
-            </Form.Item>
-          </Form>
-        )}
+                ),
+              },
+              {
+                label: t['tenantSearch.columns.tenantZone'],
+                value: viewRecord.tenantZone,
+              },
+              {
+                label: t['tenantSearch.columns.eventSecret'],
+                value: (
+                  <Typography.Text copyable={Boolean(viewSecret)}>
+                    {viewSecret || '—'}
+                  </Typography.Text>
+                ),
+              },
+              {
+                label: t['tenantSearch.columns.enableStatus'],
+                value: activeStatusLabel(t, viewRecord.activeStatus),
+              },
+              {
+                label: t['tenantSearch.columns.tenantStatus'],
+                value: dataStatusLabel(t, viewRecord.status),
+              },
+              {
+                label: t['tenantSearch.columns.lastOperator'],
+                value: viewRecord.operatorUsername?.trim() || '—',
+              },
+              {
+                label: t['tenantSearch.columns.createdAt'],
+                value: formatEpochMs(viewRecord.createdAt),
+              },
+              {
+                label: t['tenantSearch.columns.updatedAt'],
+                value: formatEpochMs(viewRecord.updatedAt),
+              },
+            ]}
+          />
+        ) : null}
       </Modal>
     </Card>
   );
