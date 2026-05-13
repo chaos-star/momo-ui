@@ -229,20 +229,6 @@ function joinElementCode(
   return prefix ? `${prefix}:${suffix}` : suffix;
 }
 
-function replaceParentCodePrefix(
-  code = '',
-  previousParentCode = '',
-  nextParentCode = ''
-) {
-  const value = code.trim();
-  const previousPrefix = previousParentCode ? `${previousParentCode}:` : '';
-  const suffix =
-    previousPrefix && value.startsWith(previousPrefix)
-      ? value.slice(previousPrefix.length)
-      : value;
-  return nextParentCode ? `${nextParentCode}:${suffix}` : suffix;
-}
-
 function formatType(type?: string) {
   if (type === 'CATALOG') return '目录';
   if (type === 'MENU') return '菜单';
