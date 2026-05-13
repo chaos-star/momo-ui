@@ -650,11 +650,23 @@ export default function AppManagePage() {
               },
               {
                 label: t['appSearch.columns.appCode'],
-                value: viewRecord.appCode,
+                value: viewRecord.appCode ? (
+                  <Typography.Text copyable>
+                    {viewRecord.appCode}
+                  </Typography.Text>
+                ) : (
+                  '—'
+                ),
               },
               {
                 label: t['appSearch.columns.pkgName'],
-                value: viewRecord.pkgName,
+                value: viewRecord.pkgName ? (
+                  <Typography.Text copyable>
+                    {viewRecord.pkgName}
+                  </Typography.Text>
+                ) : (
+                  '—'
+                ),
               },
               {
                 label: t['appSearch.columns.osType'],
