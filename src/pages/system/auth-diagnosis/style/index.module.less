@@ -1,0 +1,63 @@
+.toolbar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.8fr);
+  gap: 16px;
+}
+
+.card-block {
+  min-height: 180px;
+  background: var(--color-bg-2);
+}
+
+.metric-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.metric {
+  flex: 1;
+  min-width: 140px;
+  padding: 12px 16px;
+  border: 1px solid var(--color-border-1);
+  border-radius: 4px;
+  background: var(--color-fill-1);
+}
+
+.metric-label {
+  color: var(--color-text-2);
+  font-size: 12px;
+}
+
+.metric-value {
+  margin-top: 6px;
+  color: var(--color-text-1);
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.result {
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid var(--color-border-1);
+  border-radius: 4px;
+  background: var(--color-fill-1);
+}
+
+.code {
+  max-height: 260px;
+  overflow: auto;
+  padding: 12px;
+  border: 1px solid var(--color-border-1);
+  border-radius: 4px;
+  background: var(--color-fill-1);
+  color: var(--color-text-1);
+  white-space: pre-wrap;
+}
