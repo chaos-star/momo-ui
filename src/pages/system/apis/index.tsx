@@ -20,8 +20,10 @@ import {
 import type { ColumnProps } from '@arco-design/web-react/es/Table';
 import {
   ApiEndpointRecord,
+  ApiGroupRecord,
   createApi,
   deleteApi,
+  fetchApiGroupOptions,
   fetchApiPage,
   updateApi,
 } from '@/api/access-permission';
@@ -40,6 +42,7 @@ export default function ApiManagePage() {
   const [keyword, setKeyword] = useState('');
   const [visible, setVisible] = useState(false);
   const [selected, setSelected] = useState<ApiEndpointRecord | null>(null);
+  const [apiGroups, setApiGroups] = useState<ApiGroupRecord[]>([]);
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
@@ -63,12 +66,51 @@ export default function ApiManagePage() {
     };
   }, [current, pageSize, keyword, tick]);
 
+  useEffect(() => {
+    let canceled = false;
+    void fetchApiGroupOptions().then((res) => {
+      if (!canceled) {
+        setApiGroups(res?.list || []);
+      }
+    });
+    return () => {
+      canceled = true;
+    };
+  }, [tick]);
+
+  const groupNameMap = useMemo(
+    () =>
+      apiGroups.reduce<Record<string, string>>((map, item) => {
+        if (item.groupCode) {
+          map[item.groupCode] = item.groupName || item.groupCode;
+        }
+        return map;
+      }, {}),
+    [apiGroups]
+  );
+
+  const groupOptions = useMemo(
+    () =>
+      apiGroups.map((item) => ({
+        label: item.groupName
+          ? `${item.groupName} (${item.groupCode})`
+          : item.groupCode,
+        value: item.groupCode,
+      })),
+    [apiGroups]
+  );
+
   const columns = useMemo<ColumnProps<ApiEndpointRecord>[]>(
     () => [
       { title: 'ID', dataIndex: 'id', width: 80 },
       { title: 'API 编码', dataIndex: 'apiCode', width: 220 },
       { title: 'API 名称', dataIndex: 'apiName', width: 180 },
-      { title: '分组', dataIndex: 'apiGroup', width: 120 },
+      {
+        title: '分组',
+        dataIndex: 'apiGroup',
+        width: 160,
+        render: (v) => (v ? groupNameMap[v] || v : '-'),
+      },
       { title: '方法', dataIndex: 'httpMethod', width: 100 },
       { title: '路径', dataIndex: 'pathPattern', width: 260 },
       { title: '匹配', dataIndex: 'matchType', width: 100 },
@@ -126,7 +168,7 @@ export default function ApiManagePage() {
         ),
       },
     ],
-    [form]
+    [form, groupNameMap]
   );
 
   const submit = async () => {
@@ -224,7 +266,19 @@ export default function ApiManagePage() {
             <Input />
           </Form.Item>
           <Form.Item label="API 分组" field="apiGroup">
-            <Input />
+            <Select
+              allowClear
+              showSearch
+              options={groupOptions}
+              filterOption={(inputValue, option) =>
+                String(option.props.value)
+                  .toLowerCase()
+                  .includes(inputValue.toLowerCase()) ||
+                String(option.props.children)
+                  .toLowerCase()
+                  .includes(inputValue.toLowerCase())
+              }
+            />
           </Form.Item>
           <Form.Item label="请求方法" field="httpMethod">
             <Select

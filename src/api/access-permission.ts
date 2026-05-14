@@ -1,3 +1,4 @@
+import { ListData } from './request';
 import {
   page,
   get,
@@ -7,6 +8,7 @@ import {
   AccessListParams,
   MenuRecord,
   ApiEndpointRecord,
+  ApiGroupRecord,
 } from './access-control';
 
 export interface PermissionRecord {
@@ -75,4 +77,24 @@ export function deleteApi(id: number) {
   return del('/api/system/apis/manage', { id });
 }
 
-export type { MenuRecord, ApiEndpointRecord };
+export function fetchApiGroupPage(params: AccessListParams) {
+  return page<ApiGroupRecord>('/api/system/api-groups/list', params);
+}
+
+export function fetchApiGroupOptions() {
+  return get<ListData<ApiGroupRecord>>('/api/system/api-groups/options');
+}
+
+export function createApiGroup(data: Record<string, unknown>) {
+  return post<{ id: number }>('/api/system/api-groups/manage', data);
+}
+
+export function updateApiGroup(data: Record<string, unknown>) {
+  return put('/api/system/api-groups/manage', data);
+}
+
+export function deleteApiGroup(id: number) {
+  return del('/api/system/api-groups/manage', { id });
+}
+
+export type { MenuRecord, ApiEndpointRecord, ApiGroupRecord };

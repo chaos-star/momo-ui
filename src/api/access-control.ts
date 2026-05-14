@@ -86,6 +86,13 @@ export interface ApiEndpointRecord extends BaseEntity {
   description?: string;
 }
 
+export interface ApiGroupRecord extends BaseEntity {
+  groupCode?: string;
+  groupName?: string;
+  description?: string;
+  operatorUsername?: string;
+}
+
 export interface DataObjectRecord extends BaseEntity {
   tenantId?: number;
   objectCode?: string;
