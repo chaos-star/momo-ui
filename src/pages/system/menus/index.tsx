@@ -610,7 +610,7 @@ export default function MenuManagePage() {
       render: (_, record) => {
         const isDisabled = record.activeStatus === 2;
         return (
-          <Space className={styles.operations}>
+          <Space className={styles.operations} size={10} wrap>
             <Button
               type="text"
               size="small"
