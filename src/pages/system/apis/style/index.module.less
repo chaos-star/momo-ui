@@ -5,6 +5,22 @@
   vertical-align: middle;
 }
 
+.search-form {
+  flex: 1;
+  padding-right: 20px;
+  min-width: 0;
+
+  :global(.arco-form-label-item-left) {
+    > label {
+      white-space: nowrap;
+    }
+  }
+
+  :global(.arco-form-item-label-col) {
+    padding-right: 8px;
+  }
+}
+
 .api-modal {
   :global(.arco-modal-content) {
     padding-right: 64px;

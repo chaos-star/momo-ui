@@ -378,10 +378,10 @@ export default function ApiManagePage() {
         <Form
           form={searchForm}
           initialValues={SEARCH_FORM_INITIAL_VALUES}
-          className={styles['search-form']}
+          className={apiStyles['search-form']}
           labelAlign="left"
-          labelCol={{ span: 7 }}
-          wrapperCol={{ span: 17 }}
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 19 }}
         >
           <Row gutter={24}>
             <Col span={8}>
