@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Button,
   Card,
@@ -29,11 +29,17 @@ import {
 } from '@arco-design/web-react/icon';
 import {
   createMenu,
+  createPageElement,
   deleteMenu,
+  deletePageElement,
   fetchMenuTree,
+  fetchPageElements,
   MenuRecord,
+  PageElementRecord,
   toggleMenuActiveStatus,
+  togglePageElementActiveStatus,
   updateMenu,
+  updatePageElement,
 } from '@/api/access-permission';
 import { getIconComponentName } from '@/utils/routeIcon';
 import styles from './style/index.module.less';
@@ -50,7 +56,9 @@ const menuTypeOptions = [
 
 const elementTypeOptions = [
   { label: '按钮', value: 'BUTTON' },
-  { label: '页面元素', value: 'DOM' },
+  { label: '交互组件', value: 'FORM' },
+  { label: '标签页', value: 'TAB' },
+  { label: '数据列', value: 'COLUMN' },
 ];
 
 const statusOptions = [
@@ -69,10 +77,6 @@ const iconNames = Object.keys(ArcoIcons)
 
 function isMenuNode(item?: MenuRecord | null) {
   return item ? MENU_TYPES.includes(item.menuType || 'MENU') : false;
-}
-
-function isElementNode(item?: MenuRecord | null) {
-  return item ? !isMenuNode(item) : false;
 }
 
 function flattenMenus(nodes: MenuRecord[] = []): MenuRecord[] {
@@ -288,14 +292,18 @@ export default function MenuManagePage() {
   const [selectedId, setSelectedId] = useState<number>();
   const [menuVisible, setMenuVisible] = useState(false);
   const [elementVisible, setElementVisible] = useState(false);
-  const [viewElement, setViewElement] = useState<MenuRecord | null>(null);
+  const [viewElement, setViewElement] = useState<PageElementRecord | null>(
+    null
+  );
   const [menuMode, setMenuMode] = useState<'create' | 'edit'>('create');
   const [elementMode, setElementMode] = useState<'create' | 'edit'>('create');
-  const [editingElement, setEditingElement] = useState<MenuRecord | null>(null);
+  const [editingElement, setEditingElement] =
+    useState<PageElementRecord | null>(null);
+  const [pageElements, setPageElements] = useState<PageElementRecord[]>([]);
   const [parentCode, setParentCode] = useState('');
   const [elementSearch, setElementSearch] = useState<{
-    menuCode?: string;
-    menuType?: string;
+    elementCode?: string;
+    elementType?: string;
     activeStatus?: number;
   }>({});
 
@@ -303,28 +311,7 @@ export default function MenuManagePage() {
   const menuTree = useMemo(() => filterMenuTree(allTree), [allTree]);
   const selected = findMenu(allTree, selectedId);
   const selectedMenuNode = isMenuNode(selected) ? selected : null;
-  const pageElements = useMemo(
-    () => (selectedMenuNode?.children || []).filter(isElementNode),
-    [selectedMenuNode]
-  );
-  const filteredPageElements = useMemo(
-    () =>
-      pageElements.filter((item) => {
-        const codeKeyword = elementSearch.menuCode?.trim().toLowerCase();
-        const codeMatched = codeKeyword
-          ? (item.menuCode || '').toLowerCase().includes(codeKeyword)
-          : true;
-        const typeMatched = elementSearch.menuType
-          ? item.menuType === elementSearch.menuType ||
-            (elementSearch.menuType === 'DOM' && item.menuType === 'ELEMENT')
-          : true;
-        const statusMatched = elementSearch.activeStatus
-          ? item.activeStatus === elementSearch.activeStatus
-          : true;
-        return codeMatched && typeMatched && statusMatched;
-      }),
-    [pageElements, elementSearch]
-  );
+  const filteredPageElements = useMemo(() => pageElements, [pageElements]);
   const disabledParentIds = useMemo(() => {
     const ids = getDescendantIds(menuMode === 'edit' ? selected : null);
     if (menuMode === 'edit' && selected?.id) {
@@ -336,24 +323,38 @@ export default function MenuManagePage() {
     () => toParentTreeData(menuTree, disabledParentIds),
     [menuTree, disabledParentIds]
   );
-  const elementType = Form.useWatch('menuType', elementForm);
+  const elementType = Form.useWatch('elementType', elementForm);
   const elementCodePrefix = getElementCodePrefix(
     selectedMenuNode?.menuCode || '',
     elementType
   );
 
-  const updateActiveStatus = (record: MenuRecord) => {
+  const updateMenuActiveStatus = (record: MenuRecord) => {
     const isDisabled = record.activeStatus === 2;
-    const resourceName = isElementNode(record) ? '页面元素' : '菜单';
     Modal.confirm({
-      title: `${isDisabled ? '启用' : '停用'}${resourceName}`,
-      content: `确认${isDisabled ? '启用' : '停用'}${resourceName} ${
+      title: `${isDisabled ? '启用' : '停用'}菜单`,
+      content: `确认${isDisabled ? '启用' : '停用'}菜单 ${
         record.menuName || record.menuCode
       }？`,
       onOk: async () => {
         await toggleMenuActiveStatus(record.id, isDisabled ? 1 : 2);
-        Message.success(`${resourceName}已${isDisabled ? '启用' : '停用'}`);
+        Message.success(`菜单已${isDisabled ? '启用' : '停用'}`);
         await loadTree();
+      },
+    });
+  };
+
+  const updateElementActiveStatus = (record: PageElementRecord) => {
+    const isDisabled = record.activeStatus === 2;
+    Modal.confirm({
+      title: `${isDisabled ? '启用' : '停用'}页面元素`,
+      content: `确认${isDisabled ? '启用' : '停用'}页面元素 ${
+        record.elementName || record.elementCode
+      }？`,
+      onOk: async () => {
+        await togglePageElementActiveStatus(record.id, isDisabled ? 1 : 2);
+        Message.success(`页面元素已${isDisabled ? '启用' : '停用'}`);
+        await loadPageElements();
       },
     });
   };
@@ -384,7 +385,7 @@ export default function MenuManagePage() {
             className={!isDisabled ? styles['stop-menu-button'] : undefined}
             status={isDisabled ? 'success' : undefined}
             icon={isDisabled ? <IconPlayArrow /> : <IconStop />}
-            onClick={() => updateActiveStatus(item)}
+            onClick={() => updateMenuActiveStatus(item)}
           >
             {isDisabled ? '启用' : '停用'}
           </Button>
@@ -443,9 +444,25 @@ export default function MenuManagePage() {
     }
   };
 
+  const loadPageElements = useCallback(async () => {
+    if (!selectedMenuNode?.id || selectedMenuNode.menuType !== 'MENU') {
+      setPageElements([]);
+      return;
+    }
+    const data = await fetchPageElements({
+      menuId: selectedMenuNode.id,
+      ...elementSearch,
+    });
+    setPageElements(data || []);
+  }, [selectedMenuNode?.id, selectedMenuNode?.menuType, elementSearch]);
+
   useEffect(() => {
     void loadTree(true);
   }, []);
+
+  useEffect(() => {
+    void loadPageElements();
+  }, [loadPageElements]);
 
   const openCreateMenu = () => {
     const parentId = selectedMenuNode?.id || ROOT_PARENT_ID;
@@ -497,24 +514,26 @@ export default function MenuManagePage() {
     setEditingElement(null);
     elementForm.resetFields();
     elementForm.setFieldsValue({
-      parentId: selectedMenuNode.id,
+      menuId: selectedMenuNode.id,
       codeSuffix: '',
-      menuType: undefined,
+      elementType: undefined,
+      elementName: '',
+      sortOrder: 100,
     });
     setElementVisible(true);
   };
 
-  const openEditElement = (record: MenuRecord) => {
+  const openEditElement = (record: PageElementRecord) => {
     setElementMode('edit');
     setEditingElement(record);
     elementForm.resetFields();
     const elementPrefix = getElementCodePrefix(
       selectedMenuNode?.menuCode || '',
-      record.menuType
+      record.elementType
     );
     elementForm.setFieldsValue({
       ...record,
-      codeSuffix: splitMenuCode(record.menuCode, elementPrefix),
+      codeSuffix: splitMenuCode(record.elementCode, elementPrefix),
     });
     setElementVisible(true);
   };
@@ -549,27 +568,26 @@ export default function MenuManagePage() {
     const values = await elementForm.validate();
     const payload = {
       ...values,
-      parentId: selectedMenuNode.id,
-      menuCode: joinElementCode(
+      menuId: selectedMenuNode.id,
+      elementCode: joinElementCode(
         selectedMenuNode.menuCode || '',
-        values.menuType,
+        values.elementType,
         values.codeSuffix
       ),
-      activeStatus: editingElement?.activeStatus || 1,
-      visible: editingElement?.visible || 1,
-      sortOrder: editingElement?.sortOrder || 100,
+      activeStatus: editingElement?.activeStatus,
+      sortOrder: editingElement?.sortOrder || values.sortOrder || 100,
     };
     delete payload.codeSuffix;
 
     if (elementMode === 'create') {
-      await createMenu(payload);
+      await createPageElement(payload);
       Message.success('页面元素已新增');
     } else if (editingElement) {
-      await updateMenu({ ...payload, id: editingElement.id });
+      await updatePageElement({ ...payload, id: editingElement.id });
       Message.success('页面元素已更新');
     }
     setElementVisible(false);
-    await loadTree();
+    await loadPageElements();
   };
 
   const handleElementSearch = () => {
@@ -582,12 +600,12 @@ export default function MenuManagePage() {
     setElementSearch({});
   };
 
-  const elementColumns: ColumnProps<MenuRecord>[] = [
-    { title: '元素名称', dataIndex: 'menuName', width: 160 },
-    { title: '元素编码', dataIndex: 'menuCode', width: 260 },
+  const elementColumns: ColumnProps<PageElementRecord>[] = [
+    { title: '元素名称', dataIndex: 'elementName', width: 160 },
+    { title: '元素编码', dataIndex: 'elementCode', width: 260 },
     {
       title: '类型',
-      dataIndex: 'menuType',
+      dataIndex: 'elementType',
       width: 110,
       render: (value) => <Tag>{formatType(value)}</Tag>,
     },
@@ -617,7 +635,7 @@ export default function MenuManagePage() {
               className={!isDisabled ? styles['stop-menu-button'] : undefined}
               status={isDisabled ? 'success' : undefined}
               icon={isDisabled ? <IconPlayArrow /> : <IconStop />}
-              onClick={() => updateActiveStatus(record)}
+              onClick={() => updateElementActiveStatus(record)}
             >
               {isDisabled ? '启用' : '停用'}
             </Button>
@@ -645,11 +663,13 @@ export default function MenuManagePage() {
               onClick={() =>
                 Modal.confirm({
                   title: '删除页面元素',
-                  content: `确认删除 ${record.menuName || record.menuCode}？`,
+                  content: `确认删除 ${
+                    record.elementName || record.elementCode
+                  }？`,
                   onOk: async () => {
-                    await deleteMenu(record.id);
+                    await deletePageElement(record.id);
                     Message.success('页面元素已删除');
-                    await loadTree();
+                    await loadPageElements();
                   },
                 })
               }
@@ -762,10 +782,10 @@ export default function MenuManagePage() {
                 layout="inline"
                 onSubmit={handleElementSearch}
               >
-                <Form.Item label="元素编码" field="menuCode">
+                <Form.Item label="元素编码" field="elementCode">
                   <Input allowClear placeholder="请输入元素编码" />
                 </Form.Item>
-                <Form.Item label="元素类型" field="menuType">
+                <Form.Item label="元素类型" field="elementType">
                   <Select
                     allowClear
                     options={elementTypeOptions}
@@ -800,7 +820,7 @@ export default function MenuManagePage() {
                   icon={<IconPlus />}
                   onClick={openCreateElement}
                 >
-                  添加元
+                  添加元素
                 </Button>
               ) : null}
             </div>
@@ -945,7 +965,7 @@ export default function MenuManagePage() {
           </Form.Item>
           <Form.Item
             label="元素类型"
-            field="menuType"
+            field="elementType"
             rules={[{ required: true }]}
           >
             <Select options={elementTypeOptions} placeholder="请选择元素类型" />
@@ -974,11 +994,20 @@ export default function MenuManagePage() {
           </Form.Item>
           <Form.Item
             label="元素名称"
-            field="menuName"
+            field="elementName"
             rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
+          {elementType === 'COLUMN' ? (
+            <Form.Item
+              label="字段名称"
+              field="elementKey"
+              rules={[{ required: true, message: '请输入字段名称' }]}
+            >
+              <Input placeholder="请输入字段名称" />
+            </Form.Item>
+          ) : null}
         </Form>
       </Modal>
 
@@ -992,9 +1021,9 @@ export default function MenuManagePage() {
         <Descriptions
           column={1}
           data={[
-            { label: '元素名称', value: viewElement?.menuName || '-' },
-            { label: '元素编码', value: viewElement?.menuCode || '-' },
-            { label: '元素类型', value: formatType(viewElement?.menuType) },
+            { label: '元素名称', value: viewElement?.elementName || '-' },
+            { label: '元素编码', value: viewElement?.elementCode || '-' },
+            { label: '元素类型', value: formatType(viewElement?.elementType) },
             {
               label: '启用状态',
               value: viewElement?.activeStatus === 2 ? '停用' : '启用',

@@ -7,6 +7,7 @@ import {
   del,
   AccessListParams,
   MenuRecord,
+  PageElementRecord,
   ApiEndpointRecord,
   ApiGroupRecord,
 } from './access-control';
@@ -61,6 +62,29 @@ export function deleteMenu(id: number) {
   return del('/api/system/menus/manage', { id });
 }
 
+export function fetchPageElements(params: AccessListParams) {
+  return get<PageElementRecord[]>('/api/system/page-elements/list', params);
+}
+
+export function createPageElement(data: Record<string, unknown>) {
+  return post<{ id: number }>('/api/system/page-elements/manage', data);
+}
+
+export function updatePageElement(data: Record<string, unknown>) {
+  return put('/api/system/page-elements/manage', data);
+}
+
+export function togglePageElementActiveStatus(
+  id: number,
+  activeStatus: number
+) {
+  return put('/api/system/page-elements/active-status', { id, activeStatus });
+}
+
+export function deletePageElement(id: number) {
+  return del('/api/system/page-elements/manage', { id });
+}
+
 export function fetchApiPage(params: AccessListParams) {
   return page<ApiEndpointRecord>('/api/system/apis/list', params);
 }
@@ -97,4 +121,9 @@ export function deleteApiGroup(id: number) {
   return del('/api/system/api-groups/manage', { id });
 }
 
-export type { MenuRecord, ApiEndpointRecord, ApiGroupRecord };
+export type {
+  MenuRecord,
+  PageElementRecord,
+  ApiEndpointRecord,
+  ApiGroupRecord,
+};

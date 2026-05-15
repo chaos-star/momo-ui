@@ -75,6 +75,19 @@ export interface MenuRecord extends BaseEntity {
   children?: MenuRecord[];
 }
 
+export interface PageElementRecord extends BaseEntity {
+  menuId?: number;
+  elementCode?: string;
+  elementName?: string;
+  elementType?: string;
+  elementKey?: string;
+  description?: string;
+  sortOrder?: number;
+  permissionId?: number;
+  permissionCode?: string;
+  permissionName?: string;
+}
+
 export interface ApiEndpointRecord extends BaseEntity {
   apiCode?: string;
   apiName?: string;
