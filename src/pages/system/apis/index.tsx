@@ -1,21 +1,25 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Button,
   Card,
   Form,
+  Grid,
   Input,
   Message,
   Modal,
   Select,
   Space,
   Table,
+  Tooltip,
   Typography,
+  PaginationProps,
 } from '@arco-design/web-react';
 import {
   IconDelete,
   IconEdit,
   IconPlus,
   IconRefresh,
+  IconSearch,
 } from '@arco-design/web-react/icon';
 import type { ColumnProps } from '@arco-design/web-react/es/Table';
 import {
@@ -28,55 +32,98 @@ import {
   updateApi,
 } from '@/api/access-permission';
 import { formatTime } from '@/utils/accessControl';
-import styles from '../permissions/style/index.module.less';
+import useLocale from '@/utils/useLocale';
+import locale from './locale';
+import styles from '../tenants/style/index.module.less';
+import apiStyles from './style/index.module.less';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
+const { Row, Col } = Grid;
+
+const HTTP_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
+const MATCH_TYPES = ['EXACT', 'PREFIX', 'REGEX'];
+const API_CODE_PREFIX_ROOT = 'api';
+
+type ApiSearchValues = {
+  apiCode?: string;
+  apiName?: string;
+  apiGroup?: string;
+  httpMethod?: string;
+  pathPattern?: string;
+  matchType?: string;
+  anonymous?: number;
+};
+
+type ApiModalValues = ApiEndpointRecord & {
+  apiCodeSuffix?: string;
+};
+
+const SEARCH_FORM_INITIAL_VALUES: ApiSearchValues = {
+  apiCode: '',
+  apiName: '',
+  apiGroup: undefined,
+  httpMethod: undefined,
+  pathPattern: '',
+  matchType: undefined,
+  anonymous: undefined,
+};
+
+function apiCodePrefix(groupCode?: string) {
+  return groupCode ? `${API_CODE_PREFIX_ROOT}:${groupCode}:` : '';
+}
+
+function splitApiCodeSuffix(apiCode?: string, groupCode?: string) {
+  const prefix = apiCodePrefix(groupCode);
+  if (!apiCode) {
+    return '';
+  }
+  return prefix && apiCode.startsWith(prefix)
+    ? apiCode.slice(prefix.length)
+    : apiCode;
+}
+
+function renderEllipsisText(value?: string) {
+  if (!value) {
+    return '-';
+  }
+  return (
+    <Tooltip content={value} position="top">
+      <Text className={apiStyles['ellipsis-text']} ellipsis>
+        {value}
+      </Text>
+    </Tooltip>
+  );
+}
 
 export default function ApiManagePage() {
-  const [form] = Form.useForm();
+  const t = useLocale(locale);
+  const [searchForm] = Form.useForm();
+  const [modalForm] = Form.useForm();
   const [data, setData] = useState<ApiEndpointRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
-  const [keyword, setKeyword] = useState('');
+  const [formParams, setFormParams] = useState<ApiSearchValues>({});
   const [visible, setVisible] = useState(false);
   const [selected, setSelected] = useState<ApiEndpointRecord | null>(null);
   const [apiGroups, setApiGroups] = useState<ApiGroupRecord[]>([]);
+  const [selectedApiGroup, setSelectedApiGroup] = useState<string>();
   const [tick, setTick] = useState(0);
 
-  useEffect(() => {
-    let canceled = false;
-    setLoading(true);
-    void fetchApiPage({
-      page: current,
+  const pagination = useMemo<PaginationProps>(
+    () => ({
+      current,
       pageSize,
-      apiCode: keyword || undefined,
-      apiName: keyword || undefined,
-    })
-      .then((res) => {
-        if (!canceled) {
-          setData(res.list || []);
-          setTotal(res.total || 0);
-        }
-      })
-      .finally(() => !canceled && setLoading(false));
-    return () => {
-      canceled = true;
-    };
-  }, [current, pageSize, keyword, tick]);
-
-  useEffect(() => {
-    let canceled = false;
-    void fetchApiGroupOptions().then((res) => {
-      if (!canceled) {
-        setApiGroups(res?.list || []);
-      }
-    });
-    return () => {
-      canceled = true;
-    };
-  }, [tick]);
+      total,
+      showTotal: true,
+      sizeCanChange: true,
+      pageSizeChangeResetCurrent: true,
+      showJumper: true,
+      pageSizeOptions: [10, 20, 50, 100],
+    }),
+    [current, pageSize, total]
+  );
 
   const groupNameMap = useMemo(
     () =>
@@ -100,34 +147,149 @@ export default function ApiManagePage() {
     [apiGroups]
   );
 
+  const matchTypeOptions = useMemo(
+    () =>
+      MATCH_TYPES.map((value) => ({
+        label: t[`apiSearch.matchType.${value}`] || value,
+        value,
+      })),
+    [t]
+  );
+
+  const anonymousOptions = useMemo(
+    () => [
+      { label: t['apiSearch.anonymous.no'], value: 2 },
+      { label: t['apiSearch.anonymous.yes'], value: 1 },
+    ],
+    [t]
+  );
+
+  const httpMethodOptions = useMemo(
+    () => HTTP_METHODS.map((value) => ({ label: value, value })),
+    []
+  );
+
+  useEffect(() => {
+    let canceled = false;
+    setLoading(true);
+    void fetchApiPage({
+      page: current,
+      pageSize,
+      apiCode: formParams.apiCode?.trim() || undefined,
+      apiName: formParams.apiName?.trim() || undefined,
+      apiGroup: formParams.apiGroup || undefined,
+      httpMethod: formParams.httpMethod || undefined,
+      pathPattern: formParams.pathPattern?.trim() || undefined,
+      matchType: formParams.matchType || undefined,
+      anonymous: formParams.anonymous,
+    })
+      .then((res) => {
+        if (!canceled) {
+          setData(res.list || []);
+          setTotal(res.total || 0);
+        }
+      })
+      .finally(() => !canceled && setLoading(false));
+    return () => {
+      canceled = true;
+    };
+  }, [current, pageSize, formParams, tick]);
+
+  useEffect(() => {
+    let canceled = false;
+    void fetchApiGroupOptions().then((res) => {
+      if (!canceled) {
+        setApiGroups(res?.list || []);
+      }
+    });
+    return () => {
+      canceled = true;
+    };
+  }, [tick]);
+
+  const openCreateModal = () => {
+    setSelected(null);
+    setSelectedApiGroup(undefined);
+    modalForm.resetFields();
+    modalForm.setFieldsValue({
+      httpMethod: 'GET',
+      matchType: 'EXACT',
+      anonymous: 2,
+      activeStatus: 1,
+    });
+    setVisible(true);
+  };
+
+  const openEditModal = useCallback(
+    (record: ApiEndpointRecord) => {
+      const apiGroup = record.apiGroup;
+      setSelected(record);
+      setSelectedApiGroup(apiGroup);
+      modalForm.setFieldsValue({
+        ...record,
+        apiCodeSuffix: splitApiCodeSuffix(record.apiCode, apiGroup),
+      });
+      setVisible(true);
+    },
+    [modalForm]
+  );
+
   const columns = useMemo<ColumnProps<ApiEndpointRecord>[]>(
     () => [
-      { title: 'ID', dataIndex: 'id', width: 80 },
-      { title: 'API 编码', dataIndex: 'apiCode', width: 220 },
-      { title: 'API 名称', dataIndex: 'apiName', width: 180 },
+      { title: t['apiSearch.columns.id'], dataIndex: 'id', width: 80 },
       {
-        title: '分组',
+        title: t['apiSearch.columns.apiName'],
+        dataIndex: 'apiName',
+        width: 180,
+        render: renderEllipsisText,
+      },
+      {
+        title: t['apiSearch.columns.apiCode'],
+        dataIndex: 'apiCode',
+        width: 240,
+        render: renderEllipsisText,
+      },
+      {
+        title: t['apiSearch.columns.apiGroup'],
         dataIndex: 'apiGroup',
-        width: 160,
-        render: (v) => (v ? groupNameMap[v] || v : '-'),
+        width: 120,
+        render: (value) =>
+          renderEllipsisText(value ? groupNameMap[value] || value : ''),
       },
-      { title: '方法', dataIndex: 'httpMethod', width: 100 },
-      { title: '路径', dataIndex: 'pathPattern', width: 260 },
-      { title: '匹配', dataIndex: 'matchType', width: 100 },
       {
-        title: '匿名',
+        title: t['apiSearch.columns.httpMethod'],
+        dataIndex: 'httpMethod',
+        width: 110,
+      },
+      {
+        title: t['apiSearch.columns.pathPattern'],
+        dataIndex: 'pathPattern',
+        width: 280,
+        render: renderEllipsisText,
+      },
+      {
+        title: t['apiSearch.columns.matchType'],
+        dataIndex: 'matchType',
+        width: 120,
+        render: (value) => t[`apiSearch.matchType.${value}`] || value || '-',
+      },
+      {
+        title: t['apiSearch.columns.anonymous'],
         dataIndex: 'anonymous',
-        width: 90,
-        render: (v) => (v === 1 ? '是' : '否'),
+        width: 110,
+        render: (value) =>
+          value === 1
+            ? t['apiSearch.anonymous.yes']
+            : t['apiSearch.anonymous.no'],
       },
       {
-        title: '更新时间',
+        title: t['apiSearch.columns.updatedAt'],
         dataIndex: 'updatedAt',
         width: 170,
         render: formatTime,
       },
       {
-        title: '操作',
+        title: t['apiSearch.columns.operations'],
         dataIndex: 'operations',
         width: 160,
         fixed: 'right',
@@ -137,13 +299,9 @@ export default function ApiManagePage() {
               type="text"
               size="small"
               icon={<IconEdit />}
-              onClick={() => {
-                setSelected(record);
-                form.setFieldsValue(record);
-                setVisible(true);
-              }}
+              onClick={() => openEditModal(record)}
             >
-              编辑
+              {t['apiSearch.operations.edit']}
             </Button>
             <Button
               type="text"
@@ -152,71 +310,175 @@ export default function ApiManagePage() {
               icon={<IconDelete />}
               onClick={() =>
                 Modal.confirm({
-                  title: '删除 API',
-                  content: `确认删除 ${record.apiCode}？`,
+                  title: t['apiSearch.confirm.deleteTitle'],
+                  content: t['apiSearch.confirm.deleteContent'],
                   onOk: async () => {
                     await deleteApi(record.id);
-                    Message.success('API 已删除');
+                    Message.success(t['apiSearch.msg.deleteOk']);
                     setTick((x) => x + 1);
                   },
                 })
               }
             >
-              删除
+              {t['apiSearch.operations.delete']}
             </Button>
           </Space>
         ),
       },
     ],
-    [form, groupNameMap]
+    [groupNameMap, openEditModal, t]
   );
 
+  const handleSearch = () => {
+    setCurrent(1);
+    setFormParams(searchForm.getFieldsValue() as ApiSearchValues);
+  };
+
+  const handleReset = () => {
+    searchForm.resetFields();
+    setCurrent(1);
+    setFormParams({ ...SEARCH_FORM_INITIAL_VALUES });
+  };
+
+  const handleApiGroupChange = (value: string) => {
+    setSelectedApiGroup(value);
+    modalForm.setFieldValue('apiGroup', value);
+  };
+
   const submit = async () => {
-    const values = await form.validate();
+    const values = (await modalForm.validate()) as ApiModalValues;
+    const apiCode = `${apiCodePrefix(values.apiGroup)}${String(
+      values.apiCodeSuffix || ''
+    ).trim()}`;
+    const payload = {
+      ...values,
+      apiCode,
+    };
+    delete payload.apiCodeSuffix;
     if (selected) {
-      await updateApi({ ...values, id: selected.id });
-      Message.success('API 已更新');
+      await updateApi({ ...payload, id: selected.id });
+      Message.success(t['apiSearch.msg.saveOk']);
     } else {
-      await createApi(values);
-      Message.success('API 已新增');
+      await createApi(payload);
+      Message.success(t['apiSearch.msg.createOk']);
     }
     setVisible(false);
     setTick((x) => x + 1);
   };
 
+  const onChangeTable = (p: PaginationProps) => {
+    setCurrent(p.current || 1);
+    setPageSize(p.pageSize || 10);
+  };
+
   return (
     <Card>
-      <Title heading={6}>API 权限管理</Title>
-      <div className={styles['search-row']}>
-        <Input.Search
-          allowClear
-          placeholder="搜索 API 编码或名称"
-          onSearch={(v) => {
-            setCurrent(1);
-            setKeyword(v);
-          }}
-        />
-        <Button icon={<IconRefresh />} onClick={() => setTick((x) => x + 1)}>
-          刷新
-        </Button>
+      <Title heading={6}>{t['apiSearch.title']}</Title>
+      <div className={styles['search-form-wrapper']}>
+        <Form
+          form={searchForm}
+          initialValues={SEARCH_FORM_INITIAL_VALUES}
+          className={styles['search-form']}
+          labelAlign="left"
+          labelCol={{ span: 7 }}
+          wrapperCol={{ span: 17 }}
+        >
+          <Row gutter={24}>
+            <Col span={8}>
+              <Form.Item label={t['apiSearch.columns.apiCode']} field="apiCode">
+                <Input
+                  allowClear
+                  placeholder={t['apiSearch.placeholder.apiCodeSuffix']}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label={t['apiSearch.columns.apiName']} field="apiName">
+                <Input
+                  allowClear
+                  placeholder={t['apiSearch.placeholder.apiName']}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label={t['apiSearch.columns.apiGroup']}
+                field="apiGroup"
+              >
+                <Select
+                  allowClear
+                  showSearch
+                  options={groupOptions}
+                  placeholder={t['apiSearch.placeholder.apiGroup']}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label={t['apiSearch.columns.httpMethod']}
+                field="httpMethod"
+              >
+                <Select
+                  allowClear
+                  options={httpMethodOptions}
+                  placeholder={t['apiSearch.placeholder.httpMethod']}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label={t['apiSearch.columns.pathPattern']}
+                field="pathPattern"
+              >
+                <Input
+                  allowClear
+                  placeholder={t['apiSearch.placeholder.pathPattern']}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label={t['apiSearch.columns.matchType']}
+                field="matchType"
+              >
+                <Select
+                  allowClear
+                  options={matchTypeOptions}
+                  placeholder={t['apiSearch.placeholder.matchType']}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                label={t['apiSearch.columns.anonymous']}
+                field="anonymous"
+              >
+                <Select
+                  allowClear
+                  options={anonymousOptions}
+                  placeholder={t['apiSearch.placeholder.anonymous']}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+        <div className={styles['right-button']}>
+          <Button type="primary" icon={<IconSearch />} onClick={handleSearch}>
+            {t['apiSearch.form.search']}
+          </Button>
+          <Button icon={<IconRefresh />} onClick={handleReset}>
+            {t['apiSearch.form.reset']}
+          </Button>
+        </div>
       </div>
       <div className={styles['button-group']}>
-        <Button
-          type="primary"
-          icon={<IconPlus />}
-          onClick={() => {
-            setSelected(null);
-            form.resetFields();
-            form.setFieldsValue({
-              httpMethod: 'GET',
-              matchType: 'EXACT',
-              anonymous: 2,
-              activeStatus: 1,
-            });
-            setVisible(true);
-          }}
-        >
-          新增 API
+        <Space>
+          <Button type="primary" icon={<IconPlus />} onClick={openCreateModal}>
+            {t['apiSearch.operations.add']}
+          </Button>
+        </Space>
+        <Button icon={<IconRefresh />} onClick={() => setTick((x) => x + 1)}>
+          {t['apiSearch.operations.refresh']}
         </Button>
       </div>
       <Table
@@ -224,97 +486,141 @@ export default function ApiManagePage() {
         loading={loading}
         columns={columns}
         data={data}
-        scroll={{ x: 1400 }}
-        pagination={{
-          current,
-          pageSize,
-          total,
-          showTotal: true,
-          sizeCanChange: true,
-        }}
-        onChange={(p) => {
-          setCurrent(p.current || 1);
-          setPageSize(p.pageSize || 10);
-        }}
+        border
+        pagination={pagination}
+        onChange={onChangeTable}
       />
       <Modal
-        title={selected ? '编辑 API' : '新增 API'}
+        title={
+          selected
+            ? t['apiSearch.modal.editTitle']
+            : t['apiSearch.modal.createTitle']
+        }
         visible={visible}
         onOk={submit}
         onCancel={() => setVisible(false)}
         unmountOnExit
+        className={apiStyles['api-modal']}
+        style={{ width: 880 }}
       >
         <Form
-          form={form}
+          form={modalForm}
           layout="horizontal"
           labelAlign="left"
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 19 }}
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+          className={`${styles['search-form']} ${apiStyles['modal-form']}`}
         >
-          <Form.Item
-            label="API 编码"
-            field="apiCode"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="API 名称"
-            field="apiName"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item label="API 分组" field="apiGroup">
-            <Select
-              allowClear
-              showSearch
-              options={groupOptions}
-              filterOption={(inputValue, option) =>
-                String(option.props.value)
-                  .toLowerCase()
-                  .includes(inputValue.toLowerCase()) ||
-                String(option.props.children)
-                  .toLowerCase()
-                  .includes(inputValue.toLowerCase())
-              }
-            />
-          </Form.Item>
-          <Form.Item label="请求方法" field="httpMethod">
-            <Select
-              options={['GET', 'POST', 'PUT', 'DELETE', 'PATCH'].map((v) => ({
-                label: v,
-                value: v,
-              }))}
-            />
-          </Form.Item>
-          <Form.Item
-            label="路径匹配"
-            field="pathPattern"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item label="匹配类型" field="matchType">
-            <Select
-              options={[
-                { label: '精确', value: 'EXACT' },
-                { label: '前缀', value: 'PREFIX' },
-                { label: '正则', value: 'REGEX' },
-              ]}
-            />
-          </Form.Item>
-          <Form.Item label="匿名访问" field="anonymous">
-            <Select
-              options={[
-                { label: '否', value: 2 },
-                { label: '是', value: 1 },
-              ]}
-            />
-          </Form.Item>
-          <Form.Item label="描述" field="description">
-            <Input.TextArea rows={3} />
-          </Form.Item>
+          <Row gutter={24}>
+            <Col span={12}>
+              <Form.Item
+                label={t['apiSearch.columns.apiGroup']}
+                field="apiGroup"
+                rules={[
+                  {
+                    required: true,
+                    message: t['apiSearch.validation.required'],
+                  },
+                ]}
+              >
+                <Select
+                  allowClear
+                  showSearch
+                  options={groupOptions}
+                  placeholder={t['apiSearch.placeholder.apiGroup']}
+                  onChange={handleApiGroupChange}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label={t['apiSearch.columns.apiCode']}
+                field="apiCodeSuffix"
+                rules={[
+                  {
+                    required: true,
+                    message: t['apiSearch.validation.required'],
+                  },
+                ]}
+              >
+                <Input
+                  disabled={!selectedApiGroup}
+                  addBefore={apiCodePrefix(selectedApiGroup)}
+                  placeholder={
+                    selectedApiGroup
+                      ? t['apiSearch.placeholder.apiCodeSuffix']
+                      : t['apiSearch.placeholder.apiCode']
+                  }
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label={t['apiSearch.columns.apiName']}
+                field="apiName"
+                rules={[
+                  {
+                    required: true,
+                    message: t['apiSearch.validation.required'],
+                  },
+                ]}
+              >
+                <Input placeholder={t['apiSearch.placeholder.apiName']} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label={t['apiSearch.columns.httpMethod']}
+                field="httpMethod"
+              >
+                <Select options={httpMethodOptions} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label={t['apiSearch.columns.pathPattern']}
+                field="pathPattern"
+                rules={[
+                  {
+                    required: true,
+                    message: t['apiSearch.validation.required'],
+                  },
+                ]}
+              >
+                <Input placeholder={t['apiSearch.placeholder.pathPattern']} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label={t['apiSearch.columns.matchType']}
+                field="matchType"
+              >
+                <Select options={matchTypeOptions} />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label={t['apiSearch.columns.anonymous']}
+                field="anonymous"
+              >
+                <Select options={anonymousOptions} />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item
+                label={t['apiSearch.field.description']}
+                field="description"
+                labelCol={{ span: 4 }}
+                wrapperCol={{ span: 20 }}
+                className={apiStyles['description-item']}
+              >
+                <Input.TextArea
+                  rows={3}
+                  autoSize={{ minRows: 3, maxRows: 5 }}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
         </Form>
       </Modal>
     </Card>
