@@ -71,14 +71,39 @@ function isApiSuccess(code: number) {
   return code === 200;
 }
 
+/** 后端 LogicException：未登录 / Token 无效 */
+const API_ERROR_UNAUTHORIZED = 100001;
+/** 后端 LogicException：无接口或菜单访问权限 */
+const API_ERROR_FORBIDDEN = 100060;
+
 function getErrorMessage(response?: ApiResponse, fallback = '请求失败') {
   return response?.message || fallback;
 }
 
 let isRedirectingToLogin = false;
 
+function isForbiddenResponse(response?: AxiosResponse<ApiResponse>) {
+  const code = response?.data?.code;
+  return (
+    response?.status === 403 ||
+    code === API_ERROR_FORBIDDEN ||
+    code === 100003 ||
+    code === 100002
+  );
+}
+
 function isUnauthorizedResponse(response?: AxiosResponse<ApiResponse>) {
-  return response?.status === 401 || response?.data?.code === 401;
+  if (isForbiddenResponse(response)) {
+    return false;
+  }
+  const code = response?.data?.code;
+  return (
+    response?.status === 401 || code === 401 || code === API_ERROR_UNAUTHORIZED
+  );
+}
+
+function showForbiddenMessage(response?: AxiosResponse<ApiResponse>) {
+  Message.warning(getErrorMessage(response?.data, '无权限访问该资源'));
 }
 
 function redirectToLogin() {
@@ -117,6 +142,9 @@ axios.interceptors.response.use(
     return response;
   },
   (error: AxiosError<ApiResponse>) => {
+    if (isForbiddenResponse(error.response)) {
+      return Promise.reject(error);
+    }
     if (isUnauthorizedResponse(error.response)) {
       handleUnauthorized();
     }
@@ -131,6 +159,13 @@ function handleResponse<T>(
 ): T | Promise<never> {
   if (isUnauthorizedResponse(response)) {
     handleUnauthorized(config);
+    return Promise.reject(response.data);
+  }
+
+  if (isForbiddenResponse(response)) {
+    if (!config?.skipErrorMessage) {
+      showForbiddenMessage(response);
+    }
     return Promise.reject(response.data);
   }
 
@@ -149,6 +184,13 @@ function handleError(
   error: AxiosError<ApiResponse>,
   config?: ApiRequestConfig
 ) {
+  if (isForbiddenResponse(error.response)) {
+    if (!config?.skipErrorMessage) {
+      showForbiddenMessage(error.response);
+    }
+    return Promise.reject(error);
+  }
+
   if (isUnauthorizedResponse(error.response)) {
     handleUnauthorized(config);
     return Promise.reject(error);

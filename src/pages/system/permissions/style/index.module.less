@@ -1,17 +1,15 @@
-.button-group {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 16px;
-}
+.search-form {
+  flex: 1;
+  padding-right: 20px;
+  min-width: 0;
 
-.search-row {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 16px;
-}
+  :global(.arco-form-label-item-left) {
+    > label {
+      white-space: nowrap;
+    }
+  }
 
-.operations {
-  display: flex;
-  flex-wrap: wrap;
-  row-gap: 4px;
+  :global(.arco-form-item-label-col) {
+    padding-right: 8px;
+  }
 }

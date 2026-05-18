@@ -7,6 +7,7 @@ import {
   RoleRecord,
   RoleDetail,
   AccessListParams,
+  PermissionNode,
 } from './access-control';
 
 export interface RoleListParams extends AccessListParams {
@@ -50,4 +51,18 @@ export function saveRolePermissions(data: {
   return post<{ ids: number[] }>('/api/system/roles/permissions', data);
 }
 
-export type { RoleRecord, RoleDetail };
+export function fetchPermissionGrantTree() {
+  return get<PermissionNode[]>('/api/system/permissions/grant-tree');
+}
+
+export function fetchPermissionMenuGrantTree() {
+  return get<PermissionNode[]>('/api/system/permissions/grant-tree/menus');
+}
+
+export function fetchPermissionGrantChildren(parentPermissionId: number) {
+  return get<PermissionNode[]>('/api/system/permissions/grant-children', {
+    parentPermissionId,
+  });
+}
+
+export type { RoleRecord, RoleDetail, PermissionNode };

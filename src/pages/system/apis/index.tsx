@@ -43,6 +43,9 @@ const { Row, Col } = Grid;
 const HTTP_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
 const MATCH_TYPES = ['EXACT', 'PREFIX', 'REGEX'];
 const API_CODE_PREFIX_ROOT = 'api';
+const ACCESS_LEVEL_PUBLIC = 1;
+const ACCESS_LEVEL_LOGIN_ONLY = 2;
+const ACCESS_LEVEL_PERMISSION = 3;
 
 type ApiSearchValues = {
   apiCode?: string;
@@ -51,7 +54,7 @@ type ApiSearchValues = {
   httpMethod?: string;
   pathPattern?: string;
   matchType?: string;
-  anonymous?: number;
+  accessLevel?: number;
 };
 
 type ApiModalValues = ApiEndpointRecord & {
@@ -65,8 +68,18 @@ const SEARCH_FORM_INITIAL_VALUES: ApiSearchValues = {
   httpMethod: undefined,
   pathPattern: '',
   matchType: undefined,
-  anonymous: undefined,
+  accessLevel: undefined,
 };
+
+function renderAccessLevelLabel(
+  value: number | undefined,
+  labels: Record<number, string>
+) {
+  if (value == null) {
+    return '-';
+  }
+  return labels[value] || String(value);
+}
 
 function apiCodePrefix(groupCode?: string) {
   return groupCode ? `${API_CODE_PREFIX_ROOT}:${groupCode}:` : '';
@@ -156,10 +169,26 @@ export default function ApiManagePage() {
     [t]
   );
 
-  const anonymousOptions = useMemo(
+  const accessLevelLabels = useMemo(
+    () => ({
+      [ACCESS_LEVEL_PUBLIC]: t['apiSearch.accessLevel.public'],
+      [ACCESS_LEVEL_LOGIN_ONLY]: t['apiSearch.accessLevel.loginOnly'],
+      [ACCESS_LEVEL_PERMISSION]: t['apiSearch.accessLevel.permission'],
+    }),
+    [t]
+  );
+
+  const accessLevelOptions = useMemo(
     () => [
-      { label: t['apiSearch.anonymous.no'], value: 2 },
-      { label: t['apiSearch.anonymous.yes'], value: 1 },
+      { label: t['apiSearch.accessLevel.public'], value: ACCESS_LEVEL_PUBLIC },
+      {
+        label: t['apiSearch.accessLevel.loginOnly'],
+        value: ACCESS_LEVEL_LOGIN_ONLY,
+      },
+      {
+        label: t['apiSearch.accessLevel.permission'],
+        value: ACCESS_LEVEL_PERMISSION,
+      },
     ],
     [t]
   );
@@ -181,7 +210,7 @@ export default function ApiManagePage() {
       httpMethod: formParams.httpMethod || undefined,
       pathPattern: formParams.pathPattern?.trim() || undefined,
       matchType: formParams.matchType || undefined,
-      anonymous: formParams.anonymous,
+      accessLevel: formParams.accessLevel,
     })
       .then((res) => {
         if (!canceled) {
@@ -214,7 +243,7 @@ export default function ApiManagePage() {
     modalForm.setFieldsValue({
       httpMethod: 'GET',
       matchType: 'EXACT',
-      anonymous: 2,
+      accessLevel: ACCESS_LEVEL_PERMISSION,
       activeStatus: 1,
     });
     setVisible(true);
@@ -274,13 +303,10 @@ export default function ApiManagePage() {
         render: (value) => t[`apiSearch.matchType.${value}`] || value || '-',
       },
       {
-        title: t['apiSearch.columns.anonymous'],
-        dataIndex: 'anonymous',
-        width: 110,
-        render: (value) =>
-          value === 1
-            ? t['apiSearch.anonymous.yes']
-            : t['apiSearch.anonymous.no'],
+        title: t['apiSearch.columns.accessLevel'],
+        dataIndex: 'accessLevel',
+        width: 130,
+        render: (value) => renderAccessLevelLabel(value, accessLevelLabels),
       },
       {
         title: t['apiSearch.columns.updatedAt'],
@@ -326,7 +352,7 @@ export default function ApiManagePage() {
         ),
       },
     ],
-    [groupNameMap, openEditModal, t]
+    [accessLevelLabels, groupNameMap, openEditModal, t]
   );
 
   const handleSearch = () => {
@@ -450,13 +476,13 @@ export default function ApiManagePage() {
             </Col>
             <Col span={8}>
               <Form.Item
-                label={t['apiSearch.columns.anonymous']}
-                field="anonymous"
+                label={t['apiSearch.columns.accessLevel']}
+                field="accessLevel"
               >
                 <Select
                   allowClear
-                  options={anonymousOptions}
-                  placeholder={t['apiSearch.placeholder.anonymous']}
+                  options={accessLevelOptions}
+                  placeholder={t['apiSearch.placeholder.accessLevel']}
                 />
               </Form.Item>
             </Col>
@@ -600,10 +626,10 @@ export default function ApiManagePage() {
             </Col>
             <Col span={12}>
               <Form.Item
-                label={t['apiSearch.columns.anonymous']}
-                field="anonymous"
+                label={t['apiSearch.columns.accessLevel']}
+                field="accessLevel"
               >
-                <Select options={anonymousOptions} />
+                <Select options={accessLevelOptions} />
               </Form.Item>
             </Col>
             <Col span={24}>

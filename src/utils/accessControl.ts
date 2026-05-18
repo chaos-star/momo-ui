@@ -91,6 +91,10 @@ export function formatTime(value?: number) {
 
 type PermissionIdNode = {
   permissionId?: number;
+  id?: number;
+  autoGrant?: number;
+  checkable?: boolean;
+  nodeType?: string;
   children?: PermissionIdNode[];
 };
 
@@ -104,4 +108,52 @@ export function flattenPermissionIds(nodes: PermissionIdNode[] = []) {
   };
   walk(nodes);
   return ids;
+}
+
+export function expandCheckedWithAutoGrant(
+  tree: PermissionIdNode[] = [],
+  checkedKeys: string[]
+): string[] {
+  const set = new Set(checkedKeys);
+  const walk = (nodes: PermissionIdNode[]) => {
+    nodes.forEach((node) => {
+      const key =
+        node.permissionId != null && node.permissionId > 0
+          ? String(node.permissionId)
+          : null;
+      if (key && set.has(key)) {
+        (node.children || []).forEach((child) => {
+          if (child.permissionId && child.autoGrant === 1) {
+            set.add(String(child.permissionId));
+          }
+        });
+      }
+      walk(node.children || []);
+    });
+  };
+  walk(tree);
+  return Array.from(set);
+}
+
+export function filterCheckablePermissionKeys(
+  tree: PermissionIdNode[] = [],
+  checkedKeys: string[]
+): string[] {
+  const checkable = new Set<string>();
+  const walk = (nodes: PermissionIdNode[]) => {
+    nodes.forEach((node) => {
+      if (
+        node.permissionId &&
+        node.permissionId > 0 &&
+        node.checkable !== false &&
+        node.nodeType !== 'CATALOG' &&
+        node.nodeType !== 'GROUP'
+      ) {
+        checkable.add(String(node.permissionId));
+      }
+      walk(node.children || []);
+    });
+  };
+  walk(tree);
+  return checkedKeys.filter((k) => checkable.has(k));
 }

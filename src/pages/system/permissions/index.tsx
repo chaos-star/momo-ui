@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Button,
   Card,
   Form,
+  Grid,
   Input,
   Message,
   Modal,
@@ -10,12 +11,14 @@ import {
   Space,
   Table,
   Typography,
+  PaginationProps,
 } from '@arco-design/web-react';
 import {
   IconDelete,
   IconEdit,
   IconPlus,
   IconRefresh,
+  IconSearch,
 } from '@arco-design/web-react/icon';
 import type { ColumnProps } from '@arco-design/web-react/es/Table';
 import {
@@ -26,21 +29,64 @@ import {
   updatePermission,
 } from '@/api/access-permission';
 import { formatTime } from '@/utils/accessControl';
-import styles from './style/index.module.less';
+import styles from '../tenants/style/index.module.less';
+import pageStyles from './style/index.module.less';
 
 const { Title } = Typography;
+const { Row, Col } = Grid;
+
+type PermissionSearchValues = {
+  permissionCode?: string;
+  permissionName?: string;
+  permissionType?: string;
+  objectType?: string;
+};
+
+const SEARCH_FORM_INITIAL_VALUES: PermissionSearchValues = {
+  permissionCode: '',
+  permissionName: '',
+  permissionType: undefined,
+  objectType: undefined,
+};
+
+const PERMISSION_TYPE_OPTIONS = [
+  { label: '菜单', value: 'MENU' },
+  { label: 'API', value: 'API' },
+  { label: '全局', value: 'GLOBAL' },
+];
+
+const OBJECT_TYPE_OPTIONS = [
+  { label: 'MENU', value: 'MENU' },
+  { label: 'API', value: 'API' },
+  { label: 'GLOBAL', value: 'GLOBAL' },
+];
 
 export default function PermissionManagePage() {
-  const [form] = Form.useForm();
+  const [searchForm] = Form.useForm();
+  const [modalForm] = Form.useForm();
   const [data, setData] = useState<PermissionRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
-  const [keyword, setKeyword] = useState('');
+  const [formParams, setFormParams] = useState<PermissionSearchValues>({});
   const [visible, setVisible] = useState(false);
   const [selected, setSelected] = useState<PermissionRecord | null>(null);
   const [tick, setTick] = useState(0);
+
+  const pagination = useMemo<PaginationProps>(
+    () => ({
+      current,
+      pageSize,
+      total,
+      showTotal: true,
+      sizeCanChange: true,
+      pageSizeChangeResetCurrent: true,
+      showJumper: true,
+      pageSizeOptions: [10, 20, 50, 100],
+    }),
+    [current, pageSize, total]
+  );
 
   useEffect(() => {
     let canceled = false;
@@ -48,8 +94,10 @@ export default function PermissionManagePage() {
     void fetchPermissionPage({
       page: current,
       pageSize,
-      permissionCode: keyword || undefined,
-      permissionName: keyword || undefined,
+      permissionCode: formParams.permissionCode?.trim() || undefined,
+      permissionName: formParams.permissionName?.trim() || undefined,
+      permissionType: formParams.permissionType || undefined,
+      objectType: formParams.objectType || undefined,
     })
       .then((res) => {
         if (!canceled) {
@@ -61,7 +109,23 @@ export default function PermissionManagePage() {
     return () => {
       canceled = true;
     };
-  }, [current, pageSize, keyword, tick]);
+  }, [current, pageSize, formParams, tick]);
+
+  const openCreateModal = () => {
+    setSelected(null);
+    modalForm.resetFields();
+    modalForm.setFieldsValue({ activeStatus: 1 });
+    setVisible(true);
+  };
+
+  const openEditModal = useCallback(
+    (record: PermissionRecord) => {
+      setSelected(record);
+      modalForm.setFieldsValue(record);
+      setVisible(true);
+    },
+    [modalForm]
+  );
 
   const columns = useMemo<ColumnProps<PermissionRecord>[]>(
     () => [
@@ -89,11 +153,7 @@ export default function PermissionManagePage() {
               type="text"
               size="small"
               icon={<IconEdit />}
-              onClick={() => {
-                setSelected(record);
-                form.setFieldsValue(record);
-                setVisible(true);
-              }}
+              onClick={() => openEditModal(record)}
             >
               编辑
             </Button>
@@ -120,11 +180,22 @@ export default function PermissionManagePage() {
         ),
       },
     ],
-    [form]
+    [openEditModal]
   );
 
+  const handleSearch = () => {
+    setCurrent(1);
+    setFormParams(searchForm.getFieldsValue() as PermissionSearchValues);
+  };
+
+  const handleReset = () => {
+    searchForm.resetFields();
+    setCurrent(1);
+    setFormParams({ ...SEARCH_FORM_INITIAL_VALUES });
+  };
+
   const submit = async () => {
-    const values = await form.validate();
+    const values = await modalForm.validate();
     if (selected) {
       await updatePermission({ ...values, id: selected.id });
       Message.success('权限点已更新');
@@ -136,34 +207,71 @@ export default function PermissionManagePage() {
     setTick((x) => x + 1);
   };
 
+  const onChangeTable = (p: PaginationProps) => {
+    setCurrent(p.current || 1);
+    setPageSize(p.pageSize || 10);
+  };
+
   return (
     <Card>
       <Title heading={6}>权限点管理</Title>
-      <div className={styles['search-row']}>
-        <Input.Search
-          allowClear
-          placeholder="搜索权限编码或名称"
-          onSearch={(v) => {
-            setCurrent(1);
-            setKeyword(v);
-          }}
-        />
-        <Button icon={<IconRefresh />} onClick={() => setTick((x) => x + 1)}>
-          刷新
-        </Button>
+      <div className={styles['search-form-wrapper']}>
+        <Form
+          form={searchForm}
+          initialValues={SEARCH_FORM_INITIAL_VALUES}
+          className={pageStyles['search-form']}
+          labelAlign="left"
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 19 }}
+        >
+          <Row gutter={24}>
+            <Col span={8}>
+              <Form.Item label="权限编码" field="permissionCode">
+                <Input allowClear placeholder="请输入权限编码" />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="权限名称" field="permissionName">
+                <Input allowClear placeholder="请输入权限名称" />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="权限类型" field="permissionType">
+                <Select
+                  allowClear
+                  options={PERMISSION_TYPE_OPTIONS}
+                  placeholder="全部"
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item label="对象类型" field="objectType">
+                <Select
+                  allowClear
+                  options={OBJECT_TYPE_OPTIONS}
+                  placeholder="全部"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+        <div className={styles['right-button']}>
+          <Button type="primary" icon={<IconSearch />} onClick={handleSearch}>
+            查询
+          </Button>
+          <Button icon={<IconRefresh />} onClick={handleReset}>
+            重置
+          </Button>
+        </div>
       </div>
       <div className={styles['button-group']}>
-        <Button
-          type="primary"
-          icon={<IconPlus />}
-          onClick={() => {
-            setSelected(null);
-            form.resetFields();
-            form.setFieldsValue({ activeStatus: 1 });
-            setVisible(true);
-          }}
-        >
-          新增权限点
+        <Space>
+          <Button type="primary" icon={<IconPlus />} onClick={openCreateModal}>
+            新增权限点
+          </Button>
+        </Space>
+        <Button icon={<IconRefresh />} onClick={() => setTick((x) => x + 1)}>
+          刷新
         </Button>
       </div>
       <Table
@@ -171,18 +279,10 @@ export default function PermissionManagePage() {
         loading={loading}
         columns={columns}
         data={data}
+        border
         scroll={{ x: 1200 }}
-        pagination={{
-          current,
-          pageSize,
-          total,
-          showTotal: true,
-          sizeCanChange: true,
-        }}
-        onChange={(p) => {
-          setCurrent(p.current || 1);
-          setPageSize(p.pageSize || 10);
-        }}
+        pagination={pagination}
+        onChange={onChangeTable}
       />
       <Modal
         title={selected ? '编辑权限点' : '新增权限点'}
@@ -190,13 +290,15 @@ export default function PermissionManagePage() {
         onOk={submit}
         onCancel={() => setVisible(false)}
         unmountOnExit
+        style={{ width: 560 }}
       >
         <Form
-          form={form}
+          form={modalForm}
           layout="horizontal"
           labelAlign="left"
           labelCol={{ span: 5 }}
           wrapperCol={{ span: 19 }}
+          className={styles['search-form']}
         >
           <Form.Item
             label="权限编码"
@@ -213,28 +315,16 @@ export default function PermissionManagePage() {
             <Input />
           </Form.Item>
           <Form.Item label="权限类型" field="permissionType">
-            <Select
-              options={[
-                { label: '菜单', value: 'MENU' },
-                { label: 'API', value: 'API' },
-                { label: '全局', value: 'GLOBAL' },
-              ]}
-            />
+            <Select options={PERMISSION_TYPE_OPTIONS} />
           </Form.Item>
           <Form.Item label="对象类型" field="objectType">
-            <Select
-              options={[
-                { label: 'MENU', value: 'MENU' },
-                { label: 'API', value: 'API' },
-                { label: 'GLOBAL', value: 'GLOBAL' },
-              ]}
-            />
+            <Select options={OBJECT_TYPE_OPTIONS} />
           </Form.Item>
           <Form.Item label="对象 ID" field="objectId">
             <Input />
           </Form.Item>
           <Form.Item label="描述" field="description">
-            <Input.TextArea rows={3} />
+            <Input.TextArea rows={3} autoSize={{ minRows: 3, maxRows: 5 }} />
           </Form.Item>
         </Form>
       </Modal>

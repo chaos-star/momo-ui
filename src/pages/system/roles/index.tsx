@@ -2,45 +2,30 @@ import React, { useCallback, useEffect, useState } from 'react';
 import {
   Button,
   Card,
-  Drawer,
   Form,
   Input,
   Message,
   Modal,
   Space,
   Table,
-  Tree,
   Typography,
 } from '@arco-design/web-react';
 import { IconPlus, IconRefresh } from '@arco-design/web-react/icon';
 import {
   createRole,
   deleteRole,
-  fetchRoleDetail,
   fetchRolePage,
   RoleRecord,
-  saveRolePermissions,
   updateRole,
 } from '@/api/access-role';
-import { flattenPermissionIds } from '@/utils/accessControl';
-import type { PermissionNode } from '@/api/access-control';
 import SearchForm, { RoleSearchValues } from './form';
 import { getColumns } from './constants';
+import RoleGrantDrawer from './RoleGrantDrawer';
 import styles from './style/index.module.less';
 
 const { Title } = Typography;
 
 type Mode = 'create' | 'edit';
-
-function toTreeData(nodes: PermissionNode[] = []) {
-  return nodes.map((item) => ({
-    key: String(item.permissionId || item.id),
-    title: `${
-      item.permissionName || item.objectName || item.permissionCode || item.id
-    }${item.objectType ? `（${item.objectType}）` : ''}`,
-    children: toTreeData(item.children || []),
-  }));
-}
 
 export default function RoleManagePage() {
   const [form] = Form.useForm();
@@ -55,8 +40,6 @@ export default function RoleManagePage() {
   const [visible, setVisible] = useState(false);
   const [grantVisible, setGrantVisible] = useState(false);
   const [selected, setSelected] = useState<RoleRecord | null>(null);
-  const [permissionTree, setPermissionTree] = useState<PermissionNode[]>([]);
-  const [checkedPermissions, setCheckedPermissions] = useState<string[]>([]);
 
   const reload = useCallback(() => setTick((x) => x + 1), []);
 
@@ -89,6 +72,11 @@ export default function RoleManagePage() {
     setVisible(true);
   };
 
+  const openGrant = (record: RoleRecord) => {
+    setSelected(record);
+    setGrantVisible(true);
+  };
+
   const submitRole = async () => {
     const values = await form.validate();
     if (mode === 'create') {
@@ -100,19 +88,6 @@ export default function RoleManagePage() {
     }
     setVisible(false);
     reload();
-  };
-
-  const openGrant = async (record: RoleRecord) => {
-    setSelected(record);
-    const detail = await fetchRoleDetail(record.id);
-    const tree = detail.permissionTree || [];
-    setPermissionTree(tree);
-    setCheckedPermissions(
-      flattenPermissionIds(
-        tree.filter((node) => !!node.rolePermissionConfig)
-      ).map(String)
-    );
-    setGrantVisible(true);
   };
 
   const columns = getColumns({
@@ -174,6 +149,7 @@ export default function RoleManagePage() {
         onOk={submitRole}
         onCancel={() => setVisible(false)}
         unmountOnExit
+        style={{ width: 560 }}
       >
         <Form
           form={form}
@@ -195,31 +171,11 @@ export default function RoleManagePage() {
         </Form>
       </Modal>
 
-      <Drawer
-        title={`角色授权：${selected?.roleName || ''}`}
+      <RoleGrantDrawer
+        role={selected}
         visible={grantVisible}
-        width={680}
-        onOk={async () => {
-          if (selected) {
-            await saveRolePermissions({
-              roleId: selected.id,
-              permissionIds: checkedPermissions.map(Number),
-            });
-            Message.success('权限已保存');
-            setGrantVisible(false);
-          }
-        }}
-        onCancel={() => setGrantVisible(false)}
-      >
-        <div className={styles['tree-card']}>
-          <Tree
-            checkable
-            checkedKeys={checkedPermissions}
-            onCheck={(keys) => setCheckedPermissions(keys as string[])}
-            treeData={toTreeData(permissionTree)}
-          />
-        </div>
-      </Drawer>
+        onClose={() => setGrantVisible(false)}
+      />
     </Card>
   );
 }

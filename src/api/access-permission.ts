@@ -10,6 +10,7 @@ import {
   PageElementRecord,
   ApiEndpointRecord,
   ApiGroupRecord,
+  PermissionNode,
 } from './access-control';
 
 export interface PermissionRecord {
@@ -119,6 +120,63 @@ export function updateApiGroup(data: Record<string, unknown>) {
 
 export function deleteApiGroup(id: number) {
   return del('/api/system/api-groups/manage', { id });
+}
+
+export function fetchPermissionGrantTree() {
+  return get<PermissionNode[]>('/api/system/permissions/grant-tree');
+}
+
+export interface PermissionRelationRecord {
+  id: number;
+  parentPermissionId: number;
+  parentPermissionCode?: string;
+  parentPermissionName?: string;
+  childPermissionId: number;
+  childPermissionCode?: string;
+  childPermissionName?: string;
+  relationType?: string;
+  childGroup?: string;
+  autoGrant?: number;
+  sortOrder?: number;
+  activeStatus?: number;
+}
+
+export interface PermissionOptionRecord {
+  id: number;
+  permissionCode?: string;
+  permissionName?: string;
+  permissionType?: string;
+  objectType?: string;
+  objectId?: number;
+}
+
+export function fetchPermissionOptions(params?: {
+  objectType?: string;
+  permissionType?: string;
+}) {
+  return get<PermissionOptionRecord[]>(
+    '/api/system/permissions/options',
+    params
+  );
+}
+
+export function fetchPermissionRelationList(params?: Record<string, unknown>) {
+  return get<PermissionRelationRecord[]>(
+    '/api/system/permission-relations/list',
+    params
+  );
+}
+
+export function createPermissionRelation(data: Record<string, unknown>) {
+  return post<{ id: number }>('/api/system/permission-relations/manage', data);
+}
+
+export function updatePermissionRelation(data: Record<string, unknown>) {
+  return put('/api/system/permission-relations/manage', data);
+}
+
+export function deletePermissionRelation(id: number) {
+  return del('/api/system/permission-relations/manage', { id });
 }
 
 export type {

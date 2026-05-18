@@ -19,17 +19,19 @@ import { readCachedAuthContext } from '@/api/auth';
 import { getTenantCodeFromPathname } from '@/utils/tenant';
 import type { FieldPolicyMap } from '@/utils/accessControl';
 import {
-  flattenPermissionIds,
+  expandCheckedWithAutoGrant,
+  filterCheckablePermissionKeys,
   getFieldPolicy,
   isFieldReadonly,
 } from '@/utils/accessControl';
+import { fetchPermissionGrantTree } from '@/api/access-role';
 import {
   createUser,
   deleteUser,
   fetchRoleOptions,
   fetchUserDeptTree,
   fetchUserDetail,
-  fetchUserPermissionTree,
+  fetchUserGrantedPermissionIds,
   fetchUserRoles,
   fetchUserPage,
   saveUserDepts,
@@ -51,16 +53,28 @@ const { Title } = Typography;
 type Mode = 'create' | 'edit';
 
 function toTreeData(nodes: (DeptRecord | PermissionNode)[] = []) {
-  return nodes.map((item) => ({
-    key: String((item as PermissionNode).permissionId || item.id),
-    title:
-      (item as PermissionNode).permissionName ||
-      (item as PermissionNode).objectName ||
-      (item as DeptRecord).deptName ||
-      (item as PermissionNode).permissionCode ||
-      String(item.id),
-    children: toTreeData(item.children || []),
-  }));
+  return nodes.map((item) => {
+    const perm = item as PermissionNode;
+    const dept = item as DeptRecord;
+    return {
+      key: String(perm.permissionId || item.id),
+      title: `${
+        perm.permissionName ||
+        perm.objectName ||
+        dept.deptName ||
+        perm.permissionCode ||
+        String(item.id)
+      }${perm.nodeType ? `（${perm.nodeType}）` : ''}${
+        perm.autoGrant === 1 ? ' [自动]' : ''
+      }`,
+      disableCheckbox:
+        perm.checkable === false ||
+        perm.nodeType === 'CATALOG' ||
+        perm.nodeType === 'GROUP' ||
+        (!perm.permissionId && !dept.deptName),
+      children: toTreeData(item.children || []),
+    };
+  });
 }
 
 export default function UserManagePage() {
@@ -166,10 +180,21 @@ export default function UserManagePage() {
 
   const openPermissions = async (record: UserRecord) => {
     setSelected(record);
-    const tree = await fetchUserPermissionTree(record.id);
-    setPermissionTree(tree || []);
-    setCheckedPermissions(flattenPermissionIds(tree || []).map(String));
+    const [grantTree, grantedIds] = await Promise.all([
+      fetchPermissionGrantTree(),
+      fetchUserGrantedPermissionIds(record.id),
+    ]);
+    setPermissionTree(grantTree || []);
+    setCheckedPermissions((grantedIds || []).map(String));
     setPermissionsVisible(true);
+  };
+
+  const handlePermissionCheck = (keys: string[]) => {
+    const expanded = expandCheckedWithAutoGrant(
+      permissionTree,
+      keys as string[]
+    );
+    setCheckedPermissions(expanded);
   };
 
   const columns = getColumns(
@@ -377,7 +402,10 @@ export default function UserManagePage() {
           if (selected) {
             await saveUserPermissions({
               userId: selected.id,
-              permissionIds: checkedPermissions.map(Number),
+              permissionIds: filterCheckablePermissionKeys(
+                permissionTree,
+                checkedPermissions
+              ).map(Number),
             });
             Message.success('直接授权已保存');
             setPermissionsVisible(false);
@@ -389,7 +417,7 @@ export default function UserManagePage() {
           <Tree
             checkable
             checkedKeys={checkedPermissions}
-            onCheck={(keys) => setCheckedPermissions(keys as string[])}
+            onCheck={handlePermissionCheck}
             treeData={toTreeData(permissionTree)}
           />
         </div>

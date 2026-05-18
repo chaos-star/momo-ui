@@ -54,12 +54,20 @@ export interface PermissionNode extends BaseEntity {
   objectPath?: string;
   httpMethod?: string;
   rolePermissionConfig?: unknown;
+  autoGrant?: number;
+  childGroup?: string;
+  nodeType?: string;
+  /** 附属权限展示前缀：api / button / form / tab 等 */
+  resourceSubType?: string;
+  checkable?: boolean;
+  sortOrder?: number;
   children?: PermissionNode[];
 }
 
 export interface RoleDetail {
   role: RoleRecord;
   permissionTree: PermissionNode[];
+  grantedPermissionIds?: number[];
 }
 
 export interface MenuRecord extends BaseEntity {
@@ -95,7 +103,8 @@ export interface ApiEndpointRecord extends BaseEntity {
   httpMethod?: string;
   pathPattern?: string;
   matchType?: string;
-  anonymous?: number;
+  /** 1-无需登录 2-无需鉴权(已登录) 3-需鉴权 */
+  accessLevel?: number;
   description?: string;
 }
 

@@ -77,6 +77,16 @@ export function fetchUserPermissionTree(userId: number, tenantId?: number) {
   });
 }
 
+export function fetchUserGrantedPermissionIds(
+  userId: number,
+  tenantId?: number
+) {
+  return get<number[]>('/api/system/users/permissions/granted-ids', {
+    userId,
+    tenantId,
+  });
+}
+
 export function saveUserPermissions(data: {
   userId: number;
   tenantId?: number;
