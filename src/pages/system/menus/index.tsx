@@ -115,11 +115,13 @@ function getAllMenus(nodes: MenuRecord[] = []) {
   return buildHierarchy(flattenMenus(nodes));
 }
 
-function filterMenuTree(nodes: MenuRecord[] = []): MenuRecord[] {
-  return nodes.filter(isMenuNode).map((item) => ({
-    ...item,
-    children: filterMenuTree(item.children || []),
-  }));
+function filterCatalogTree(nodes: MenuRecord[] = []): MenuRecord[] {
+  return nodes
+    .filter((item) => item.menuType === 'CATALOG')
+    .map((item) => ({
+      ...item,
+      children: filterCatalogTree(item.children || []),
+    }));
 }
 
 function findMenu(nodes: MenuRecord[] = [], id?: number): MenuRecord | null {
@@ -157,10 +159,15 @@ function toParentTreeData(
   disabledIds = new Set<number>()
 ) {
   return [
-    { key: '0', value: ROOT_PARENT_ID, title: '根节点', children: undefined },
+    {
+      key: String(ROOT_PARENT_ID),
+      value: String(ROOT_PARENT_ID),
+      title: '根节点',
+      children: undefined,
+    },
     ...nodes.map((item) => ({
       key: String(item.id),
-      value: item.id,
+      value: String(item.id),
       title: `${item.menuName || item.menuCode || item.id}${
         item.menuCode ? `（${item.menuCode}）` : ''
       }`,
@@ -168,6 +175,15 @@ function toParentTreeData(
       children: toParentTreeData(item.children || [], disabledIds).slice(1),
     })),
   ];
+}
+
+function normalizeParentId(parentId?: number | string | null) {
+  const value = Number(parentId ?? ROOT_PARENT_ID);
+  return Number.isFinite(value) ? value : ROOT_PARENT_ID;
+}
+
+function getParentFieldValue(parentId?: number | null) {
+  return String(parentId ?? ROOT_PARENT_ID);
 }
 
 function normalizeIconValue(icon?: string) {
@@ -196,9 +212,23 @@ function renderIcon(icon?: string) {
   ) : null;
 }
 
-function getParentCode(nodes: MenuRecord[], parentId?: number) {
-  if (!parentId || parentId === ROOT_PARENT_ID) return 'menu';
-  return findMenu(nodes, parentId)?.menuCode || 'menu';
+function getMenuCodePrefix(
+  nodes: MenuRecord[],
+  parentId?: number,
+  menuType?: string
+) {
+  if (!parentId || parentId === ROOT_PARENT_ID) {
+    if (menuType === 'CATALOG') return 'catalog';
+    if (menuType === 'MENU') return 'menu';
+    return '';
+  }
+
+  const parentCode = findMenu(nodes, parentId)?.menuCode || '';
+  if (!parentCode || !menuType) return '';
+  if (menuType === 'MENU') {
+    return parentCode.replace(/^catalog(?=:|$)/, 'menu');
+  }
+  return parentCode;
 }
 
 function splitMenuCode(code?: string, parentCode?: string) {
@@ -300,7 +330,6 @@ export default function MenuManagePage() {
   const [editingElement, setEditingElement] =
     useState<PageElementRecord | null>(null);
   const [pageElements, setPageElements] = useState<PageElementRecord[]>([]);
-  const [parentCode, setParentCode] = useState('');
   const [elementSearch, setElementSearch] = useState<{
     elementCode?: string;
     elementType?: string;
@@ -308,9 +337,13 @@ export default function MenuManagePage() {
   }>({});
 
   const allTree = useMemo(() => getAllMenus(tree), [tree]);
-  const menuTree = useMemo(() => filterMenuTree(allTree), [allTree]);
+  const catalogTree = useMemo(() => filterCatalogTree(allTree), [allTree]);
   const selected = findMenu(allTree, selectedId);
   const selectedMenuNode = isMenuNode(selected) ? selected : null;
+  const menuParentId = Form.useWatch('parentId', menuForm);
+  const normalizedMenuParentId = normalizeParentId(menuParentId);
+  const menuType = Form.useWatch('menuType', menuForm);
+  const hasMenuParent = menuParentId !== undefined && menuParentId !== null;
   const filteredPageElements = useMemo(() => pageElements, [pageElements]);
   const disabledParentIds = useMemo(() => {
     const ids = getDescendantIds(menuMode === 'edit' ? selected : null);
@@ -320,8 +353,13 @@ export default function MenuManagePage() {
     return ids;
   }, [menuMode, selected]);
   const parentTreeData = useMemo(
-    () => toParentTreeData(menuTree, disabledParentIds),
-    [menuTree, disabledParentIds]
+    () => toParentTreeData(catalogTree, disabledParentIds),
+    [catalogTree, disabledParentIds]
+  );
+  const currentMenuCodePrefix = getMenuCodePrefix(
+    allTree,
+    normalizedMenuParentId,
+    menuType
   );
   const elementType = Form.useWatch('elementType', elementForm);
   const elementCodePrefix = getElementCodePrefix(
@@ -465,19 +503,21 @@ export default function MenuManagePage() {
   }, [loadPageElements]);
 
   const openCreateMenu = () => {
-    const parentId = selectedMenuNode?.id || ROOT_PARENT_ID;
-    const codePrefix = getParentCode(allTree, parentId);
+    const parentId =
+      selectedMenuNode?.menuType === 'CATALOG'
+        ? selectedMenuNode.id
+        : ROOT_PARENT_ID;
+    const defaultMenuType = 'MENU';
     setMenuMode('create');
-    setParentCode(codePrefix);
     menuForm.resetFields();
     menuForm.setFieldsValue({
-      parentId,
+      parentId: getParentFieldValue(parentId),
       codeSuffix: '',
       menuName: '',
       label_zh: '',
       label_en: '',
       label_es: '',
-      menuType: 'MENU',
+      menuType: defaultMenuType,
       visible: 1,
       sortOrder: 100,
     });
@@ -487,15 +527,19 @@ export default function MenuManagePage() {
   const openEditMenu = (record = selectedMenuNode) => {
     if (!record) return;
     setSelectedId(record.id);
-    const codePrefix = getParentCode(allTree, record.parentId);
+    const nextParentId = normalizeParentId(record.parentId);
+    const codePrefix = getMenuCodePrefix(
+      allTree,
+      nextParentId,
+      record.menuType
+    );
     setMenuMode('edit');
-    setParentCode(codePrefix);
     menuForm.resetFields();
     const labels = getMenuLabels(record);
     menuForm.setFieldsValue({
       ...record,
       ...labels,
-      parentId: record.parentId || ROOT_PARENT_ID,
+      parentId: getParentFieldValue(nextParentId),
       codeSuffix: splitMenuCode(record.menuCode, codePrefix),
       icon: normalizeIconValue(record.icon),
       activeStatus: undefined,
@@ -503,9 +547,12 @@ export default function MenuManagePage() {
     setMenuVisible(true);
   };
 
-  const handleMenuParentChange = (value: number) => {
-    const nextParentCode = getParentCode(allTree, Number(value));
-    setParentCode(nextParentCode);
+  const handleMenuParentChange = () => {
+    menuForm.setFieldValue('codeSuffix', '');
+  };
+
+  const handleMenuTypeChange = () => {
+    menuForm.setFieldValue('codeSuffix', '');
   };
 
   const openCreateElement = () => {
@@ -541,10 +588,13 @@ export default function MenuManagePage() {
   const submitMenu = async () => {
     const values = await menuForm.validate();
     const currentRecord = menuMode === 'edit' ? selectedMenuNode : null;
+    const parentId = normalizeParentId(values.parentId);
+    const codePrefix = getMenuCodePrefix(allTree, parentId, values.menuType);
     const payload = {
       ...values,
+      parentId,
       menuName: values.label_zh,
-      menuCode: joinMenuCode(parentCode, values.codeSuffix),
+      menuCode: joinMenuCode(codePrefix, values.codeSuffix),
       config: buildMenuConfig(currentRecord, values),
     };
     delete payload.codeSuffix;
@@ -700,7 +750,7 @@ export default function MenuManagePage() {
         <div className={styles['tree-panel']}>
           <Tree
             blockNode
-            treeData={toTreeData(menuTree)}
+            treeData={toTreeData(allTree)}
             selectedKeys={selectedId ? [String(selectedId)] : []}
             onSelect={(keys) =>
               setSelectedId(keys[0] ? Number(keys[0]) : undefined)
@@ -864,11 +914,21 @@ export default function MenuManagePage() {
                 onChange={handleMenuParentChange}
               />
             </Form.Item>
+            <Form.Item
+              label="菜单类型"
+              field="menuType"
+              rules={[{ required: true }]}
+            >
+              <Select
+                options={menuTypeOptions}
+                onChange={handleMenuTypeChange}
+              />
+            </Form.Item>
             <Form.Item label="菜单编码" required>
               <Input.Group compact className={styles['code-input-group']}>
-                {parentCode ? (
+                {currentMenuCodePrefix ? (
                   <Input
-                    value={`${parentCode}:`}
+                    value={`${currentMenuCodePrefix}:`}
                     disabled
                     className={styles['code-prefix']}
                   />
@@ -880,17 +940,15 @@ export default function MenuManagePage() {
                 >
                   <Input
                     className={styles['code-suffix']}
-                    placeholder="请输入无前缀编码"
+                    disabled={!hasMenuParent || !menuType}
+                    placeholder={
+                      hasMenuParent && menuType
+                        ? '请输入无前缀编码'
+                        : '请先选择父菜单和菜单类型'
+                    }
                   />
                 </Form.Item>
               </Input.Group>
-            </Form.Item>
-            <Form.Item
-              label="菜单类型"
-              field="menuType"
-              rules={[{ required: true }]}
-            >
-              <Select options={menuTypeOptions} />
             </Form.Item>
             <Form.Item
               label="中文名称"
