@@ -841,108 +841,112 @@ export default function MenuManagePage() {
         onOk={submitMenu}
         onCancel={() => setMenuVisible(false)}
         unmountOnExit
+        style={{ width: 880 }}
+        className={styles['menu-modal']}
       >
         <Form
           form={menuForm}
           layout="horizontal"
           labelAlign="left"
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 19 }}
+          labelCol={{ span: 7 }}
+          wrapperCol={{ span: 17 }}
         >
-          <Form.Item
-            label="父菜单"
-            field="parentId"
-            rules={[{ required: true }]}
-          >
-            <TreeSelect
-              treeData={parentTreeData}
-              placeholder="请选择父菜单"
-              allowClear={false}
-              onChange={handleMenuParentChange}
-            />
-          </Form.Item>
-          <Form.Item label="菜单编码" required>
-            <Input.Group compact className={styles['code-input-group']}>
-              {parentCode ? (
-                <Input
-                  value={`${parentCode}:`}
-                  disabled
-                  className={styles['code-prefix']}
-                />
-              ) : null}
-              <Form.Item
-                field="codeSuffix"
-                noStyle
-                rules={[{ required: true, message: '请输入菜单编码' }]}
-              >
-                <Input
-                  className={styles['code-suffix']}
-                  placeholder="请输入无前缀编码"
-                />
-              </Form.Item>
-            </Input.Group>
-          </Form.Item>
-          <Form.Item
-            label="中文名称"
-            field="label_zh"
-            rules={[{ required: true, message: '请输入中文名称' }]}
-          >
-            <Input placeholder="如 系统管理" />
-          </Form.Item>
-          <Form.Item
-            label="英文名称"
-            field="label_en"
-            rules={[{ required: true, message: '请输入英文名称' }]}
-          >
-            <Input placeholder="如 System" />
-          </Form.Item>
-          <Form.Item
-            label="西语名称"
-            field="label_es"
-            rules={[{ required: true, message: '请输入西语名称' }]}
-          >
-            <Input placeholder="如 Sistema" />
-          </Form.Item>
-          <Form.Item
-            label="菜单类型"
-            field="menuType"
-            rules={[{ required: true }]}
-          >
-            <Select options={menuTypeOptions} />
-          </Form.Item>
-          <Form.Item label="路由路径" field="routePath">
-            <Input placeholder="菜单类型为菜单时填写" />
-          </Form.Item>
-          <Form.Item label="组件路径" field="componentPath">
-            <Input placeholder="如 system/menus" />
-          </Form.Item>
-          <Form.Item label="图标" field="icon">
-            <Select
-              showSearch
-              allowClear
-              placeholder="请选择图标"
-              filterOption={(inputValue, option) =>
-                String(option.props.value)
-                  .toLowerCase()
-                  .includes(inputValue.toLowerCase())
-              }
+          <div className={styles['menu-modal-form-grid']}>
+            <Form.Item
+              label="父菜单"
+              field="parentId"
+              rules={[{ required: true }]}
             >
-              {iconNames.map((name) => (
-                <Select.Option key={name} value={name}>
-                  <Space>
-                    {renderIcon(name)}
-                    <span>{name}</span>
-                  </Space>
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item label="排序" field="sortOrder">
-            <Input />
-          </Form.Item>
-          <Form.Item label="是否显示" field="visible">
-            <Select options={visibleOptions} />
-          </Form.Item>
+              <TreeSelect
+                treeData={parentTreeData}
+                placeholder="请选择父菜单"
+                allowClear={false}
+                onChange={handleMenuParentChange}
+              />
+            </Form.Item>
+            <Form.Item label="菜单编码" required>
+              <Input.Group compact className={styles['code-input-group']}>
+                {parentCode ? (
+                  <Input
+                    value={`${parentCode}:`}
+                    disabled
+                    className={styles['code-prefix']}
+                  />
+                ) : null}
+                <Form.Item
+                  field="codeSuffix"
+                  noStyle
+                  rules={[{ required: true, message: '请输入菜单编码' }]}
+                >
+                  <Input
+                    className={styles['code-suffix']}
+                    placeholder="请输入无前缀编码"
+                  />
+                </Form.Item>
+              </Input.Group>
+            </Form.Item>
+            <Form.Item
+              label="菜单类型"
+              field="menuType"
+              rules={[{ required: true }]}
+            >
+              <Select options={menuTypeOptions} />
+            </Form.Item>
+            <Form.Item
+              label="中文名称"
+              field="label_zh"
+              rules={[{ required: true, message: '请输入中文名称' }]}
+            >
+              <Input placeholder="如 系统管理" />
+            </Form.Item>
+            <Form.Item
+              label="英文名称"
+              field="label_en"
+              rules={[{ required: true, message: '请输入英文名称' }]}
+            >
+              <Input placeholder="如 System" />
+            </Form.Item>
+            <Form.Item
+              label="西语名称"
+              field="label_es"
+              rules={[{ required: true, message: '请输入西语名称' }]}
+            >
+              <Input placeholder="如 Sistema" />
+            </Form.Item>
+            <Form.Item label="路由路径" field="routePath">
+              <Input placeholder="菜单类型为菜单时填写" />
+            </Form.Item>
+            <Form.Item label="组件路径" field="componentPath">
+              <Input placeholder="如 system/menus" />
+            </Form.Item>
+            <Form.Item label="图标" field="icon">
+              <Select
+                showSearch
+                allowClear
+                placeholder="请选择图标"
+                filterOption={(inputValue, option) =>
+                  String(option.props.value)
+                    .toLowerCase()
+                    .includes(inputValue.toLowerCase())
+                }
+              >
+                {iconNames.map((name) => (
+                  <Select.Option key={name} value={name}>
+                    <Space>
+                      {renderIcon(name)}
+                      <span>{name}</span>
+                    </Space>
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+            <Form.Item label="排序" field="sortOrder">
+              <Input />
+            </Form.Item>
+            <Form.Item label="是否显示" field="visible">
+              <Select options={visibleOptions} />
+            </Form.Item>
+          </div>
         </Form>
       </Modal>
 
