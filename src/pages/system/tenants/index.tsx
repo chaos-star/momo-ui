@@ -405,7 +405,7 @@ export default function TenantManagePage() {
         ),
       },
     ],
-    [boundaryManageForm, t]
+    [boundaryManageForm]
   );
   const handleSearch = (params: TenantSearchValues) => {
     setListCurrent(1);
