@@ -1,0 +1,32 @@
+._ellipsis-text_hb9k4_1 {
+  display: inline-block;
+  width: 100%;
+  margin: 0;
+  vertical-align: middle;
+}
+._search-form_hb9k4_7 {
+  flex: 1;
+  padding-right: 20px;
+  min-width: 0;
+}
+._search-form_hb9k4_7 .arco-form-label-item-left > label {
+  white-space: nowrap;
+}
+._search-form_hb9k4_7 .arco-form-item-label-col {
+  padding-right: 8px;
+}
+._api-modal_hb9k4_18 .arco-modal-content {
+  padding-right: 64px;
+}
+._modal-form_hb9k4_21 {
+  padding-right: 0;
+}
+._modal-form_hb9k4_21 .arco-form-item-label {
+  white-space: nowrap;
+}
+._description-item_hb9k4_27 .arco-textarea-wrapper {
+  width: 100%;
+}
+._description-item_hb9k4_27 .arco-form-item-label-col {
+  flex: 0 0 16.6667%;
+}

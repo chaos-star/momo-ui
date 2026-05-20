@@ -666,7 +666,7 @@ function SystemConfigPage() {
                           <TextArea
                             id={getFormControlId(systemDescriptionField)}
                             name={systemDescriptionField}
-                            autoSize={{ minRows: 2, maxRows: 4 }}
+                            rows={2}
                           />
                         </Form.Item>
                       </Col>
@@ -727,7 +727,7 @@ function SystemConfigPage() {
                       id={getFormControlId('logoSvgElement')}
                       name="logoSvgElement"
                       value={svgPreview}
-                      autoSize={{ minRows: 4, maxRows: 8 }}
+                      rows={4}
                       placeholder={text.logoSvgPlaceholder}
                       onChange={(value) => {
                         setSvgPreview(value);

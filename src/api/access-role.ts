@@ -15,6 +15,7 @@ export interface RoleListParams extends AccessListParams {
   roleCode?: string;
   roleName?: string;
   roleType?: string;
+  assignScope?: string;
 }
 
 export function fetchRolePage(params: RoleListParams) {

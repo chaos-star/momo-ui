@@ -4,6 +4,7 @@ import {
   IconDelete,
   IconEdit,
   IconEye,
+  IconSafe,
   IconLock,
   IconUnlock,
 } from '@arco-design/web-react/icon';
@@ -23,6 +24,7 @@ const { Text } = Typography;
 export type TenantColumnCallbacks = {
   onView: (record: TenantRecord) => void;
   onEdit: (record: TenantRecord) => void;
+  onBoundary: (record: TenantRecord) => void;
   onDelete: (record: TenantRecord) => void;
   onEnable: (record: TenantRecord) => void;
   onDisable: (record: TenantRecord) => void;
@@ -118,7 +120,10 @@ export function getColumns(
       headerCellStyle: { paddingLeft: '12px' },
       render: (_, record) => {
         const deleted = record.status === 2;
+        const platformTenant =
+          tenantTypeToBusinessType(record.tenantType) === 1;
         const canToggleActive = !deleted;
+        const canOpenBoundary = !deleted && !platformTenant;
         const showEnable = record.activeStatus !== 1;
         const showDisable = record.activeStatus === 1;
         return (
@@ -139,6 +144,15 @@ export function getColumns(
               onClick={() => callbacks.onEdit(record)}
             >
               {t['tenantSearch.columns.operations.edit']}
+            </Button>
+            <Button
+              type="text"
+              size="small"
+              icon={<IconSafe />}
+              disabled={!canOpenBoundary}
+              onClick={() => callbacks.onBoundary(record)}
+            >
+              {t['tenantSearch.columns.operations.boundary']}
             </Button>
             {showEnable ? (
               <Button

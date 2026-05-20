@@ -1,0 +1,27 @@
+const t = '_operations_1nxmj_25';
+var e = {
+  'button-group': '_button-group_1nxmj_1',
+  'search-form-wrapper': '_search-form-wrapper_1nxmj_6',
+  'right-button': '_right-button_1nxmj_11',
+  'search-form': '_search-form_1nxmj_6',
+  operations: t,
+  'grant-spin': '_grant-spin_1nxmj_31',
+  'grant-layout': '_grant-layout_1nxmj_45',
+  'grant-panel-left': '_grant-panel-left_1nxmj_52',
+  'grant-panel-right': '_grant-panel-right_1nxmj_62',
+  'grant-panel-title': '_grant-panel-title_1nxmj_71',
+  'grant-panel-body': '_grant-panel-body_1nxmj_79',
+  'grant-mode-section': '_grant-mode-section_1nxmj_84',
+  'grant-mode-section-title': '_grant-mode-section-title_1nxmj_90',
+  'grant-resource-block': '_grant-resource-block_1nxmj_97',
+  'grant-resource-type-title': '_grant-resource-type-title_1nxmj_103',
+  'grant-resource-list-element': '_grant-resource-list-element_1nxmj_108',
+  'grant-resource-list-api': '_grant-resource-list-api_1nxmj_114',
+  'grant-resource-item': '_grant-resource-item_1nxmj_120',
+  'grant-resource-item-element': '_grant-resource-item-element_1nxmj_131',
+  'grant-checkbox-label': '_grant-checkbox-label_1nxmj_137',
+  'grant-label-tooltip-wrap': '_grant-label-tooltip-wrap_1nxmj_144',
+  'grant-label-inline': '_grant-label-inline_1nxmj_150',
+  'grant-label-ellipsis': '_grant-label-ellipsis_1nxmj_158',
+};
+export { e as s };

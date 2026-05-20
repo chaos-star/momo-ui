@@ -8,11 +8,47 @@ import styles from './style/index.module.less';
 
 const { Text } = Typography;
 
+const ROLE_TYPE_LABELS: Record<string, string> = {
+  PLATFORM_INTERNAL: '平台内部',
+  PLATFORM_BUSINESS: '平台业务',
+  TENANT_CUSTOM: '租户自定义',
+};
+
+const ASSIGN_SCOPE_LABELS: Record<string, string> = {
+  PLATFORM_ONLY: '仅平台',
+  TENANT_ONLY: '仅本租户',
+  CROSS_TENANT: '可跨租户',
+};
+
 export type RoleCallbacks = {
   onEdit: (record: RoleRecord) => void;
   onDelete: (record: RoleRecord) => void;
   onGrant: (record: RoleRecord) => void;
 };
+
+function renderRoleType(value?: string) {
+  const normalized = value || 'TENANT_CUSTOM';
+  const color =
+    normalized === 'PLATFORM_INTERNAL'
+      ? 'red'
+      : normalized === 'PLATFORM_BUSINESS'
+      ? 'arcoblue'
+      : 'green';
+  return <Tag color={color}>{ROLE_TYPE_LABELS[normalized] || normalized}</Tag>;
+}
+
+function renderAssignScope(value?: string) {
+  const normalized = value || 'TENANT_ONLY';
+  const color =
+    normalized === 'CROSS_TENANT'
+      ? 'purple'
+      : normalized === 'PLATFORM_ONLY'
+      ? 'orange'
+      : 'gray';
+  return (
+    <Tag color={color}>{ASSIGN_SCOPE_LABELS[normalized] || normalized}</Tag>
+  );
+}
 
 export function getColumns(
   callbacks: RoleCallbacks
@@ -29,8 +65,14 @@ export function getColumns(
     {
       title: '类型',
       dataIndex: 'roleType',
-      width: 120,
-      render: (v) => <Tag>{v || 'CUSTOM'}</Tag>,
+      width: 130,
+      render: renderRoleType,
+    },
+    {
+      title: '分配范围',
+      dataIndex: 'assignScope',
+      width: 130,
+      render: renderAssignScope,
     },
     {
       title: '描述',

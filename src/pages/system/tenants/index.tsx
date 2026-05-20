@@ -17,20 +17,40 @@ import {
   Select,
   Space,
   Table,
+  Badge,
   Typography,
   PaginationProps,
+  Alert,
 } from '@arco-design/web-react';
 import PermissionWrapper from '@/components/PermissionWrapper';
-import { IconPlus, IconRefresh } from '@arco-design/web-react/icon';
+import {
+  IconDelete,
+  IconEdit,
+  IconLock,
+  IconPlus,
+  IconRefresh,
+  IconSearch,
+  IconUnlock,
+} from '@arco-design/web-react/icon';
 import useLocale from '@/utils/useLocale';
 import {
   createTenant,
+  createTenantPermissionPackage,
   deleteTenant,
+  deleteTenantPermissionPackage,
   fetchTenantPage,
-  TenantRecord,
+  fetchTenantPermissionPackagePage,
+  TenantPermissionPackageRecord,
   updateTenant,
   updateTenantActiveStatus,
+  updateTenantPermissionPackage,
+  updateTenantPermissionPackageActiveStatus,
+  TenantRecord,
 } from '@/api/tenant';
+import {
+  fetchPermissionBoundaryPackageOptions,
+  PermissionBoundaryPackageRecord,
+} from '@/api/permission-boundary-package';
 import SearchForm from './form';
 import type { TenantSearchValues } from './form';
 import ArcoSelectInputIds, {
@@ -89,6 +109,22 @@ function toListParams(
   };
 }
 
+function toBoundaryListParams(
+  tenantId: number,
+  params: { id?: string; permissionName?: string },
+  current: number,
+  pageSize: number
+) {
+  const idText = params.id?.trim();
+  return {
+    tenantId,
+    page: current,
+    pageSize,
+    id: idText && /^\d+$/.test(idText) ? Number(idText) : undefined,
+    permissionName: params.permissionName?.trim() || undefined,
+  };
+}
+
 export default function TenantManagePage() {
   const t = useLocale(locale);
   const [createForm] = Form.useForm();
@@ -120,6 +156,30 @@ export default function TenantManagePage() {
   const [viewRecord, setViewRecord] = useState<TenantRecord | null>(null);
   const [editInitialSecret, setEditInitialSecret] = useState('');
   const [editTenantCode, setEditTenantCode] = useState('');
+  const [boundaryVisible, setBoundaryVisible] = useState(false);
+  const [boundaryRecord, setBoundaryRecord] = useState<TenantRecord | null>(
+    null
+  );
+  const [boundaryLoading, setBoundaryLoading] = useState(false);
+  const [boundaryData, setBoundaryData] = useState<
+    TenantPermissionPackageRecord[]
+  >([]);
+  const [boundaryCurrent, setBoundaryCurrent] = useState(1);
+  const [boundaryPageSize, setBoundaryPageSize] = useState(10);
+  const [boundaryTotal, setBoundaryTotal] = useState(0);
+  const [boundaryFormParams, setBoundaryFormParams] = useState<{
+    id?: string;
+    permissionName?: string;
+  }>({});
+  const [boundaryTick, setBoundaryTick] = useState(0);
+  const [boundaryManageVisible, setBoundaryManageVisible] = useState(false);
+  const [boundaryEditing, setBoundaryEditing] =
+    useState<TenantPermissionPackageRecord | null>(null);
+  const [boundaryManageForm] = Form.useForm();
+  const [boundarySearchForm] = Form.useForm();
+  const [boundaryPackageOptions, setBoundaryPackageOptions] = useState<
+    { value: number; label: string }[]
+  >([]);
 
   const tableBlockRef = useRef<HTMLDivElement>(null);
   useArcoPaginationFieldIds(
@@ -154,6 +214,199 @@ export default function TenantManagePage() {
 
   const bumpList = useCallback(() => setListTick((x) => x + 1), []);
 
+  const openBoundary = useCallback(
+    async (record: TenantRecord) => {
+      setBoundaryRecord(record);
+      setBoundaryVisible(true);
+      setBoundaryCurrent(1);
+      setBoundaryFormParams({});
+      boundarySearchForm.resetFields();
+      setBoundaryLoading(true);
+      try {
+        const packages = await fetchPermissionBoundaryPackageOptions();
+        setBoundaryPackageOptions(
+          (packages || []).map((item: PermissionBoundaryPackageRecord) => ({
+            value: item.id,
+            label: `${item.packageName || item.packageCode} (${
+              item.packageCode
+            })`,
+          }))
+        );
+      } finally {
+        setBoundaryLoading(false);
+      }
+    },
+    [boundarySearchForm]
+  );
+
+  useEffect(() => {
+    if (!boundaryVisible || !boundaryRecord) {
+      return undefined;
+    }
+    let canceled = false;
+    setBoundaryLoading(true);
+    void fetchTenantPermissionPackagePage(
+      toBoundaryListParams(
+        boundaryRecord.id,
+        boundaryFormParams,
+        boundaryCurrent,
+        boundaryPageSize
+      )
+    )
+      .then((res) => {
+        if (canceled) {
+          return;
+        }
+        setBoundaryData(res.list || []);
+        setBoundaryTotal(res.total ?? 0);
+      })
+      .finally(() => {
+        if (!canceled) {
+          setBoundaryLoading(false);
+        }
+      });
+    return () => {
+      canceled = true;
+    };
+  }, [
+    boundaryVisible,
+    boundaryRecord,
+    boundaryFormParams,
+    boundaryCurrent,
+    boundaryPageSize,
+    boundaryTick,
+  ]);
+
+  const boundaryPagination = useMemo<PaginationProps>(
+    () => ({
+      sizeCanChange: true,
+      showTotal: true,
+      current: boundaryCurrent,
+      pageSize: boundaryPageSize,
+      total: boundaryTotal,
+      pageSizeChangeResetCurrent: true,
+      showJumper: true,
+      pageSizeOptions: [10, 20, 50, 100],
+    }),
+    [boundaryCurrent, boundaryPageSize, boundaryTotal]
+  );
+
+  const boundaryColumns = useMemo(
+    () => [
+      {
+        title: 'ID',
+        dataIndex: 'id',
+        width: 90,
+      },
+      {
+        title: '权限名称',
+        dataIndex: 'permissionName',
+        width: 200,
+        render: (value: string, record: TenantPermissionPackageRecord) =>
+          value || record.permissionCode || '—',
+      },
+      {
+        title: '状态',
+        dataIndex: 'activeStatus',
+        width: 110,
+        render: (value: number) => (
+          <Badge
+            status={value === 1 ? 'success' : 'default'}
+            text={value === 1 ? '启动' : '停用'}
+          />
+        ),
+      },
+      {
+        title: '最后操作人',
+        dataIndex: 'operatorUsername',
+        width: 130,
+        render: (value: string) => value?.trim() || '—',
+      },
+      {
+        title: '更新时间',
+        dataIndex: 'updatedAt',
+        width: 168,
+        render: (value: number) => formatEpochMs(value),
+      },
+      {
+        title: '操作',
+        dataIndex: 'operations',
+        width: 250,
+        fixed: 'right' as const,
+        render: (_: unknown, record: TenantPermissionPackageRecord) => (
+          <Space className={styles.operations} size={10} wrap>
+            <Button
+              type="text"
+              size="small"
+              icon={<IconEdit />}
+              onClick={() => {
+                setBoundaryEditing(record);
+                boundaryManageForm.setFieldsValue({
+                  packageId: record.packageId,
+                });
+                setBoundaryManageVisible(true);
+              }}
+            >
+              编辑
+            </Button>
+            {record.activeStatus === 1 ? (
+              <Button
+                type="text"
+                size="small"
+                icon={<IconLock />}
+                onClick={async () => {
+                  await updateTenantPermissionPackageActiveStatus({
+                    id: record.id,
+                    activeStatus: 2,
+                  });
+                  Message.success('停用成功');
+                  setBoundaryTick((x) => x + 1);
+                }}
+              >
+                停用
+              </Button>
+            ) : (
+              <Button
+                type="text"
+                size="small"
+                icon={<IconUnlock />}
+                onClick={async () => {
+                  await updateTenantPermissionPackageActiveStatus({
+                    id: record.id,
+                    activeStatus: 1,
+                  });
+                  Message.success('启动成功');
+                  setBoundaryTick((x) => x + 1);
+                }}
+              >
+                启动
+              </Button>
+            )}
+            <Button
+              type="text"
+              size="small"
+              icon={<IconDelete />}
+              status="danger"
+              onClick={() => {
+                Modal.confirm({
+                  title: '确认删除',
+                  content: '删除后该租户将不再关联此权限边界，是否继续？',
+                  onOk: async () => {
+                    await deleteTenantPermissionPackage(record.id);
+                    Message.success('删除成功');
+                    setBoundaryTick((x) => x + 1);
+                  },
+                });
+              }}
+            >
+              删除
+            </Button>
+          </Space>
+        ),
+      },
+    ],
+    [boundaryManageForm, t]
+  );
   const handleSearch = (params: TenantSearchValues) => {
     setListCurrent(1);
     setFormParams(params);
@@ -180,6 +433,7 @@ export default function TenantManagePage() {
         });
         setEditVisible(true);
       },
+      onBoundary: openBoundary,
       onDelete: (record: TenantRecord) => {
         Modal.confirm({
           title: t['tenantSearch.confirm.deleteTitle'],
@@ -214,7 +468,7 @@ export default function TenantManagePage() {
         });
       },
     }),
-    [editForm, t, bumpList]
+    [editForm, t, bumpList, openBoundary]
   );
 
   const columns = useMemo(
@@ -528,6 +782,197 @@ export default function TenantManagePage() {
           >
             <Input.Password autoComplete="new-password" />
           </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal
+        title={`授权：${boundaryRecord?.tenantName || ''}`}
+        visible={boundaryVisible}
+        footer={null}
+        onCancel={() => {
+          setBoundaryVisible(false);
+          setBoundaryRecord(null);
+          setBoundaryData([]);
+          setBoundaryFormParams({});
+          setBoundaryCurrent(1);
+          setBoundaryManageVisible(false);
+          setBoundaryEditing(null);
+          boundarySearchForm.resetFields();
+        }}
+        unmountOnExit
+        style={{ width: 980 }}
+      >
+        {tenantTypeToBusinessType(boundaryRecord?.tenantType || '') === 1 ? (
+          <Alert
+            type="info"
+            content="平台租户管理员天然拥有全部启用权限，无需配置租户权限边界；平台租户普通成员仍需通过角色、用户或部门角色授权获得权限。"
+          />
+        ) : (
+          <Space direction="vertical" size={16} style={{ width: '100%' }}>
+            <Alert
+              type="warning"
+              content="新增授权默认不启用；普通租户管理员自动拥有已启用边界内全部权限，普通成员不会超出该边界。"
+            />
+            <div className={styles['search-form-wrapper']}>
+              <Form
+                form={boundarySearchForm}
+                className={styles['search-form']}
+                labelAlign="left"
+                labelCol={{ span: 5 }}
+                wrapperCol={{ span: 19 }}
+              >
+                <div className={styles.boundarySearchGrid}>
+                  <Form.Item label="ID" field="id">
+                    <Input placeholder="精准查询" allowClear />
+                  </Form.Item>
+                  <Form.Item label="权限名称" field="permissionName">
+                    <Input placeholder="模糊查询" allowClear />
+                  </Form.Item>
+                </div>
+              </Form>
+              <div className={styles['right-button']}>
+                <Button
+                  type="primary"
+                  icon={<IconSearch />}
+                  onClick={async () => {
+                    const values = await boundarySearchForm.validate();
+                    setBoundaryCurrent(1);
+                    setBoundaryFormParams(values);
+                  }}
+                >
+                  查询
+                </Button>
+                <Button
+                  icon={<IconRefresh />}
+                  onClick={() => {
+                    boundarySearchForm.resetFields();
+                    setBoundaryCurrent(1);
+                    setBoundaryFormParams({});
+                  }}
+                >
+                  重置
+                </Button>
+              </div>
+            </div>
+            <div className={styles['button-group']}>
+              <Space>
+                <Button
+                  type="primary"
+                  icon={<IconPlus />}
+                  onClick={() => {
+                    setBoundaryEditing(null);
+                    boundaryManageForm.resetFields();
+                    setBoundaryManageVisible(true);
+                  }}
+                >
+                  新增
+                </Button>
+              </Space>
+              <Button
+                icon={<IconRefresh />}
+                onClick={() => setBoundaryTick((x) => x + 1)}
+              >
+                刷新
+              </Button>
+            </div>
+            <Table
+              rowKey="id"
+              loading={boundaryLoading}
+              data={boundaryData}
+              columns={boundaryColumns}
+              pagination={boundaryPagination}
+              onChange={(pag) => {
+                setBoundaryCurrent((c) => pag.current ?? c);
+                setBoundaryPageSize((s) =>
+                  pag.pageSize != null ? Number(pag.pageSize) : s
+                );
+              }}
+              border
+              scroll={{ x: 898 }}
+            />
+          </Space>
+        )}
+      </Modal>
+
+      <Modal
+        title={boundaryEditing ? '编辑授权' : '新增授权'}
+        visible={boundaryManageVisible}
+        onCancel={() => {
+          setBoundaryManageVisible(false);
+          setBoundaryEditing(null);
+          boundaryManageForm.resetFields();
+        }}
+        onOk={async () => {
+          if (!boundaryRecord) {
+            return;
+          }
+          try {
+            const values = await boundaryManageForm.validate();
+            if (boundaryEditing) {
+              await updateTenantPermissionPackage({
+                id: boundaryEditing.id,
+                tenantId: boundaryRecord.id,
+                packageId: values.packageId,
+              });
+              Message.success('保存成功');
+            } else {
+              await createTenantPermissionPackage({
+                tenantId: boundaryRecord.id,
+                packageId: values.packageId,
+              });
+              Message.success('新增成功');
+            }
+            setBoundaryManageVisible(false);
+            setBoundaryEditing(null);
+            boundaryManageForm.resetFields();
+            setBoundaryTick((x) => x + 1);
+          } catch {
+            /* validate or request */
+          }
+        }}
+        unmountOnExit
+        style={{ width: 560 }}
+      >
+        <Form
+          form={boundaryManageForm}
+          layout="horizontal"
+          labelAlign="left"
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 19 }}
+          className={styles['search-form']}
+        >
+          {!boundaryEditing && (
+            <Form.Item label="状态">
+              <Badge status="default" text="停用" />
+            </Form.Item>
+          )}
+          <div className={styles.formLikeField}>
+            <label className={styles.formLikeFieldLabel}>权限边界</label>
+            <div className={styles.formLikeFieldControl}>
+              <Form.Item
+                field="packageId"
+                rules={[
+                  {
+                    required: true,
+                    message: t['tenantSearch.validation.required'],
+                  },
+                ]}
+                noStyle
+              >
+                <Select
+                  placeholder="请选择权限边界"
+                  showSearch
+                  allowClear
+                  options={boundaryPackageOptions}
+                  filterOption={(inputValue, option) =>
+                    String(option.extra?.label || '')
+                      .toLowerCase()
+                      .includes(inputValue.toLowerCase())
+                  }
+                />
+              </Form.Item>
+            </div>
+          </div>
         </Form>
       </Modal>
 

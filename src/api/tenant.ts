@@ -1,5 +1,36 @@
 import { authRequest } from './request';
 import type { PageData } from './request';
+import type { PermissionOptionRecord } from './access-permission';
+import type { PermissionBoundaryPackageRecord } from './permission-boundary-package';
+
+export interface TenantPermissionBoundaryRecord {
+  tenantId: number;
+  tenantType?: string;
+  platformTenant?: boolean;
+  packages?: PermissionBoundaryPackageRecord[];
+  directPermissions?: PermissionOptionRecord[];
+  effectivePermissions?: PermissionOptionRecord[];
+}
+
+export interface TenantPermissionPackageRecord {
+  id: number;
+  tenantId: number;
+  packageId: number;
+  permissionCode?: string;
+  permissionName?: string;
+  activeStatus: number;
+  operator?: number;
+  operatorUsername?: string | null;
+  updatedAt?: number;
+}
+
+export interface TenantPermissionPackageListParams {
+  tenantId: number;
+  page?: number;
+  pageSize?: number;
+  id?: number;
+  permissionName?: string;
+}
 
 export interface TenantRecord {
   id: number;
@@ -80,6 +111,78 @@ export function updateTenantActiveStatus(data: {
 export function deleteTenant(id: number) {
   return authRequest<Record<string, never>>({
     url: '/api/system/tenants/manage',
+    method: 'DELETE',
+    params: { id },
+  });
+}
+
+export function fetchTenantPermissionBoundary(tenantId?: number) {
+  return authRequest<TenantPermissionBoundaryRecord>({
+    url: '/api/system/tenants/permission-boundary',
+    method: 'GET',
+    params: tenantId ? { tenantId } : undefined,
+  });
+}
+
+export function saveTenantPermissionBoundary(data: {
+  tenantId: number;
+  packageIds: number[];
+  directPermissionIds?: number[];
+}) {
+  return authRequest<{ ids: number[] }>({
+    url: '/api/system/tenants/permission-boundary',
+    method: 'POST',
+    data,
+  });
+}
+
+export function fetchTenantPermissionPackagePage(
+  params: TenantPermissionPackageListParams
+) {
+  return authRequest<PageData<TenantPermissionPackageRecord>>({
+    url: '/api/system/tenants/permission-boundary-packages/list',
+    method: 'GET',
+    params,
+  });
+}
+
+export function createTenantPermissionPackage(data: {
+  tenantId: number;
+  packageId: number;
+}) {
+  return authRequest<{ id: number }>({
+    url: '/api/system/tenants/permission-boundary-packages/manage',
+    method: 'POST',
+    data,
+  });
+}
+
+export function updateTenantPermissionPackage(data: {
+  id: number;
+  tenantId: number;
+  packageId: number;
+}) {
+  return authRequest<{ id: number }>({
+    url: '/api/system/tenants/permission-boundary-packages/manage',
+    method: 'PUT',
+    data,
+  });
+}
+
+export function updateTenantPermissionPackageActiveStatus(data: {
+  id: number;
+  activeStatus: 1 | 2;
+}) {
+  return authRequest<Record<string, never>>({
+    url: '/api/system/tenants/permission-boundary-packages/active-status',
+    method: 'PATCH',
+    data,
+  });
+}
+
+export function deleteTenantPermissionPackage(id: number) {
+  return authRequest<Record<string, never>>({
+    url: '/api/system/tenants/permission-boundary-packages/manage',
     method: 'DELETE',
     params: { id },
   });

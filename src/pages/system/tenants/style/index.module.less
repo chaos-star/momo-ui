@@ -79,6 +79,12 @@
   min-width: 0;
 }
 
+.boundarySearchGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 24px;
+}
+
 .tenant-view-modal {
   :global(.arco-modal-content) {
     padding-top: 8px;

@@ -28,6 +28,7 @@ export interface RoleRecord extends BaseEntity {
   roleCode: string;
   roleName: string;
   roleType?: string;
+  assignScope?: string;
   description?: string;
 }
 

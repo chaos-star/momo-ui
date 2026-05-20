@@ -6,6 +6,7 @@ import React, {
   useState,
 } from 'react';
 import {
+  Alert,
   Checkbox,
   Drawer,
   Empty,
@@ -22,13 +23,17 @@ import type { PermissionNode } from '@/api/access-control';
 import {
   fetchPermissionGrantChildren,
   fetchPermissionMenuGrantTree,
-  fetchRoleDetail,
-  RoleRecord,
-  saveRolePermissions,
 } from '@/api/access-role';
-import styles from './style/index.module.less';
+import {
+  fetchPermissionBoundaryPackagePermissions,
+  savePermissionBoundaryPackagePermissions,
+  PermissionBoundaryPackageRecord,
+} from '@/api/permission-boundary-package';
+import roleStyles from '../roles/style/index.module.less';
+import packageStyles from './style/index.module.less';
 
 const { Text } = Typography;
+
 function nodeKey(node: PermissionNode) {
   const pid = node.permissionId ?? node.id;
   return pid != null ? String(pid) : '';
@@ -197,10 +202,10 @@ function ChildPermissionLabel({
   if (ellipsis) {
     return (
       <Tooltip content={tooltip}>
-        <span className={styles['grant-label-tooltip-wrap']}>
-          <span className={styles['grant-label-inline']}>
+        <span className={roleStyles['grant-label-tooltip-wrap']}>
+          <span className={roleStyles['grant-label-inline']}>
             {subType ? <ResourceSubTypeTag type={subType} /> : null}
-            <Text className={styles['grant-label-ellipsis']} ellipsis>
+            <Text className={roleStyles['grant-label-ellipsis']} ellipsis>
               {name}
             </Text>
           </span>
@@ -223,15 +228,15 @@ function ChildPermissionLabel({
 }
 
 type Props = {
-  role: RoleRecord | null;
   visible: boolean;
+  record: PermissionBoundaryPackageRecord | null;
   onClose: () => void;
   onSaved?: () => void;
 };
 
-export default function RoleGrantDrawer({
-  role,
+export default function PermissionPackageGrantDrawer({
   visible,
+  record,
   onClose,
   onSaved,
 }: Props) {
@@ -262,13 +267,20 @@ export default function RoleGrantDrawer({
     return keys;
   }, [checkedKeys, menuTreeMeta]);
 
+  const selectedCount = useMemo(
+    () =>
+      checkedKeys.map(Number).filter((id) => Number.isFinite(id) && id > 0)
+        .length,
+    [checkedKeys]
+  );
+
   const menuChecked = useMemo(
     () => selectedMenuKey !== '' && checkedKeys.includes(selectedMenuKey),
     [checkedKeys, selectedMenuKey]
   );
 
   useEffect(() => {
-    if (!visible || !role) {
+    if (!visible || !record) {
       return;
     }
     let canceled = false;
@@ -276,17 +288,20 @@ export default function RoleGrantDrawer({
     setSelectedMenuKey('');
     setChildNodes([]);
     childrenCacheRef.current = {};
-    void Promise.all([fetchPermissionMenuGrantTree(), fetchRoleDetail(role.id)])
-      .then(([tree, detail]) => {
+    void Promise.all([
+      fetchPermissionMenuGrantTree(),
+      fetchPermissionBoundaryPackagePermissions(record.id),
+    ])
+      .then(([tree, selected]) => {
         if (canceled) return;
         setMenuTree(tree || []);
-        setCheckedKeys((detail.grantedPermissionIds || []).map(String));
+        setCheckedKeys((selected || []).map((item) => String(item.id)));
       })
       .finally(() => !canceled && setLoadingMenu(false));
     return () => {
       canceled = true;
     };
-  }, [visible, role]);
+  }, [record, visible]);
 
   useEffect(() => {
     if (!selectedMenuKey) {
@@ -422,18 +437,19 @@ export default function RoleGrantDrawer({
     });
   };
 
-  const handleSave = async () => {
-    if (!role) return;
+  const handleOk = async () => {
+    if (!record) {
+      return;
+    }
     setSaving(true);
     try {
-      const permissionIds = checkedKeys
-        .map(Number)
-        .filter((id) => Number.isFinite(id) && id > 0);
-      await saveRolePermissions({
-        roleId: role.id,
-        permissionIds,
+      await savePermissionBoundaryPackagePermissions({
+        packageId: record.id,
+        permissionIds: checkedKeys
+          .map((key) => Number(key))
+          .filter((id) => Number.isFinite(id) && id > 0),
       });
-      Message.success('权限已保存');
+      Message.success('权限包权限已保存');
       onSaved?.();
       onClose();
     } finally {
@@ -453,7 +469,7 @@ export default function RoleGrantDrawer({
         size={8}
         align="center"
         className={
-          layout === 'element' ? styles['grant-checkbox-label'] : undefined
+          layout === 'element' ? roleStyles['grant-checkbox-label'] : undefined
         }
       >
         <ChildPermissionLabel item={item} ellipsis={layout === 'element'} />
@@ -470,20 +486,23 @@ export default function RoleGrantDrawer({
     if (!items.length) return null;
     const listClass =
       layout === 'element'
-        ? styles['grant-resource-list-element']
-        : styles['grant-resource-list-api'];
+        ? roleStyles['grant-resource-list-element']
+        : roleStyles['grant-resource-list-api'];
     return (
-      <div className={styles['grant-resource-block']} key={blockKey}>
-        <Text type="secondary" className={styles['grant-resource-type-title']}>
+      <div className={roleStyles['grant-resource-block']} key={blockKey}>
+        <Text
+          type="secondary"
+          className={roleStyles['grant-resource-type-title']}
+        >
           {title}
         </Text>
         <div className={listClass}>
           {items.map((item) => (
             <div
               key={item.permissionId}
-              className={`${styles['grant-resource-item']}${
+              className={`${roleStyles['grant-resource-item']}${
                 layout === 'element'
-                  ? ` ${styles['grant-resource-item-element']}`
+                  ? ` ${roleStyles['grant-resource-item-element']}`
                   : ''
               }`}
             >
@@ -502,8 +521,8 @@ export default function RoleGrantDrawer({
   ) => {
     if (!hasBucketItems(bucket)) return null;
     return (
-      <div className={styles['grant-mode-section']} key={sectionKey}>
-        <Text className={styles['grant-mode-section-title']}>{title}</Text>
+      <div className={roleStyles['grant-mode-section']} key={sectionKey}>
+        <Text className={roleStyles['grant-mode-section-title']}>{title}</Text>
         {renderResourceBlock(
           '页面元素',
           bucket.element,
@@ -530,12 +549,13 @@ export default function RoleGrantDrawer({
 
   return (
     <Drawer
-      title={`角色授权：${role?.roleName || ''}`}
+      title={`维护权限：${record?.packageName || ''}`}
       visible={visible}
       width={920}
-      confirmLoading={saving}
-      onOk={handleSave}
       onCancel={onClose}
+      onOk={handleOk}
+      confirmLoading={saving}
+      unmountOnExit
       bodyStyle={{
         padding: 0,
         overflow: 'hidden',
@@ -545,16 +565,29 @@ export default function RoleGrantDrawer({
         minHeight: 0,
       }}
     >
-      <Spin loading={loadingMenu} block className={styles['grant-spin']}>
-        <div className={styles['grant-layout']}>
-          <div className={styles['grant-panel-left']}>
-            <Text className={styles['grant-panel-title']}>
+      <div className={packageStyles['package-grant-header']}>
+        <Alert
+          type="warning"
+          content="修改权限包会立即影响所有绑定该权限包的普通租户；平台租户无需配置权限边界。"
+        />
+        <div className={packageStyles['package-summary']}>
+          <Tag color="arcoblue">权限数：{selectedCount}</Tag>
+          <Tag color="green">绑定租户：{record?.tenantCount ?? 0}</Tag>
+          <Text type="secondary">
+            普通租户管理员将自动拥有有效边界内全部权限。
+          </Text>
+        </div>
+      </div>
+      <Spin loading={loadingMenu} block className={roleStyles['grant-spin']}>
+        <div className={roleStyles['grant-layout']}>
+          <div className={roleStyles['grant-panel-left']}>
+            <Text className={roleStyles['grant-panel-title']}>
               菜单权限
               <Text type="secondary" style={{ marginLeft: 8, fontSize: 12 }}>
                 （CATALOG 为目录，无需勾选；授权子菜单后目录会自动展示）
               </Text>
             </Text>
-            <div className={styles['grant-panel-body']}>
+            <div className={roleStyles['grant-panel-body']}>
               <Tree
                 checkable
                 checkStrictly
@@ -569,8 +602,8 @@ export default function RoleGrantDrawer({
               />
             </div>
           </div>
-          <div className={styles['grant-panel-right']}>
-            <Text className={styles['grant-panel-title']}>
+          <div className={roleStyles['grant-panel-right']}>
+            <Text className={roleStyles['grant-panel-title']}>
               附属权限点
               {selectedMenuKey && !menuChecked ? (
                 <Text type="secondary" style={{ marginLeft: 8, fontSize: 12 }}>
@@ -578,7 +611,7 @@ export default function RoleGrantDrawer({
                 </Text>
               ) : null}
             </Text>
-            <div className={styles['grant-panel-body']}>
+            <div className={roleStyles['grant-panel-body']}>
               <Spin loading={loadingChildren} style={{ width: '100%' }}>
                 {!selectedMenuKey ? (
                   <Empty description="请在左侧选择菜单" />
