@@ -31,49 +31,67 @@ export function getColumns(
 ): ColumnProps<PermissionBoundaryPackageRecord>[] {
   return [
     {
+      title: 'ID',
+      dataIndex: 'id',
+      width: 72,
+    },
+    {
       title: '权限包编码',
       dataIndex: 'packageCode',
-      width: 220,
+      width: 170,
+      ellipsis: true,
+      tooltip: true,
     },
     {
       title: '权限包名称',
       dataIndex: 'packageName',
-      width: 200,
+      width: 150,
+      ellipsis: true,
+      tooltip: true,
     },
     {
       title: '权限数量',
       dataIndex: 'permissionCount',
-      width: 110,
+      width: 92,
       render: (value) => value ?? 0,
     },
     {
-      title: '绑定租户数',
+      title: '绑定数',
       dataIndex: 'tenantCount',
-      width: 120,
+      width: 88,
       render: (value) => value ?? 0,
     },
     {
-      title: '状态',
+      title: '启动状态',
       dataIndex: 'activeStatus',
-      width: 100,
+      width: 96,
       render: activeTag,
     },
     {
       title: '描述',
       dataIndex: 'description',
+      width: 200,
       ellipsis: true,
       tooltip: true,
     },
     {
+      title: '最后操作人',
+      dataIndex: 'operatorUsername',
+      width: 120,
+      ellipsis: true,
+      tooltip: true,
+      render: (_, record) => record.operatorUsername?.trim() || '—',
+    },
+    {
       title: '更新时间',
       dataIndex: 'updatedAt',
-      width: 180,
+      width: 160,
       render: (value) => formatEpochMs(value),
     },
     {
       title: '操作',
       dataIndex: 'operations',
-      width: 300,
+      width: 210,
       fixed: 'right',
       render: (_, record) => (
         <Space className={styles.operations} size={4}>
@@ -91,7 +109,7 @@ export function getColumns(
             icon={<IconSettings />}
             onClick={() => callbacks.onGrant(record)}
           >
-            维护权限
+            授权
           </Button>
           {record.activeStatus === 1 ? (
             <Button

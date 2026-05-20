@@ -800,7 +800,7 @@ export default function TenantManagePage() {
           boundarySearchForm.resetFields();
         }}
         unmountOnExit
-        style={{ width: 980 }}
+        style={{ width: 1100 }}
       >
         {tenantTypeToBusinessType(boundaryRecord?.tenantType || '') === 1 ? (
           <Alert
@@ -888,7 +888,7 @@ export default function TenantManagePage() {
                 );
               }}
               border
-              scroll={{ x: 898 }}
+              scroll={{ x: 948 }}
             />
           </Space>
         )}
@@ -941,11 +941,6 @@ export default function TenantManagePage() {
           wrapperCol={{ span: 19 }}
           className={styles['search-form']}
         >
-          {!boundaryEditing && (
-            <Form.Item label="状态">
-              <Badge status="default" text="停用" />
-            </Form.Item>
-          )}
           <div className={styles.formLikeField}>
             <label className={styles.formLikeFieldLabel}>权限边界</label>
             <div className={styles.formLikeFieldControl}>

@@ -39,6 +39,7 @@ function toListParams(
   return {
     page: current,
     pageSize,
+    id: formParams.id?.trim() || undefined,
     packageCode: formParams.packageCode?.trim() || undefined,
     packageName: formParams.packageName?.trim() || undefined,
     activeStatus: formParams.activeStatus || undefined,
@@ -96,10 +97,8 @@ export default function PermissionBoundaryPackagePage() {
   const handleSubmit = async (values: PackageModalValues) => {
     const payload = {
       id: values.id,
-      packageCode: values.packageCode.trim().toUpperCase(),
       packageName: values.packageName.trim(),
       description: values.description?.trim() || '',
-      activeStatus: values.activeStatus || 1,
     };
     if (editing) {
       await updatePermissionBoundaryPackage({ ...payload, id: editing.id });
@@ -154,7 +153,9 @@ export default function PermissionBoundaryPackagePage() {
       onDelete: (record: PermissionBoundaryPackageRecord) => {
         Modal.confirm({
           title: '确认删除权限包？',
-          content: `删除 ${record.packageName} 后，相关租户绑定将不再生效。`,
+          content: `删除 ${record.packageName} 后，将同时解绑 ${
+            record.tenantCount ?? 0
+          } 个已绑定租户的权限包，可能影响相关用户正常使用，请谨慎操作。`,
           onOk: async () => {
             await deletePermissionBoundaryPackage(record.id);
             Message.success('权限包已删除');
@@ -210,7 +211,6 @@ export default function PermissionBoundaryPackagePage() {
         columns={columns}
         data={data}
         border
-        scroll={{ x: 1320 }}
         onChange={(pag) => {
           setCurrent((c) => pag.current ?? c);
           setPageSize((s) => (pag.pageSize != null ? Number(pag.pageSize) : s));

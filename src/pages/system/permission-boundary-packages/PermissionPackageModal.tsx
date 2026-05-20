@@ -1,14 +1,12 @@
 import React, { useEffect } from 'react';
-import { Form, Input, Modal, Radio } from '@arco-design/web-react';
+import { Form, Input, Modal } from '@arco-design/web-react';
 import type { PermissionBoundaryPackageRecord } from '@/api/permission-boundary-package';
 import styles from '../tenants/style/index.module.less';
 
 export type PackageModalValues = {
   id?: number;
-  packageCode: string;
   packageName: string;
   description?: string;
-  activeStatus?: number;
 };
 
 type Props = {
@@ -33,14 +31,11 @@ export default function PermissionPackageModal({
     if (record) {
       form.setFieldsValue({
         id: record.id,
-        packageCode: record.packageCode,
         packageName: record.packageName,
         description: record.description || '',
-        activeStatus: record.activeStatus || 1,
       });
     } else {
       form.resetFields();
-      form.setFieldsValue({ activeStatus: 1 });
     }
   }, [form, record, visible]);
 
@@ -68,24 +63,11 @@ export default function PermissionPackageModal({
           <Input />
         </Form.Item>
         <Form.Item
-          label="权限包编码"
-          field="packageCode"
-          rules={[{ required: true, message: '请输入权限包编码' }]}
-        >
-          <Input disabled={!!record} placeholder="如 DEFAULT_TENANT_PACKAGE" />
-        </Form.Item>
-        <Form.Item
           label="权限包名称"
           field="packageName"
           rules={[{ required: true, message: '请输入权限包名称' }]}
         >
           <Input placeholder="如 默认租户权限包" />
-        </Form.Item>
-        <Form.Item label="启用状态" field="activeStatus">
-          <Radio.Group>
-            <Radio value={1}>启用</Radio>
-            <Radio value={2}>停用</Radio>
-          </Radio.Group>
         </Form.Item>
         <Form.Item label="描述" field="description">
           <Input.TextArea

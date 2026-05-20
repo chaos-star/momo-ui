@@ -13,6 +13,7 @@ import styles from '../tenants/style/index.module.less';
 const { Row, Col } = Grid;
 
 export type PermissionBoundaryPackageSearchValues = {
+  id?: string;
   packageCode?: string;
   packageName?: string;
   activeStatus?: number;
@@ -35,17 +36,22 @@ export default function SearchForm({ onSearch }: Props) {
         wrapperCol={{ span: 19 }}
       >
         <Row gutter={24}>
-          <Col span={8}>
+          <Col span={6}>
+            <Form.Item label="ID" field="id">
+              <Input allowClear placeholder="请输入ID" />
+            </Form.Item>
+          </Col>
+          <Col span={6}>
             <Form.Item label="权限包编码" field="packageCode">
               <Input allowClear placeholder="如 DEFAULT_TENANT_PACKAGE" />
             </Form.Item>
           </Col>
-          <Col span={8}>
+          <Col span={6}>
             <Form.Item label="权限包名称" field="packageName">
               <Input allowClear placeholder="如 默认租户权限包" />
             </Form.Item>
           </Col>
-          <Col span={8}>
+          <Col span={6}>
             <div className={styles.formLikeField}>
               <label className={styles.formLikeFieldLabel}>启用状态</label>
               <div className={styles.formLikeFieldControl}>

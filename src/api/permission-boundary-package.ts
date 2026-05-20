@@ -11,6 +11,8 @@ export interface PermissionBoundaryPackageRecord {
   config?: string;
   permissionCount?: number;
   tenantCount?: number;
+  operator?: number;
+  operatorUsername?: string | null;
   createdAt?: number;
   updatedAt?: number;
 }
@@ -18,6 +20,7 @@ export interface PermissionBoundaryPackageRecord {
 export interface PermissionBoundaryPackageListParams {
   page?: number;
   pageSize?: number;
+  id?: string;
   packageCode?: string;
   packageName?: string;
   activeStatus?: number;
@@ -41,10 +44,8 @@ export function fetchPermissionBoundaryPackageOptions() {
 }
 
 export function createPermissionBoundaryPackage(data: {
-  packageCode: string;
   packageName: string;
   description?: string;
-  activeStatus?: number;
 }) {
   return authRequest<{ id: number }>({
     url: '/api/system/permission-boundary-packages/manage',
@@ -55,10 +56,8 @@ export function createPermissionBoundaryPackage(data: {
 
 export function updatePermissionBoundaryPackage(data: {
   id: number;
-  packageCode: string;
   packageName: string;
   description?: string;
-  activeStatus?: number;
 }) {
   return authRequest<{ id: number }>({
     url: '/api/system/permission-boundary-packages/manage',

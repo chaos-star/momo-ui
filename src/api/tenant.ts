@@ -8,7 +8,6 @@ export interface TenantPermissionBoundaryRecord {
   tenantType?: string;
   platformTenant?: boolean;
   packages?: PermissionBoundaryPackageRecord[];
-  directPermissions?: PermissionOptionRecord[];
   effectivePermissions?: PermissionOptionRecord[];
 }
 
@@ -127,7 +126,6 @@ export function fetchTenantPermissionBoundary(tenantId?: number) {
 export function saveTenantPermissionBoundary(data: {
   tenantId: number;
   packageIds: number[];
-  directPermissionIds?: number[];
 }) {
   return authRequest<{ ids: number[] }>({
     url: '/api/system/tenants/permission-boundary',
