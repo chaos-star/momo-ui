@@ -37,7 +37,6 @@ import {
   applySystemFavicon,
 } from './utils/systemConfig';
 import { getPublicSystemConfig } from './api/system';
-import './mock';
 
 const store = createStore(rootReducer);
 
@@ -257,4 +256,12 @@ function Index() {
   );
 }
 
-ReactDOM.render(<Index />, document.getElementById('root'));
+function renderApp() {
+  ReactDOM.render(<Index />, document.getElementById('root'));
+}
+
+if (import.meta.env.MODE !== 'production') {
+  import('./mock').finally(renderApp);
+} else {
+  renderApp();
+}

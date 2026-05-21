@@ -1,6 +1,8 @@
 {
   "name": "arco-design-pro",
   "version": "1.0.0",
+  "private": true,
+  "license": "UNLICENSED",
   "description": "Arco Design Pro",
   "scripts": {
     "start": "vite",
