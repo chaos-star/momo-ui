@@ -6,7 +6,6 @@ import {
   Input,
   Message,
   Modal,
-  Select,
   Space,
   Table,
   Typography,
@@ -18,12 +17,9 @@ import {
   fetchRolePage,
   RoleRecord,
   updateRole,
+  updateRoleActiveStatus,
 } from '@/api/access-role';
-import SearchForm, {
-  ASSIGN_SCOPE_OPTIONS,
-  ROLE_TYPE_OPTIONS,
-  RoleSearchValues,
-} from './form';
+import SearchForm, { RoleSearchValues } from './form';
 import { getColumns } from './constants';
 import RoleGrantDrawer from './RoleGrantDrawer';
 import styles from './style/index.module.less';
@@ -67,10 +63,6 @@ export default function RoleManagePage() {
     setMode('create');
     setSelected(null);
     form.resetFields();
-    form.setFieldsValue({
-      roleType: 'TENANT_CUSTOM',
-      assignScope: 'TENANT_ONLY',
-    });
     setVisible(true);
   };
 
@@ -101,11 +93,29 @@ export default function RoleManagePage() {
 
   const columns = getColumns({
     onEdit: openEdit,
+    onToggleActiveStatus: (record) => {
+      const nextActiveStatus = record.activeStatus === 1 ? 2 : 1;
+      const actionText = nextActiveStatus === 1 ? '启用' : '停用';
+      Modal.confirm({
+        title: `${actionText}角色`,
+        content: `确认${actionText}角色 ${record.roleName}？`,
+        onOk: async () => {
+          await updateRoleActiveStatus({
+            id: record.id,
+            activeStatus: nextActiveStatus,
+          });
+          Message.success(`角色已${actionText}`);
+          reload();
+        },
+      });
+    },
     onGrant: openGrant,
     onDelete: (record) =>
       Modal.confirm({
         title: '删除角色',
-        content: `确认删除角色 ${record.roleName}？`,
+        content:
+          `确认删除角色 ${record.roleName}？删除后将同时解除该角色与用户、部门的绑定关系，` +
+          '已绑定用户和部门将不再具备此角色授予的权限。',
         onOk: async () => {
           await deleteRole(record.id);
           Message.success('角色已删除');
@@ -138,7 +148,7 @@ export default function RoleManagePage() {
         loading={loading}
         columns={columns}
         data={data}
-        scroll={{ x: 1130 }}
+        scroll={{ x: 1400 }}
         pagination={{
           current,
           pageSize,
@@ -174,24 +184,6 @@ export default function RoleManagePage() {
           >
             <Input />
           </Form.Item>
-          {mode === 'create' ? (
-            <>
-              <Form.Item
-                label="角色类型"
-                field="roleType"
-                rules={[{ required: true }]}
-              >
-                <Select options={ROLE_TYPE_OPTIONS} />
-              </Form.Item>
-              <Form.Item
-                label="分配范围"
-                field="assignScope"
-                rules={[{ required: true }]}
-              >
-                <Select options={ASSIGN_SCOPE_OPTIONS} />
-              </Form.Item>
-            </>
-          ) : null}
           <Form.Item label="角色描述" field="description">
             <Input.TextArea rows={4} />
           </Form.Item>

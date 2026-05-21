@@ -31,6 +31,23 @@
   flex-wrap: wrap;
   align-items: center;
   row-gap: 4px;
+
+  :global(.arco-btn-size-small.arco-btn-text) {
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+
+  :global(.arco-btn-size-small.arco-btn-text > svg + span) {
+    margin-left: 2px;
+  }
+}
+
+.table-cell-ellipsis {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .grant-spin {

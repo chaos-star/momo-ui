@@ -54,14 +54,14 @@ import styles from '../tenants/style/index.module.less';
 
 Use these class names from that file:
 
-| Class                                                           | Purpose                                                                                                                                 |
-| --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `search-form-wrapper`                                           | Flex row: search form + right-side query/reset buttons; bottom border `var(--color-border-1)`, `margin-bottom: 20px`                    |
-| `search-form`                                                   | Form area `flex: 1`; label `white-space: nowrap`                                                                                        |
-| `right-button`                                                  | Vertical stack of 查询 / 重置; left border `var(--color-border-2)`, `padding-left: 20px`                                                |
-| `button-group`                                                  | Flex `space-between`; `margin-bottom: 20px`                                                                                             |
-| `formLikeField` / `formLikeFieldLabel` / `formLikeFieldControl` | Select (and similar) fields in the **search grid** — label width **5/24** (`20.8333%`), `padding-right: 16px` between label and control |
-| `operations`                                                    | Table row action buttons (text buttons, compact padding)                                                                                |
+| Class                                                           | Purpose                                                                                                                                      |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `search-form-wrapper`                                           | Flex row: search form + right-side query/reset buttons; bottom border `var(--color-border-1)`, `margin-bottom: 20px`                         |
+| `search-form`                                                   | Form area `flex: 1`; label `white-space: nowrap`                                                                                             |
+| `right-button`                                                  | Vertical stack of 查询 / 重置; left border `var(--color-border-2)`, `padding-left: 20px`                                                     |
+| `button-group`                                                  | Flex `space-between`; `margin-bottom: 20px`                                                                                                  |
+| `formLikeField` / `formLikeFieldLabel` / `formLikeFieldControl` | Select (and similar) fields in the **search grid** — label width **5/24** (`20.8333%`), `padding-right: 16px` between label and control      |
+| `operations`                                                    | Table row action buttons (text buttons, compact padding, use `<Space className={styles.operations} size={10} wrap>` for 10px button spacing) |
 
 Page-specific LESS should only add deltas (e.g. tip text, modal tweaks). **Do not** override label column to `flex: auto` or shrink label spacing unless the user asks — that breaks parity with tenant.
 
@@ -126,7 +126,7 @@ Use normal `div` elements only — **never** typo `motion.div` as a tag name (br
 - `onChange` updates `current` and `pageSize`.
 - List refresh: `listTick` / `tick` counter incremented after mutations (avoid ad-hoc refetch logic scattered in handlers).
 - Columns: extract to `constants.tsx` when the table is non-trivial; actions via callbacks object (tenant pattern).
-- Operation column: `width` + `fixed: 'right'`, `Space` with `className={styles.operations}`, text buttons with `IconEdit` / `IconDelete` where appropriate.
+- Operation column: `width` + `fixed: 'right'`, `Space` with `className={styles.operations}` and `size={10}` + `wrap`, text buttons with `IconEdit` / `IconDelete` where appropriate. When a page owns its own LESS instead of importing tenant styles, copy the tenant `operations` rules for compact text-button padding and icon-text spacing so the 10px action-button gap is visually effective.
 
 ### Create / edit modals
 

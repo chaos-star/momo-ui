@@ -1,6 +1,18 @@
 import React from 'react';
-import { Button, Space, Tag, Typography } from '@arco-design/web-react';
-import { IconDelete, IconEdit, IconSafe } from '@arco-design/web-react/icon';
+import {
+  Badge,
+  Button,
+  Space,
+  Tooltip,
+  Typography,
+} from '@arco-design/web-react';
+import {
+  IconDelete,
+  IconEdit,
+  IconLock,
+  IconSafe,
+  IconUnlock,
+} from '@arco-design/web-react/icon';
 import type { ColumnProps } from '@arco-design/web-react/es/Table';
 import type { RoleRecord } from '@/api/access-role';
 import { formatTime } from '@/utils/accessControl';
@@ -8,77 +20,65 @@ import styles from './style/index.module.less';
 
 const { Text } = Typography;
 
-const ROLE_TYPE_LABELS: Record<string, string> = {
-  PLATFORM_INTERNAL: '平台内部',
-  PLATFORM_BUSINESS: '平台业务',
-  TENANT_CUSTOM: '租户自定义',
+const renderEllipsisWithTooltip = (value?: string) => {
+  const text = value || '—';
+  return (
+    <Tooltip content={text} disabled={!value}>
+      <Text className={styles['table-cell-ellipsis']}>{text}</Text>
+    </Tooltip>
+  );
 };
 
-const ASSIGN_SCOPE_LABELS: Record<string, string> = {
-  PLATFORM_ONLY: '仅平台',
-  TENANT_ONLY: '仅本租户',
-  CROSS_TENANT: '可跨租户',
+const renderActiveStatus = (value?: number) => {
+  if (value === 1) {
+    return <Badge status="success" text="启用" />;
+  }
+  if (value === 2) {
+    return <Badge status="error" text="停用" />;
+  }
+  return <Badge status="default" text="未知" />;
 };
 
 export type RoleCallbacks = {
   onEdit: (record: RoleRecord) => void;
+  onToggleActiveStatus: (record: RoleRecord) => void;
   onDelete: (record: RoleRecord) => void;
   onGrant: (record: RoleRecord) => void;
 };
-
-function renderRoleType(value?: string) {
-  const normalized = value || 'TENANT_CUSTOM';
-  const color =
-    normalized === 'PLATFORM_INTERNAL'
-      ? 'red'
-      : normalized === 'PLATFORM_BUSINESS'
-      ? 'arcoblue'
-      : 'green';
-  return <Tag color={color}>{ROLE_TYPE_LABELS[normalized] || normalized}</Tag>;
-}
-
-function renderAssignScope(value?: string) {
-  const normalized = value || 'TENANT_ONLY';
-  const color =
-    normalized === 'CROSS_TENANT'
-      ? 'purple'
-      : normalized === 'PLATFORM_ONLY'
-      ? 'orange'
-      : 'gray';
-  return (
-    <Tag color={color}>{ASSIGN_SCOPE_LABELS[normalized] || normalized}</Tag>
-  );
-}
 
 export function getColumns(
   callbacks: RoleCallbacks
 ): ColumnProps<RoleRecord>[] {
   return [
     { title: 'ID', dataIndex: 'id', width: 80 },
-    { title: '角色名称', dataIndex: 'roleName', width: 160 },
+    {
+      title: '角色名称',
+      dataIndex: 'roleName',
+      width: 160,
+      render: renderEllipsisWithTooltip,
+    },
     {
       title: '角色编码',
       dataIndex: 'roleCode',
-      width: 180,
+      width: 280,
       render: (v) => <Text copyable>{v}</Text>,
     },
     {
-      title: '类型',
-      dataIndex: 'roleType',
-      width: 130,
-      render: renderRoleType,
-    },
-    {
-      title: '分配范围',
-      dataIndex: 'assignScope',
-      width: 130,
-      render: renderAssignScope,
+      title: '启用状态',
+      dataIndex: 'activeStatus',
+      width: 100,
+      render: renderActiveStatus,
     },
     {
       title: '描述',
       dataIndex: 'description',
-      ellipsis: true,
-      width: 220,
+      width: 280,
+      render: renderEllipsisWithTooltip,
+    },
+    {
+      title: '操作人',
+      dataIndex: 'operatorUsername',
+      width: 120,
       render: (v) => v || '—',
     },
     {
@@ -90,37 +90,48 @@ export function getColumns(
     {
       title: '操作',
       dataIndex: 'operations',
-      width: 230,
+      width: 290,
       fixed: 'right',
-      render: (_, record) => (
-        <Space className={styles.operations} size={8} wrap>
-          <Button
-            type="text"
-            size="small"
-            icon={<IconEdit />}
-            onClick={() => callbacks.onEdit(record)}
-          >
-            编辑
-          </Button>
-          <Button
-            type="text"
-            size="small"
-            icon={<IconSafe />}
-            onClick={() => callbacks.onGrant(record)}
-          >
-            授权
-          </Button>
-          <Button
-            type="text"
-            status="danger"
-            size="small"
-            icon={<IconDelete />}
-            onClick={() => callbacks.onDelete(record)}
-          >
-            删除
-          </Button>
-        </Space>
-      ),
+      render: (_, record) => {
+        const isEnabled = record.activeStatus === 1;
+        return (
+          <Space className={styles.operations} size={10} wrap>
+            <Button
+              type="text"
+              size="small"
+              icon={<IconEdit />}
+              onClick={() => callbacks.onEdit(record)}
+            >
+              编辑
+            </Button>
+            <Button
+              type="text"
+              size="small"
+              icon={isEnabled ? <IconLock /> : <IconUnlock />}
+              onClick={() => callbacks.onToggleActiveStatus(record)}
+            >
+              {isEnabled ? '停用' : '启用'}
+            </Button>
+            <Button
+              type="text"
+              size="small"
+              icon={<IconSafe />}
+              onClick={() => callbacks.onGrant(record)}
+            >
+              授权
+            </Button>
+            <Button
+              type="text"
+              status="danger"
+              size="small"
+              icon={<IconDelete />}
+              onClick={() => callbacks.onDelete(record)}
+            >
+              删除
+            </Button>
+          </Space>
+        );
+      },
     },
   ];
 }

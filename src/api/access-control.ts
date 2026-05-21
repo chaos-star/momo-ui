@@ -27,9 +27,8 @@ export interface RoleRecord extends BaseEntity {
   tenantId?: number;
   roleCode: string;
   roleName: string;
-  roleType?: string;
-  assignScope?: string;
   description?: string;
+  operatorUsername?: string;
 }
 
 export interface DeptRecord extends BaseEntity {
@@ -237,6 +236,10 @@ export function post<T = { id?: number }>(url: string, data?: unknown) {
 
 export function put<T = Record<string, never>>(url: string, data?: unknown) {
   return authRequest<T>({ url, method: 'PUT', data });
+}
+
+export function patch<T = Record<string, never>>(url: string, data?: unknown) {
+  return authRequest<T>({ url, method: 'PATCH', data });
 }
 
 export function del<T = Record<string, never>>(url: string, params?: unknown) {

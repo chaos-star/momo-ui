@@ -3,6 +3,7 @@ import {
   page,
   post,
   put,
+  patch,
   del,
   RoleRecord,
   RoleDetail,
@@ -14,8 +15,6 @@ export interface RoleListParams extends AccessListParams {
   tenantId?: number;
   roleCode?: string;
   roleName?: string;
-  roleType?: string;
-  assignScope?: string;
 }
 
 export function fetchRolePage(params: RoleListParams) {
@@ -32,6 +31,13 @@ export function createRole(data: Record<string, unknown>) {
 
 export function updateRole(data: Record<string, unknown>) {
   return put('/api/system/roles/manage', data);
+}
+
+export function updateRoleActiveStatus(data: {
+  id: number;
+  activeStatus: 1 | 2;
+}) {
+  return patch('/api/system/roles/manage/active-status', data);
 }
 
 export function deleteRole(id: number) {
