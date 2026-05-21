@@ -4,13 +4,75 @@
 }
 
 .tree-panel {
-  width: 300px;
-  flex: 0 0 300px;
+  width: 420px;
+  flex: 0 0 420px;
   border: 1px solid var(--color-border-1);
   border-radius: 4px;
   padding: 12px;
   background: var(--color-bg-2);
-  min-height: 520px;
+  min-height: 560px;
+}
+
+.tree-node-title {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tree-node-content {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 6px;
+}
+
+.tree-node-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tree-node-actions {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+
+.tree-node-actions :global(.arco-btn) {
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+.tree-node-title:hover .tree-node-actions {
+  opacity: 1;
+}
+
+.stop-dept-button,
+.stop-dept-button:hover {
+  color: rgb(var(--primary-6));
+}
+
+.stop-dept-button :global(.arco-icon),
+.stop-dept-button:hover :global(.arco-icon) {
+  color: rgb(var(--primary-6));
+}
+
+.tree-node-disabled {
+  color: var(--color-text-3);
+}
+
+.tree-node-disabled .tree-node-name {
+  color: var(--color-text-3);
+}
+
+.tree-node-disabled .tree-node-content {
+  opacity: 0.72;
 }
 
 .detail-panel {
@@ -27,5 +89,98 @@
 .operations {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   row-gap: 4px;
+
+  :global(.arco-btn-size-small.arco-btn-text) {
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+
+  :global(.arco-btn-size-small.arco-btn-text > svg + span) {
+    margin-left: 2px;
+  }
+}
+
+.dept-card-content {
+  min-height: 168px;
+}
+
+.dept-header {
+  display: flex;
+  min-height: 54px;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.dept-title-wrap {
+  min-width: 0;
+}
+
+.dept-title-row {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+}
+
+.dept-title {
+  overflow: hidden;
+  color: var(--color-text-1);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 26px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dept-code-row {
+  display: flex;
+  min-width: 0;
+  height: 24px;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.dept-code {
+  overflow: hidden;
+  color: var(--color-text-3);
+  font-size: 12px;
+  line-height: 20px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dept-code :global(.arco-typography-operation-copy) {
+  color: var(--color-text-3);
+}
+
+.dept-descriptions {
+  :global(.arco-descriptions-table) {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  :global(.arco-descriptions-item-label) {
+    width: 76px;
+    box-sizing: border-box;
+    white-space: nowrap;
+  }
+
+  :global(.arco-descriptions-item-value) {
+    min-width: 0;
+    word-break: break-all;
+  }
+}
+
+.role-card {
+  margin-top: 16px;
+}
+
+.role-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
 }

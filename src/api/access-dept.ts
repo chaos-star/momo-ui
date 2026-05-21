@@ -25,6 +25,14 @@ export function updateDept(data: Record<string, unknown>) {
   return put('/api/system/depts/manage', data);
 }
 
+export function moveDept(data: { id: number; targetParentId: number }) {
+  return put('/api/system/depts/move', data);
+}
+
+export function toggleDeptActiveStatus(id: number, activeStatus: number) {
+  return put('/api/system/depts/active-status', { id, activeStatus });
+}
+
 export function deleteDept(id: number) {
   return del('/api/system/depts/manage', { id });
 }
