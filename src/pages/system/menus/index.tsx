@@ -412,6 +412,11 @@ export default function MenuManagePage() {
           <span className={styles['tree-node-name']}>
             {item.menuName || item.menuCode || String(item.id)}
           </span>
+          {item.visible === 2 ? (
+            <Tag className={styles['hidden-tag']} size="small">
+              隐藏
+            </Tag>
+          ) : null}
         </div>
         <div
           className={styles['tree-node-actions']}
@@ -462,9 +467,7 @@ export default function MenuManagePage() {
     );
   };
 
-  const toTreeData = (
-    nodes: MenuRecord[] = []
-  ): Parameters<typeof Tree>[0]['treeData'] =>
+  const toTreeData = (nodes: MenuRecord[] = []) =>
     nodes.map((item) => ({
       key: String(item.id),
       value: item.id,
@@ -593,8 +596,13 @@ export default function MenuManagePage() {
     const payload = {
       ...values,
       parentId,
-      menuName: values.label_zh,
+      menuName: toText(values.label_zh).trim(),
       menuCode: joinMenuCode(codePrefix, values.codeSuffix),
+      routePath: toText(values.routePath).trim(),
+      componentPath: toText(values.componentPath).trim(),
+      icon: normalizeIconValue(values.icon) || '',
+      visible: Number(values.visible ?? 1),
+      sortOrder: Number(values.sortOrder ?? 100),
       config: buildMenuConfig(currentRecord, values),
     };
     delete payload.codeSuffix;
@@ -741,7 +749,7 @@ export default function MenuManagePage() {
             新增菜单
           </Button>
         </Space>
-        <Button icon={<IconRefresh />} onClick={loadTree}>
+        <Button icon={<IconRefresh />} onClick={() => loadTree()}>
           刷新
         </Button>
       </div>
@@ -999,7 +1007,7 @@ export default function MenuManagePage() {
               </Select>
             </Form.Item>
             <Form.Item label="排序" field="sortOrder">
-              <Input />
+              <Input type="number" />
             </Form.Item>
             <Form.Item label="是否显示" field="visible">
               <Select options={visibleOptions} />
