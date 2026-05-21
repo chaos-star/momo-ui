@@ -21,6 +21,7 @@ import {
   IconDelete,
   IconEdit,
   IconEye,
+  IconMenuUnfold,
   IconPlayArrow,
   IconPlus,
   IconRefresh,
@@ -34,6 +35,7 @@ import {
   deletePageElement,
   fetchMenuTree,
   fetchPageElements,
+  moveMenu,
   MenuRecord,
   PageElementRecord,
   toggleMenuActiveStatus,
@@ -316,11 +318,14 @@ function buildMenuConfig(
 
 export default function MenuManagePage() {
   const [menuForm] = Form.useForm();
+  const [moveForm] = Form.useForm();
   const [elementForm] = Form.useForm();
   const [elementSearchForm] = Form.useForm();
   const [tree, setTree] = useState<MenuRecord[]>([]);
   const [selectedId, setSelectedId] = useState<number>();
   const [menuVisible, setMenuVisible] = useState(false);
+  const [moveVisible, setMoveVisible] = useState(false);
+  const [movingMenu, setMovingMenu] = useState<MenuRecord | null>(null);
   const [elementVisible, setElementVisible] = useState(false);
   const [viewElement, setViewElement] = useState<PageElementRecord | null>(
     null
@@ -352,9 +357,21 @@ export default function MenuManagePage() {
     }
     return ids;
   }, [menuMode, selected]);
+  const disabledMoveParentIds = useMemo(() => {
+    const ids = getDescendantIds(movingMenu);
+    if (movingMenu?.id) {
+      ids.add(movingMenu.id);
+      ids.add(normalizeParentId(movingMenu.parentId));
+    }
+    return ids;
+  }, [movingMenu]);
   const parentTreeData = useMemo(
     () => toParentTreeData(catalogTree, disabledParentIds),
     [catalogTree, disabledParentIds]
+  );
+  const moveParentTreeData = useMemo(
+    () => toParentTreeData(catalogTree, disabledMoveParentIds),
+    [catalogTree, disabledMoveParentIds]
   );
   const currentMenuCodePrefix = getMenuCodePrefix(
     allTree,
@@ -422,6 +439,14 @@ export default function MenuManagePage() {
           className={styles['tree-node-actions']}
           onClick={(event) => event.stopPropagation()}
         >
+          <Button
+            type="text"
+            size="mini"
+            icon={<IconMenuUnfold />}
+            onClick={() => openMoveMenu(item)}
+          >
+            移动
+          </Button>
           <Button
             type="text"
             size="mini"
@@ -556,6 +581,31 @@ export default function MenuManagePage() {
 
   const handleMenuTypeChange = () => {
     menuForm.setFieldValue('codeSuffix', '');
+  };
+
+  const openMoveMenu = (record: MenuRecord) => {
+    setSelectedId(record.id);
+    setMovingMenu(record);
+    moveForm.resetFields();
+    moveForm.setFieldsValue({
+      targetParentId: getParentFieldValue(record.parentId),
+    });
+    setMoveVisible(true);
+  };
+
+  const submitMoveMenu = async () => {
+    if (!movingMenu) return;
+    const values = await moveForm.validate();
+    const targetParentId = normalizeParentId(values.targetParentId);
+    if (targetParentId === normalizeParentId(movingMenu.parentId)) {
+      Message.warning('请选择不同的目标位置');
+      return;
+    }
+    await moveMenu({ id: movingMenu.id, targetParentId });
+    Message.success('菜单已移动');
+    setMoveVisible(false);
+    setMovingMenu(null);
+    await loadTree();
   };
 
   const openCreateElement = () => {
@@ -1013,6 +1063,44 @@ export default function MenuManagePage() {
               <Select options={visibleOptions} />
             </Form.Item>
           </div>
+        </Form>
+      </Modal>
+
+      <Modal
+        title="移动菜单"
+        visible={moveVisible}
+        onOk={submitMoveMenu}
+        onCancel={() => {
+          setMoveVisible(false);
+          setMovingMenu(null);
+        }}
+        unmountOnExit
+        style={{ width: 560 }}
+      >
+        <Form
+          form={moveForm}
+          layout="horizontal"
+          labelAlign="left"
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 19 }}
+        >
+          <Form.Item label="当前菜单">
+            <Input
+              value={movingMenu?.menuName || movingMenu?.menuCode || ''}
+              disabled
+            />
+          </Form.Item>
+          <Form.Item
+            label="目标位置"
+            field="targetParentId"
+            rules={[{ required: true, message: '请选择目标位置' }]}
+          >
+            <TreeSelect
+              treeData={moveParentTreeData}
+              placeholder="请选择目标位置"
+              allowClear={false}
+            />
+          </Form.Item>
         </Form>
       </Modal>
 

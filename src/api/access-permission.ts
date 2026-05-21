@@ -55,6 +55,10 @@ export function updateMenu(data: Record<string, unknown>) {
   return put('/api/system/menus/manage', data);
 }
 
+export function moveMenu(data: { id: number; targetParentId: number }) {
+  return put('/api/system/menus/move', data);
+}
+
 export function toggleMenuActiveStatus(id: number, activeStatus: number) {
   return put('/api/system/menus/active-status', { id, activeStatus });
 }
