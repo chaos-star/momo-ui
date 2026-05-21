@@ -107,6 +107,7 @@ export interface ApiEndpointRecord extends BaseEntity {
   /** 1-无需登录 2-无需鉴权(已登录) 3-需鉴权 */
   accessLevel?: number;
   description?: string;
+  operatorUsername?: string;
 }
 
 export interface ApiGroupRecord extends BaseEntity {

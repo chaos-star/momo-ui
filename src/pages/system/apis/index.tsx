@@ -37,11 +37,10 @@ import locale from './locale';
 import styles from '../tenants/style/index.module.less';
 import apiStyles from './style/index.module.less';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 const { Row, Col } = Grid;
 
 const HTTP_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
-const MATCH_TYPES = ['EXACT', 'PREFIX', 'REGEX'];
 const API_CODE_PREFIX_ROOT = 'api';
 const ACCESS_LEVEL_PUBLIC = 1;
 const ACCESS_LEVEL_LOGIN_ONLY = 2;
@@ -53,7 +52,6 @@ type ApiSearchValues = {
   apiGroup?: string;
   httpMethod?: string;
   pathPattern?: string;
-  matchType?: string;
   accessLevel?: number;
 };
 
@@ -67,7 +65,6 @@ const SEARCH_FORM_INITIAL_VALUES: ApiSearchValues = {
   apiGroup: undefined,
   httpMethod: undefined,
   pathPattern: '',
-  matchType: undefined,
   accessLevel: undefined,
 };
 
@@ -101,11 +98,14 @@ function renderEllipsisText(value?: string) {
   }
   return (
     <Tooltip content={value} position="top">
-      <Text className={apiStyles['ellipsis-text']} ellipsis>
-        {value}
-      </Text>
+      <span className={apiStyles['ellipsis-text']}>{value}</span>
     </Tooltip>
   );
+}
+
+function renderNoWrapTime(value?: string) {
+  const time = formatTime(value);
+  return <span className={apiStyles['nowrap-text']}>{time}</span>;
 }
 
 export default function ApiManagePage() {
@@ -160,15 +160,6 @@ export default function ApiManagePage() {
     [apiGroups]
   );
 
-  const matchTypeOptions = useMemo(
-    () =>
-      MATCH_TYPES.map((value) => ({
-        label: t[`apiSearch.matchType.${value}`] || value,
-        value,
-      })),
-    [t]
-  );
-
   const accessLevelLabels = useMemo(
     () => ({
       [ACCESS_LEVEL_PUBLIC]: t['apiSearch.accessLevel.public'],
@@ -209,7 +200,6 @@ export default function ApiManagePage() {
       apiGroup: formParams.apiGroup || undefined,
       httpMethod: formParams.httpMethod || undefined,
       pathPattern: formParams.pathPattern?.trim() || undefined,
-      matchType: formParams.matchType || undefined,
       accessLevel: formParams.accessLevel,
     })
       .then((res) => {
@@ -242,7 +232,6 @@ export default function ApiManagePage() {
     modalForm.resetFields();
     modalForm.setFieldsValue({
       httpMethod: 'GET',
-      matchType: 'EXACT',
       accessLevel: ACCESS_LEVEL_PERMISSION,
       activeStatus: 1,
     });
@@ -275,7 +264,7 @@ export default function ApiManagePage() {
       {
         title: t['apiSearch.columns.apiCode'],
         dataIndex: 'apiCode',
-        width: 240,
+        width: 220,
         render: renderEllipsisText,
       },
       {
@@ -288,36 +277,36 @@ export default function ApiManagePage() {
       {
         title: t['apiSearch.columns.httpMethod'],
         dataIndex: 'httpMethod',
-        width: 110,
+        width: 120,
       },
       {
         title: t['apiSearch.columns.pathPattern'],
         dataIndex: 'pathPattern',
-        width: 280,
+        width: 220,
         render: renderEllipsisText,
-      },
-      {
-        title: t['apiSearch.columns.matchType'],
-        dataIndex: 'matchType',
-        width: 120,
-        render: (value) => t[`apiSearch.matchType.${value}`] || value || '-',
       },
       {
         title: t['apiSearch.columns.accessLevel'],
         dataIndex: 'accessLevel',
-        width: 130,
+        width: 120,
         render: (value) => renderAccessLevelLabel(value, accessLevelLabels),
+      },
+      {
+        title: t['apiSearch.columns.operator'],
+        dataIndex: 'operatorUsername',
+        width: 120,
+        render: (value) => value?.trim() || '—',
       },
       {
         title: t['apiSearch.columns.updatedAt'],
         dataIndex: 'updatedAt',
-        width: 170,
-        render: formatTime,
+        width: 200,
+        render: renderNoWrapTime,
       },
       {
         title: t['apiSearch.columns.operations'],
         dataIndex: 'operations',
-        width: 160,
+        width: 240,
         fixed: 'right',
         render: (_, record) => (
           <Space className={styles.operations}>
@@ -379,6 +368,7 @@ export default function ApiManagePage() {
     const payload = {
       ...values,
       apiCode,
+      matchType: 'EXACT',
     };
     delete payload.apiCodeSuffix;
     if (selected) {
@@ -464,18 +454,6 @@ export default function ApiManagePage() {
             </Col>
             <Col span={8}>
               <Form.Item
-                label={t['apiSearch.columns.matchType']}
-                field="matchType"
-              >
-                <Select
-                  allowClear
-                  options={matchTypeOptions}
-                  placeholder={t['apiSearch.placeholder.matchType']}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
                 label={t['apiSearch.columns.accessLevel']}
                 field="accessLevel"
               >
@@ -514,6 +492,7 @@ export default function ApiManagePage() {
         data={data}
         border
         pagination={pagination}
+        scroll={{ x: 1560 }}
         onChange={onChangeTable}
       />
       <Modal
@@ -614,14 +593,6 @@ export default function ApiManagePage() {
                 ]}
               >
                 <Input placeholder={t['apiSearch.placeholder.pathPattern']} />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label={t['apiSearch.columns.matchType']}
-                field="matchType"
-              >
-                <Select options={matchTypeOptions} />
               </Form.Item>
             </Col>
             <Col span={12}>
