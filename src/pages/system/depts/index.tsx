@@ -12,7 +12,6 @@ import {
   Select,
   Space,
   Table,
-  Tag,
   Tree,
   TreeSelect,
   Typography,
@@ -201,10 +200,6 @@ export default function DeptManagePage() {
     () =>
       roleOptions.filter((role) => !selectedDeptRoleIds.has(Number(role.id))),
     [roleOptions, selectedDeptRoleIds]
-  );
-  const selectedRoleOptions = useMemo(
-    () => availableRoleOptions.filter((role) => checkedRoles.includes(role.id)),
-    [availableRoleOptions, checkedRoles]
   );
 
   const loadTree = useCallback(async (autoSelectFirst = false) => {
