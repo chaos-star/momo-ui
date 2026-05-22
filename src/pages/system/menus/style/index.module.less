@@ -121,6 +121,10 @@
   }
 }
 
+.danger-menu-item {
+  color: rgb(var(--danger-6));
+}
+
 .element-card {
   margin-top: 16px;
 }
@@ -147,6 +151,26 @@
 
 .element-search-form :global(.arco-form-item:last-child) {
   margin-right: 0;
+}
+
+.element-search-select-field {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 16px;
+  margin-bottom: 8px;
+}
+
+.element-search-select-label {
+  flex: 0 0 auto;
+  padding-right: 8px;
+  color: var(--color-text-2);
+  font-size: 14px;
+  line-height: 32px;
+  white-space: nowrap;
+}
+
+.element-search-select-control {
+  width: 160px;
 }
 
 .element-search-actions {
@@ -269,6 +293,40 @@
 }
 
 @media (max-width: 768px) {
+  .page-layout {
+    flex-direction: column;
+  }
+
+  .tree-panel {
+    width: 100%;
+    flex: none;
+    min-height: 360px;
+  }
+
+  .button-group,
+  .element-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .resource-card-content {
+    padding-right: 0;
+  }
+
+  .resource-bg-icon {
+    display: none;
+  }
+
+  .element-search-actions {
+    margin-left: 0;
+  }
+
+  .menu-modal {
+    :global(.arco-modal-content) {
+      padding-right: 20px;
+    }
+  }
+
   .menu-modal-form-grid {
     grid-template-columns: 1fr;
   }

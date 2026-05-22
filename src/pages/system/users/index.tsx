@@ -18,24 +18,16 @@ import { IconPlus, IconRefresh } from '@arco-design/web-react/icon';
 import { readCachedAuthContext } from '@/api/auth';
 import { getTenantCodeFromPathname } from '@/utils/tenant';
 import type { FieldPolicyMap } from '@/utils/accessControl';
-import {
-  expandCheckedWithAutoGrant,
-  filterCheckablePermissionKeys,
-  getFieldPolicy,
-  isFieldReadonly,
-} from '@/utils/accessControl';
-import { fetchPermissionGrantTree } from '@/api/access-role';
+import { getFieldPolicy, isFieldReadonly } from '@/utils/accessControl';
 import {
   createUser,
   deleteUser,
   fetchRoleOptions,
   fetchUserDeptTree,
   fetchUserDetail,
-  fetchUserGrantedPermissionIds,
   fetchUserRoles,
   fetchUserPage,
   saveUserDepts,
-  saveUserPermissions,
   saveUserRoles,
   updateUser,
   updateUserStatus,
@@ -46,6 +38,7 @@ import {
 } from '@/api/access-user';
 import SearchForm, { UserSearchValues } from './form';
 import { getColumns } from './constants';
+import UserGrantDrawer from './UserGrantDrawer';
 import styles from './style/index.module.less';
 
 const { Title } = Typography;
@@ -96,8 +89,6 @@ export default function UserManagePage() {
   const [checkedRoles, setCheckedRoles] = useState<number[]>([]);
   const [deptTree, setDeptTree] = useState<DeptRecord[]>([]);
   const [checkedDepts, setCheckedDepts] = useState<string[]>([]);
-  const [permissionTree, setPermissionTree] = useState<PermissionNode[]>([]);
-  const [checkedPermissions, setCheckedPermissions] = useState<string[]>([]);
 
   const tenantCode = getTenantCodeFromPathname();
   const fieldPolicies = useMemo(
@@ -178,23 +169,9 @@ export default function UserManagePage() {
     setDeptsVisible(true);
   };
 
-  const openPermissions = async (record: UserRecord) => {
+  const openPermissions = (record: UserRecord) => {
     setSelected(record);
-    const [grantTree, grantedIds] = await Promise.all([
-      fetchPermissionGrantTree(),
-      fetchUserGrantedPermissionIds(record.id),
-    ]);
-    setPermissionTree(grantTree || []);
-    setCheckedPermissions((grantedIds || []).map(String));
     setPermissionsVisible(true);
-  };
-
-  const handlePermissionCheck = (keys: string[]) => {
-    const expanded = expandCheckedWithAutoGrant(
-      permissionTree,
-      keys as string[]
-    );
-    setCheckedPermissions(expanded);
   };
 
   const columns = getColumns(
@@ -342,7 +319,7 @@ export default function UserManagePage() {
       <Drawer
         title={`分配角色：${selected?.username || ''}`}
         visible={rolesVisible}
-        width={520}
+        width="min(520px, 100vw)"
         onOk={async () => {
           if (selected) {
             await saveUserRoles({ userId: selected.id, roleIds: checkedRoles });
@@ -370,7 +347,7 @@ export default function UserManagePage() {
       <Drawer
         title={`分配部门：${selected?.username || ''}`}
         visible={deptsVisible}
-        width={520}
+        width="min(520px, 100vw)"
         onOk={async () => {
           if (selected) {
             await saveUserDepts({
@@ -394,34 +371,12 @@ export default function UserManagePage() {
         </div>
       </Drawer>
 
-      <Drawer
-        title={`用户直接授权：${selected?.username || ''}`}
+      <UserGrantDrawer
+        user={selected}
         visible={permissionsVisible}
-        width={640}
-        onOk={async () => {
-          if (selected) {
-            await saveUserPermissions({
-              userId: selected.id,
-              permissionIds: filterCheckablePermissionKeys(
-                permissionTree,
-                checkedPermissions
-              ).map(Number),
-            });
-            Message.success('直接授权已保存');
-            setPermissionsVisible(false);
-          }
-        }}
-        onCancel={() => setPermissionsVisible(false)}
-      >
-        <div className={styles['tree-card']}>
-          <Tree
-            checkable
-            checkedKeys={checkedPermissions}
-            onCheck={handlePermissionCheck}
-            treeData={toTreeData(permissionTree)}
-          />
-        </div>
-      </Drawer>
+        onClose={() => setPermissionsVisible(false)}
+        onSaved={reload}
+      />
     </Card>
   );
 }

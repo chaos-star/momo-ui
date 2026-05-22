@@ -2,6 +2,8 @@ import React from 'react';
 import {
   Badge,
   Button,
+  Dropdown,
+  Menu,
   Space,
   Tooltip,
   Typography,
@@ -10,6 +12,7 @@ import {
   IconDelete,
   IconEdit,
   IconLock,
+  IconMore,
   IconSafe,
   IconUnlock,
 } from '@arco-design/web-react/icon';
@@ -44,6 +47,15 @@ export type RoleCallbacks = {
   onToggleActiveStatus: (record: RoleRecord) => void;
   onDelete: (record: RoleRecord) => void;
   onGrant: (record: RoleRecord) => void;
+};
+
+type RoleActionItem = {
+  key: string;
+  label: string;
+  icon: React.ReactNode;
+  danger?: boolean;
+  visible?: boolean;
+  onClick: () => void;
 };
 
 export function getColumns(
@@ -90,45 +102,80 @@ export function getColumns(
     {
       title: '操作',
       dataIndex: 'operations',
-      width: 290,
+      width: 260,
       fixed: 'right',
       render: (_, record) => {
         const isEnabled = record.activeStatus === 1;
+        const actionItems: RoleActionItem[] = [
+          {
+            key: 'edit',
+            label: '编辑',
+            icon: <IconEdit />,
+            onClick: () => callbacks.onEdit(record),
+          },
+          {
+            key: 'toggleActiveStatus',
+            label: isEnabled ? '停用' : '启用',
+            icon: isEnabled ? <IconLock /> : <IconUnlock />,
+            onClick: () => callbacks.onToggleActiveStatus(record),
+          },
+          {
+            key: 'grant',
+            label: '授权',
+            icon: <IconSafe />,
+            onClick: () => callbacks.onGrant(record),
+          },
+          {
+            key: 'delete',
+            label: '删除',
+            icon: <IconDelete />,
+            danger: true,
+            onClick: () => callbacks.onDelete(record),
+          },
+        ];
+        const actions = actionItems.filter((item) => item.visible !== false);
+        const primaryActions =
+          actions.length > 4 ? actions.slice(0, 3) : actions;
+        const moreActions = actions.length > 4 ? actions.slice(3) : [];
+        const moreMenu = moreActions.length ? (
+          <Menu
+            onClickMenuItem={(key) => {
+              moreActions.find((item) => item.key === key)?.onClick();
+            }}
+          >
+            {moreActions.map((item) => (
+              <Menu.Item
+                key={item.key}
+                className={item.danger ? styles['danger-menu-item'] : undefined}
+              >
+                {item.icon}
+                {item.label}
+              </Menu.Item>
+            ))}
+          </Menu>
+        ) : null;
+
         return (
           <Space className={styles.operations} size={10} wrap>
-            <Button
-              type="text"
-              size="small"
-              icon={<IconEdit />}
-              onClick={() => callbacks.onEdit(record)}
-            >
-              编辑
-            </Button>
-            <Button
-              type="text"
-              size="small"
-              icon={isEnabled ? <IconLock /> : <IconUnlock />}
-              onClick={() => callbacks.onToggleActiveStatus(record)}
-            >
-              {isEnabled ? '停用' : '启用'}
-            </Button>
-            <Button
-              type="text"
-              size="small"
-              icon={<IconSafe />}
-              onClick={() => callbacks.onGrant(record)}
-            >
-              授权
-            </Button>
-            <Button
-              type="text"
-              status="danger"
-              size="small"
-              icon={<IconDelete />}
-              onClick={() => callbacks.onDelete(record)}
-            >
-              删除
-            </Button>
+            {primaryActions.map((item) => (
+              <Button
+                key={item.key}
+                type="text"
+                size="small"
+                icon={item.icon}
+                status={item.danger ? 'danger' : undefined}
+                onClick={item.onClick}
+              >
+                {item.label}
+              </Button>
+            ))}
+            {moreMenu ? (
+              <Dropdown droplist={moreMenu} position="br">
+                <Button type="text" size="small" icon={<IconMore />}>
+                  更多
+                </Button>
+              </Dropdown>
+            ) : null}
           </Space>
         );
       },

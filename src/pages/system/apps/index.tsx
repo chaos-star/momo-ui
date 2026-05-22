@@ -379,7 +379,7 @@ export default function AppManagePage() {
         onOk={submitCreate}
         onCancel={() => setCreateVisible(false)}
         unmountOnExit
-        style={{ width: 560 }}
+        style={{ width: 'min(560px, calc(100vw - 32px))' }}
       >
         <Form
           form={createForm}
@@ -500,7 +500,7 @@ export default function AppManagePage() {
         onOk={submitEdit}
         onCancel={() => setEditVisible(false)}
         unmountOnExit
-        style={{ width: 560 }}
+        style={{ width: 'min(560px, calc(100vw - 32px))' }}
       >
         <Form
           form={editForm}
@@ -622,7 +622,7 @@ export default function AppManagePage() {
         onCancel={() => setViewRecord(null)}
         unmountOnExit
         className={styles['tenant-view-modal']}
-        style={{ width: 640 }}
+        style={{ width: 'min(640px, calc(100vw - 32px))' }}
       >
         {viewRecord ? (
           <Descriptions

@@ -168,7 +168,7 @@ export default function RoleManagePage() {
         onOk={submitRole}
         onCancel={() => setVisible(false)}
         unmountOnExit
-        style={{ width: 560 }}
+        style={{ width: 'min(560px, calc(100vw - 32px))' }}
       >
         <Form
           form={form}

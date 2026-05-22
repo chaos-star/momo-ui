@@ -1,10 +1,18 @@
 import React from 'react';
-import { Badge, Button, Space, Typography } from '@arco-design/web-react';
+import {
+  Badge,
+  Button,
+  Dropdown,
+  Menu,
+  Space,
+  Typography,
+} from '@arco-design/web-react';
 import {
   IconDelete,
   IconEdit,
   IconEye,
   IconLock,
+  IconMore,
   IconUnlock,
 } from '@arco-design/web-react/icon';
 import type { ColumnProps } from '@arco-design/web-react/es/Table';
@@ -20,6 +28,16 @@ export type AppColumnCallbacks = {
   onEnable: (record: AppRecord) => void;
   onDisable: (record: AppRecord) => void;
   onDelete: (record: AppRecord) => void;
+};
+
+type AppActionItem = {
+  key: string;
+  label: string;
+  icon?: React.ReactNode;
+  danger?: boolean;
+  disabled?: boolean;
+  visible?: boolean;
+  onClick: () => void;
 };
 
 export function getColumns(
@@ -98,59 +116,93 @@ export function getColumns(
       render: (_: unknown, record: AppRecord) => {
         const deleted = record.status === 2;
         const canToggleActive = !deleted;
-        const showEnable = record.activeStatus !== 1;
-        const showDisable = record.activeStatus === 1;
+        const actionItems: AppActionItem[] = [
+          {
+            key: 'view',
+            label: t['appSearch.columns.operations.view'],
+            icon: <IconEye />,
+            onClick: () => callbacks.onView(record),
+          },
+          {
+            key: 'edit',
+            label: t['appSearch.columns.operations.edit'],
+            icon: <IconEdit />,
+            disabled: deleted,
+            onClick: () => callbacks.onEdit(record),
+          },
+          {
+            key: 'enable',
+            label: t['appSearch.columns.operations.enable'],
+            icon: <IconUnlock />,
+            disabled: !canToggleActive,
+            visible: record.activeStatus !== 1,
+            onClick: () => callbacks.onEnable(record),
+          },
+          {
+            key: 'disable',
+            label: t['appSearch.columns.operations.disable'],
+            icon: <IconLock />,
+            disabled: !canToggleActive,
+            visible: record.activeStatus === 1,
+            onClick: () => callbacks.onDisable(record),
+          },
+          {
+            key: 'delete',
+            label: t['appSearch.columns.operations.delete'],
+            icon: <IconDelete />,
+            danger: true,
+            disabled: deleted,
+            onClick: () => callbacks.onDelete(record),
+          },
+        ];
+        const actions = actionItems.filter((item) => item.visible !== false);
+        const primaryActions =
+          actions.length > 4 ? actions.slice(0, 3) : actions;
+        const moreActions = actions.length > 4 ? actions.slice(3) : [];
+        const moreMenu = moreActions.length ? (
+          <Menu
+            onClickMenuItem={(key) => {
+              const action = moreActions.find((item) => item.key === key);
+              if (!action?.disabled) {
+                action?.onClick();
+              }
+            }}
+          >
+            {moreActions.map((item) => (
+              <Menu.Item
+                key={item.key}
+                disabled={item.disabled}
+                className={item.danger ? styles['danger-menu-item'] : undefined}
+              >
+                {item.icon}
+                {item.label}
+              </Menu.Item>
+            ))}
+          </Menu>
+        ) : null;
+
         return (
           <Space className={styles.operations} size={10} wrap>
-            <Button
-              type="text"
-              size="small"
-              icon={<IconEye />}
-              onClick={() => callbacks.onView(record)}
-            >
-              {t['appSearch.columns.operations.view']}
-            </Button>
-            <Button
-              type="text"
-              size="small"
-              icon={<IconEdit />}
-              disabled={deleted}
-              onClick={() => callbacks.onEdit(record)}
-            >
-              {t['appSearch.columns.operations.edit']}
-            </Button>
-            {showEnable ? (
+            {primaryActions.map((item) => (
               <Button
+                key={item.key}
                 type="text"
                 size="small"
-                icon={<IconUnlock />}
-                disabled={!canToggleActive}
-                onClick={() => callbacks.onEnable(record)}
+                icon={item.icon}
+                status={item.danger ? 'danger' : undefined}
+                disabled={item.disabled}
+                onClick={item.onClick}
               >
-                {t['appSearch.columns.operations.enable']}
+                {item.label}
               </Button>
+            ))}
+            {moreMenu ? (
+              <Dropdown droplist={moreMenu} position="br">
+                <Button type="text" size="small" icon={<IconMore />}>
+                  更多
+                </Button>
+              </Dropdown>
             ) : null}
-            {showDisable ? (
-              <Button
-                type="text"
-                size="small"
-                icon={<IconLock />}
-                disabled={!canToggleActive}
-                onClick={() => callbacks.onDisable(record)}
-              >
-                {t['appSearch.columns.operations.disable']}
-              </Button>
-            ) : null}
-            <Button
-              type="text"
-              size="small"
-              status="danger"
-              icon={<IconDelete />}
-              disabled={deleted}
-              onClick={() => callbacks.onDelete(record)}
-            >
-              {t['appSearch.columns.operations.delete']}
-            </Button>
           </Space>
         );
       },

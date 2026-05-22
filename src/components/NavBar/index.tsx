@@ -197,8 +197,10 @@ function Navbar({
               patchUserThemeItem({ path: 'lang', value }).catch(
                 () => undefined
               );
-              const nextLang = defaultLocale[value];
-              Message.info(`${nextLang['message.lang.tips']}${value}`);
+              const nextLang = defaultLocale[value] || defaultLocale['zh-CN'];
+              Message.info(
+                `${nextLang['message.lang.tips'] || '语言切换至 '}${value}`
+              );
             }}
           />
         </li>

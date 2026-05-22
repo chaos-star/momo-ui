@@ -67,21 +67,102 @@ import {
   activeStatusLabel,
   dataStatusLabel,
   formatEpochMs,
+  getTenantNameLabels,
+  buildTenantConfig,
 } from './utils';
 
 const { Title } = Typography;
 
-const TIMEZONES = [
+const FALLBACK_TIMEZONES = [
+  'UTC',
   'Asia/Shanghai',
   'Asia/Hong_Kong',
+  'Asia/Macau',
+  'Asia/Taipei',
   'Asia/Singapore',
   'Asia/Tokyo',
-  'UTC',
   'Europe/London',
   'Europe/Berlin',
+  'Europe/Madrid',
+  'Europe/Paris',
   'America/New_York',
   'America/Los_Angeles',
+  'America/Chicago',
+  'America/Denver',
+  'America/Toronto',
+  'America/Vancouver',
+  'America/Mexico_City',
+  'America/Bogota',
+  'America/Lima',
+  'America/Santiago',
+  'America/Argentina/Buenos_Aires',
+  'America/Caracas',
+  'America/Guayaquil',
+  'America/La_Paz',
+  'America/Montevideo',
+  'America/Panama',
+  'America/Puerto_Rico',
+  'America/Santo_Domingo',
+  'Australia/Sydney',
+  'Australia/Melbourne',
+  'Pacific/Auckland',
 ];
+
+const TIMEZONE_ALIASES: Record<string, string[]> = {
+  UTC: ['协调世界时', 'UTC', 'Tiempo universal coordinado'],
+  'Asia/Shanghai': ['上海', '中国标准时间', 'Shanghai', 'China', 'Shanghái'],
+  'Asia/Hong_Kong': ['香港', 'Hong Kong'],
+  'Asia/Macau': ['澳门', 'Macau', 'Macao'],
+  'Asia/Taipei': ['台北', 'Taipei', 'Taipéi'],
+  'Asia/Singapore': ['新加坡', 'Singapore', 'Singapur'],
+  'Asia/Tokyo': ['东京', 'Tokyo', 'Tokio'],
+  'Europe/London': ['伦敦', 'London', 'Londres'],
+  'Europe/Berlin': ['柏林', 'Berlin', 'Berlín'],
+  'Europe/Madrid': ['马德里', 'Madrid'],
+  'Europe/Paris': ['巴黎', 'Paris', 'París'],
+  'America/New_York': ['纽约', 'New York', 'Nueva York'],
+  'America/Los_Angeles': ['洛杉矶', 'Los Angeles', 'Los Ángeles'],
+  'America/Chicago': ['芝加哥', 'Chicago'],
+  'America/Denver': ['丹佛', 'Denver'],
+  'America/Toronto': ['多伦多', 'Toronto'],
+  'America/Vancouver': ['温哥华', 'Vancouver'],
+  'America/Mexico_City': ['墨西哥城', 'Mexico City', 'Ciudad de México'],
+  'America/Bogota': ['波哥大', 'Bogota', 'Bogotá'],
+  'America/Lima': ['利马', 'Lima'],
+  'America/Santiago': ['圣地亚哥', 'Santiago'],
+  'America/Argentina/Buenos_Aires': ['布宜诺斯艾利斯', 'Buenos Aires'],
+  'America/Caracas': ['加拉加斯', 'Caracas'],
+  'America/Guayaquil': ['瓜亚基尔', 'Guayaquil'],
+  'America/La_Paz': ['拉巴斯', 'La Paz'],
+  'America/Montevideo': ['蒙得维的亚', 'Montevideo'],
+  'America/Panama': ['巴拿马', 'Panama', 'Panamá'],
+  'America/Puerto_Rico': ['波多黎各', 'Puerto Rico'],
+  'America/Santo_Domingo': ['圣多明各', 'Santo Domingo'],
+  'Australia/Sydney': ['悉尼', 'Sydney', 'Sídney'],
+  'Australia/Melbourne': ['墨尔本', 'Melbourne'],
+  'Pacific/Auckland': ['奥克兰', 'Auckland'],
+};
+
+const getSupportedTimeZones = () => {
+  const intlWithSupportedValues = Intl as typeof Intl & {
+    supportedValuesOf?: (key: 'timeZone') => string[];
+  };
+
+  return intlWithSupportedValues.supportedValuesOf?.('timeZone') || [];
+};
+
+const TIMEZONE_OPTIONS = Array.from(
+  new Set([...FALLBACK_TIMEZONES, ...getSupportedTimeZones()])
+)
+  .sort()
+  .map((value) => {
+    const aliases = TIMEZONE_ALIASES[value] || [];
+    return {
+      value,
+      label: aliases.length ? `${value}（${aliases.join(' / ')}）` : value,
+      searchText: [value, ...aliases].join(' ').toLowerCase(),
+    };
+  });
 
 const MODAL_CREATE_ZONE_BASE = 'tenant-modal-create-tenantZone';
 const MODAL_CREATE_ZONE_LABEL_ID = `${MODAL_CREATE_ZONE_BASE}-field-label`;
@@ -98,10 +179,7 @@ function toListParams(
     pageSize,
     tenantName: formParams.tenantName?.trim() || undefined,
     tenantCode: formParams.tenantCode?.trim() || undefined,
-    businessType:
-      formParams.businessType === 0 || formParams.businessType == null
-        ? undefined
-        : formParams.businessType,
+    businessType: formParams.businessType || undefined,
     status:
       formParams.status === 0 || formParams.status == null
         ? undefined
@@ -155,7 +233,7 @@ export default function TenantManagePage() {
   const [editVisible, setEditVisible] = useState(false);
   const [viewRecord, setViewRecord] = useState<TenantRecord | null>(null);
   const [editInitialSecret, setEditInitialSecret] = useState('');
-  const [editTenantCode, setEditTenantCode] = useState('');
+  const [editRecord, setEditRecord] = useState<TenantRecord | null>(null);
   const [boundaryVisible, setBoundaryVisible] = useState(false);
   const [boundaryRecord, setBoundaryRecord] = useState<TenantRecord | null>(
     null
@@ -422,11 +500,14 @@ export default function TenantManagePage() {
       onView: (record: TenantRecord) => setViewRecord(record),
       onEdit: (record: TenantRecord) => {
         const sec = parseEncryptionKey(record.config);
+        const labels = getTenantNameLabels(record);
         setEditInitialSecret(sec);
-        setEditTenantCode(record.tenantCode);
+        setEditRecord(record);
         editForm.setFieldsValue({
           id: record.id,
-          tenantName: record.tenantName,
+          tenantCode: record.tenantCode,
+          tenantName: labels.label_zh,
+          ...labels,
           businessType: tenantTypeToBusinessType(record.tenantType),
           tenantZone: record.tenantZone,
           eventSecret: sec,
@@ -477,6 +558,7 @@ export default function TenantManagePage() {
   );
 
   const viewSecret = viewRecord ? parseEncryptionKey(viewRecord.config) : '';
+  const viewLabels = viewRecord ? getTenantNameLabels(viewRecord) : null;
 
   return (
     <Card>
@@ -493,8 +575,11 @@ export default function TenantManagePage() {
               onClick={() => {
                 createForm.resetFields();
                 createForm.setFieldsValue({
-                  businessType: 2,
+                  businessType: 'NORMAL',
                   tenantZone: 'Asia/Shanghai',
+                  label_zh: '',
+                  label_en: '',
+                  label_es: '',
                 });
                 setCreateVisible(true);
               }}
@@ -528,12 +613,14 @@ export default function TenantManagePage() {
         onOk={async () => {
           try {
             const v = await createForm.validate();
+            const nextSecret = v.eventSecret?.trim() || '';
             await createTenant({
-              tenantName: v.tenantName.trim(),
+              tenantName: v.label_zh.trim(),
               tenantCode: v.tenantCode.trim().toLowerCase(),
               businessType: v.businessType,
               tenantZone: v.tenantZone,
-              eventSecret: v.eventSecret?.trim() || undefined,
+              config: buildTenantConfig(null, v, nextSecret),
+              eventSecret: nextSecret || undefined,
               expireAt: v.expireAt ?? 0,
             });
             Message.success(t['tenantSearch.msg.createOk']);
@@ -544,7 +631,7 @@ export default function TenantManagePage() {
           }
         }}
         unmountOnExit
-        style={{ width: 560 }}
+        style={{ width: 'min(560px, calc(100vw - 32px))' }}
       >
         <Form
           form={createForm}
@@ -554,18 +641,6 @@ export default function TenantManagePage() {
           wrapperCol={{ span: 19 }}
           className={styles['search-form']}
         >
-          <Form.Item
-            label={t['tenantSearch.columns.tenantName']}
-            field="tenantName"
-            rules={[
-              {
-                required: true,
-                message: t['tenantSearch.validation.required'],
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
           <Form.Item
             label={t['tenantSearch.columns.tenantCode']}
             field="tenantCode"
@@ -583,8 +658,8 @@ export default function TenantManagePage() {
             <Input placeholder="demo2" />
           </Form.Item>
           <Form.Item
-            label={t['tenantSearch.columns.businessType']}
-            field="businessType"
+            label={t['tenantSearch.columns.tenantNameZh']}
+            field="label_zh"
             rules={[
               {
                 required: true,
@@ -592,11 +667,64 @@ export default function TenantManagePage() {
               },
             ]}
           >
-            <Radio.Group>
-              <Radio value={1}>{t['tenantSearch.businessType.system']}</Radio>
-              <Radio value={2}>{t['tenantSearch.businessType.ops']}</Radio>
-            </Radio.Group>
+            <Input
+              placeholder={t['tenantSearch.modal.tenantNameZh.placeholder']}
+            />
           </Form.Item>
+          <Form.Item
+            label={t['tenantSearch.columns.tenantNameEn']}
+            field="label_en"
+            rules={[
+              {
+                required: true,
+                message: t['tenantSearch.validation.required'],
+              },
+            ]}
+          >
+            <Input
+              placeholder={t['tenantSearch.modal.tenantNameEn.placeholder']}
+            />
+          </Form.Item>
+          <Form.Item
+            label={t['tenantSearch.columns.tenantNameEs']}
+            field="label_es"
+            rules={[
+              {
+                required: true,
+                message: t['tenantSearch.validation.required'],
+              },
+            ]}
+          >
+            <Input
+              placeholder={t['tenantSearch.modal.tenantNameEs.placeholder']}
+            />
+          </Form.Item>
+          <div className={styles.formLikeField}>
+            <span className={styles.formLikeFieldLabel}>
+              {t['tenantSearch.columns.businessType']}
+            </span>
+            <div className={styles.formLikeFieldControl}>
+              <Form.Item
+                field="businessType"
+                rules={[
+                  {
+                    required: true,
+                    message: t['tenantSearch.validation.required'],
+                  },
+                ]}
+                noStyle
+              >
+                <Radio.Group>
+                  <Radio value="NORMAL">
+                    {t['tenantSearch.businessType.business']}
+                  </Radio>
+                  <Radio value="PLATFORM">
+                    {t['tenantSearch.businessType.system']}
+                  </Radio>
+                </Radio.Group>
+              </Form.Item>
+            </div>
+          </div>
           <div className={styles.formLikeField}>
             <label
               id={MODAL_CREATE_ZONE_LABEL_ID}
@@ -620,10 +748,24 @@ export default function TenantManagePage() {
                   baseId={MODAL_CREATE_ZONE_BASE}
                   ariaLabelledBy={MODAL_CREATE_ZONE_LABEL_ID}
                 >
-                  <Select allowCreate placeholder="IANA">
-                    {TIMEZONES.map((z) => (
-                      <Select.Option key={z} value={z}>
-                        {z}
+                  <Select
+                    allowCreate
+                    placeholder="IANA"
+                    showSearch
+                    filterOption={(inputValue, option) => {
+                      const searchText = String(
+                        option.props['data-search-text'] || ''
+                      );
+                      return searchText.includes(inputValue.toLowerCase());
+                    }}
+                  >
+                    {TIMEZONE_OPTIONS.map((z) => (
+                      <Select.Option
+                        key={z.value}
+                        value={z.value}
+                        data-search-text={z.searchText}
+                      >
+                        {z.label}
                       </Select.Option>
                     ))}
                   </Select>
@@ -659,7 +801,7 @@ export default function TenantManagePage() {
         onCancel={() => {
           setEditVisible(false);
           setEditInitialSecret('');
-          setEditTenantCode('');
+          setEditRecord(null);
         }}
         onOk={async () => {
           try {
@@ -668,9 +810,11 @@ export default function TenantManagePage() {
               v.eventSecret != null ? String(v.eventSecret).trim() : '';
             const payload: Parameters<typeof updateTenant>[0] = {
               id: v.id,
-              tenantName: v.tenantName?.trim(),
+              tenantName: v.label_zh?.trim(),
+              tenantCode: v.tenantCode.trim().toLowerCase(),
               businessType: v.businessType,
               tenantZone: v.tenantZone,
+              config: buildTenantConfig(editRecord, v, nextSecret),
             };
             if (nextSecret !== (editInitialSecret || '').trim()) {
               payload.eventSecret = nextSecret;
@@ -679,14 +823,14 @@ export default function TenantManagePage() {
             Message.success(t['tenantSearch.msg.saveOk']);
             setEditVisible(false);
             setEditInitialSecret('');
-            setEditTenantCode('');
+            setEditRecord(null);
             bumpList();
           } catch {
             /* */
           }
         }}
         unmountOnExit
-        style={{ width: 560 }}
+        style={{ width: 'min(560px, calc(100vw - 32px))' }}
       >
         <Form
           form={editForm}
@@ -699,12 +843,25 @@ export default function TenantManagePage() {
           <Form.Item field="id" hidden>
             <Input />
           </Form.Item>
-          <Form.Item label={t['tenantSearch.columns.tenantCode']}>
-            <Typography.Text type="secondary">{editTenantCode}</Typography.Text>
+          <Form.Item
+            label={t['tenantSearch.columns.tenantCode']}
+            field="tenantCode"
+            rules={[
+              {
+                required: true,
+                message: t['tenantSearch.validation.required'],
+              },
+              {
+                match: /^[a-z0-9][a-z0-9_-]{1,62}$/,
+                message: t['tenantSearch.validation.tenantCode'],
+              },
+            ]}
+          >
+            <Input placeholder="demo2" />
           </Form.Item>
           <Form.Item
-            label={t['tenantSearch.columns.tenantName']}
-            field="tenantName"
+            label={t['tenantSearch.columns.tenantNameZh']}
+            field="label_zh"
             rules={[
               {
                 required: true,
@@ -712,11 +869,13 @@ export default function TenantManagePage() {
               },
             ]}
           >
-            <Input />
+            <Input
+              placeholder={t['tenantSearch.modal.tenantNameZh.placeholder']}
+            />
           </Form.Item>
           <Form.Item
-            label={t['tenantSearch.columns.businessType']}
-            field="businessType"
+            label={t['tenantSearch.columns.tenantNameEn']}
+            field="label_en"
             rules={[
               {
                 required: true,
@@ -724,11 +883,50 @@ export default function TenantManagePage() {
               },
             ]}
           >
-            <Radio.Group>
-              <Radio value={1}>{t['tenantSearch.businessType.system']}</Radio>
-              <Radio value={2}>{t['tenantSearch.businessType.ops']}</Radio>
-            </Radio.Group>
+            <Input
+              placeholder={t['tenantSearch.modal.tenantNameEn.placeholder']}
+            />
           </Form.Item>
+          <Form.Item
+            label={t['tenantSearch.columns.tenantNameEs']}
+            field="label_es"
+            rules={[
+              {
+                required: true,
+                message: t['tenantSearch.validation.required'],
+              },
+            ]}
+          >
+            <Input
+              placeholder={t['tenantSearch.modal.tenantNameEs.placeholder']}
+            />
+          </Form.Item>
+          <div className={styles.formLikeField}>
+            <span className={styles.formLikeFieldLabel}>
+              {t['tenantSearch.columns.businessType']}
+            </span>
+            <div className={styles.formLikeFieldControl}>
+              <Form.Item
+                field="businessType"
+                rules={[
+                  {
+                    required: true,
+                    message: t['tenantSearch.validation.required'],
+                  },
+                ]}
+                noStyle
+              >
+                <Radio.Group>
+                  <Radio value="NORMAL">
+                    {t['tenantSearch.businessType.business']}
+                  </Radio>
+                  <Radio value="PLATFORM">
+                    {t['tenantSearch.businessType.system']}
+                  </Radio>
+                </Radio.Group>
+              </Form.Item>
+            </div>
+          </div>
           <div className={styles.formLikeField}>
             <label
               id={MODAL_EDIT_ZONE_LABEL_ID}
@@ -752,10 +950,23 @@ export default function TenantManagePage() {
                   baseId={MODAL_EDIT_ZONE_BASE}
                   ariaLabelledBy={MODAL_EDIT_ZONE_LABEL_ID}
                 >
-                  <Select allowCreate>
-                    {TIMEZONES.map((z) => (
-                      <Select.Option key={z} value={z}>
-                        {z}
+                  <Select
+                    allowCreate
+                    showSearch
+                    filterOption={(inputValue, option) => {
+                      const searchText = String(
+                        option.props['data-search-text'] || ''
+                      );
+                      return searchText.includes(inputValue.toLowerCase());
+                    }}
+                  >
+                    {TIMEZONE_OPTIONS.map((z) => (
+                      <Select.Option
+                        key={z.value}
+                        value={z.value}
+                        data-search-text={z.searchText}
+                      >
+                        {z.label}
                       </Select.Option>
                     ))}
                   </Select>
@@ -800,9 +1011,10 @@ export default function TenantManagePage() {
           boundarySearchForm.resetFields();
         }}
         unmountOnExit
-        style={{ width: 1100 }}
+        style={{ width: 'min(1100px, calc(100vw - 32px))' }}
       >
-        {tenantTypeToBusinessType(boundaryRecord?.tenantType || '') === 1 ? (
+        {tenantTypeToBusinessType(boundaryRecord?.tenantType || '') ===
+        'PLATFORM' ? (
           <Alert
             type="info"
             content="平台租户管理员天然拥有全部启用权限，无需配置租户权限边界；平台租户普通成员仍需通过角色、用户或部门角色授权获得权限。"
@@ -931,7 +1143,7 @@ export default function TenantManagePage() {
           }
         }}
         unmountOnExit
-        style={{ width: 560 }}
+        style={{ width: 'min(560px, calc(100vw - 32px))' }}
       >
         <Form
           form={boundaryManageForm}
@@ -960,7 +1172,10 @@ export default function TenantManagePage() {
                   allowClear
                   options={boundaryPackageOptions}
                   filterOption={(inputValue, option) =>
-                    String(option.extra?.label || '')
+                    String(
+                      (option.props as { extra?: { label?: string } }).extra
+                        ?.label || ''
+                    )
                       .toLowerCase()
                       .includes(inputValue.toLowerCase())
                   }
@@ -977,7 +1192,7 @@ export default function TenantManagePage() {
         footer={null}
         onCancel={() => setViewRecord(null)}
         unmountOnExit
-        style={{ width: 560 }}
+        style={{ width: 'min(560px, calc(100vw - 32px))' }}
         className={styles['tenant-view-modal']}
       >
         {viewRecord ? (
@@ -1001,8 +1216,16 @@ export default function TenantManagePage() {
             }}
             data={[
               {
-                label: t['tenantSearch.columns.tenantName'],
-                value: viewRecord.tenantName,
+                label: t['tenantSearch.columns.tenantNameZh'],
+                value: viewLabels?.label_zh || viewRecord.tenantName,
+              },
+              {
+                label: t['tenantSearch.columns.tenantNameEn'],
+                value: viewLabels?.label_en || '—',
+              },
+              {
+                label: t['tenantSearch.columns.tenantNameEs'],
+                value: viewLabels?.label_es || '—',
               },
               {
                 label: t['tenantSearch.columns.tenantCode'],

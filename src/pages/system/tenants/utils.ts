@@ -1,42 +1,84 @@
 import type { TenantRecord } from '@/api/tenant';
 
-export function parseEncryptionKey(config: unknown): string {
+export type TenantConfig = Record<string, unknown>;
+
+export type TenantNameLabels = {
+  label_zh: string;
+  label_en: string;
+  label_es: string;
+};
+
+export function parseTenantConfig(config: unknown): TenantConfig {
   if (config == null) {
-    return '';
+    return {};
   }
   if (typeof config === 'object' && !Array.isArray(config)) {
-    const v = (config as Record<string, unknown>).encryption_key;
-    return typeof v === 'string' ? v : '';
+    return config as TenantConfig;
   }
   if (typeof config !== 'string' || !config.trim()) {
-    return '';
+    return {};
   }
   try {
-    const o = JSON.parse(config) as Record<string, unknown>;
-    const v = o.encryption_key;
-    return typeof v === 'string' ? v : '';
+    const parsed = JSON.parse(config) as unknown;
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+      ? (parsed as TenantConfig)
+      : {};
   } catch {
-    return '';
+    return {};
   }
 }
 
-export function tenantTypeToBusinessType(tenantType: string): number {
+function toText(value: unknown): string {
+  return typeof value === 'string' ? value : '';
+}
+
+export function parseEncryptionKey(config: unknown): string {
+  const v = parseTenantConfig(config).encryption_key;
+  return typeof v === 'string' ? v : '';
+}
+
+export function getTenantNameLabels(
+  record?: TenantRecord | null
+): TenantNameLabels {
+  const config = parseTenantConfig(record?.config);
+  return {
+    label_zh: toText(config.label_zh) || record?.tenantName || '',
+    label_en: toText(config.label_en),
+    label_es: toText(config.label_es),
+  };
+}
+
+export function buildTenantConfig(
+  record: TenantRecord | null | undefined,
+  values: Record<string, unknown>,
+  eventSecret?: string
+): string {
+  return JSON.stringify({
+    ...parseTenantConfig(record?.config),
+    label_zh: toText(values.label_zh).trim(),
+    label_en: toText(values.label_en).trim(),
+    label_es: toText(values.label_es).trim(),
+    ...(eventSecret != null ? { encryption_key: eventSecret } : {}),
+  });
+}
+
+export function tenantTypeToBusinessType(tenantType: string): string {
   const t = (tenantType || '').toUpperCase();
   if (t === 'PLATFORM') {
-    return 1;
+    return 'PLATFORM';
   }
-  return 2;
+  return 'NORMAL';
 }
 
 export function businessTypeLabel(
   t: Record<string, string>,
-  v: number
+  v: string
 ): string {
-  if (v === 1) {
+  if (v === 'PLATFORM') {
     return t['tenantSearch.businessType.system'] || '系统';
   }
-  if (v === 2) {
-    return t['tenantSearch.businessType.ops'] || '运营';
+  if (v === 'NORMAL') {
+    return t['tenantSearch.businessType.business'] || '业务';
   }
   return '-';
 }
@@ -80,12 +122,8 @@ export function formatEpochMs(ms?: number | null): string {
 }
 
 export function formatConfigPreview(record: TenantRecord): string {
-  const c = record.config;
-  if (typeof c === 'string') {
-    return c;
-  }
   try {
-    return JSON.stringify(c);
+    return JSON.stringify(parseTenantConfig(record.config));
   } catch {
     return '';
   }

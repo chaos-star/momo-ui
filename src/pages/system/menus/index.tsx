@@ -3,8 +3,10 @@ import {
   Button,
   Card,
   Descriptions,
+  Dropdown,
   Form,
   Input,
+  Menu,
   Message,
   Modal,
   Select,
@@ -22,6 +24,7 @@ import {
   IconEdit,
   IconEye,
   IconMenuUnfold,
+  IconMore,
   IconPlayArrow,
   IconPlus,
   IconRefresh,
@@ -44,12 +47,30 @@ import {
   updatePageElement,
 } from '@/api/access-permission';
 import { getIconComponentName } from '@/utils/routeIcon';
+import ArcoSelectInputIds, {
+  arcoSelectPrimaryInputId,
+} from '../tenants/ArcoSelectInputIds';
 import styles from './style/index.module.less';
 
 const { Title, Text } = Typography;
 
 const MENU_TYPES = ['CATALOG', 'MENU'];
 const ROOT_PARENT_ID = 0;
+const ELEMENT_SEARCH_TYPE_BASE = 'menu-element-search-elementType';
+const ELEMENT_SEARCH_STATUS_BASE = 'menu-element-search-activeStatus';
+const ELEMENT_SEARCH_TYPE_LABEL_ID = `${ELEMENT_SEARCH_TYPE_BASE}-field-label`;
+const ELEMENT_SEARCH_STATUS_LABEL_ID = `${ELEMENT_SEARCH_STATUS_BASE}-field-label`;
+
+type ElementActionItem = {
+  key: string;
+  label: string;
+  icon: React.ReactNode;
+  danger?: boolean;
+  className?: string;
+  status?: 'success' | 'warning' | 'danger' | 'default';
+  visible?: boolean;
+  onClick: () => void;
+};
 
 const menuTypeOptions = [
   { label: '目录', value: 'CATALOG' },
@@ -142,6 +163,10 @@ function findFirstMenuNode(nodes: MenuRecord[] = []): MenuRecord | null {
     if (child) return child;
   }
   return null;
+}
+
+function getDefaultExpandedKeys(nodes: MenuRecord[] = []) {
+  return nodes.slice(0, 2).map((item) => String(item.id));
 }
 
 function getDescendantIds(node?: MenuRecord | null) {
@@ -322,6 +347,7 @@ export default function MenuManagePage() {
   const [elementForm] = Form.useForm();
   const [elementSearchForm] = Form.useForm();
   const [tree, setTree] = useState<MenuRecord[]>([]);
+  const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
   const [selectedId, setSelectedId] = useState<number>();
   const [menuVisible, setMenuVisible] = useState(false);
   const [moveVisible, setMoveVisible] = useState(false);
@@ -504,6 +530,9 @@ export default function MenuManagePage() {
     const data = await fetchMenuTree();
     const nextTree = data || [];
     setTree(nextTree);
+    setExpandedKeys((current) =>
+      current.length ? current : getDefaultExpandedKeys(nextTree)
+    );
     if (autoSelectFirst) {
       const firstMenu = findFirstMenuNode(nextTree);
       setSelectedId(firstMenu?.id);
@@ -731,59 +760,94 @@ export default function MenuManagePage() {
     {
       title: '操作',
       dataIndex: 'operations',
-      width: 280,
+      width: 260,
       fixed: 'right',
       render: (_, record) => {
         const isDisabled = record.activeStatus === 2;
+        const actionItems: ElementActionItem[] = [
+          {
+            key: 'toggleActiveStatus',
+            label: isDisabled ? '启用' : '停用',
+            className: !isDisabled ? styles['stop-menu-button'] : undefined,
+            status: isDisabled ? 'success' : undefined,
+            icon: isDisabled ? <IconPlayArrow /> : <IconStop />,
+            onClick: () => updateElementActiveStatus(record),
+          },
+          {
+            key: 'view',
+            label: '查看',
+            icon: <IconEye />,
+            onClick: () => setViewElement(record),
+          },
+          {
+            key: 'edit',
+            label: '修改',
+            icon: <IconEdit />,
+            onClick: () => openEditElement(record),
+          },
+          {
+            key: 'delete',
+            label: '删除',
+            icon: <IconDelete />,
+            danger: true,
+            onClick: () =>
+              Modal.confirm({
+                title: '删除页面元素',
+                content: `确认删除 ${
+                  record.elementName || record.elementCode
+                }？`,
+                onOk: async () => {
+                  await deletePageElement(record.id);
+                  Message.success('页面元素已删除');
+                  await loadPageElements();
+                },
+              }),
+          },
+        ];
+        const actions = actionItems.filter((item) => item.visible !== false);
+        const primaryActions =
+          actions.length > 4 ? actions.slice(0, 3) : actions;
+        const moreActions = actions.length > 4 ? actions.slice(3) : [];
+        const moreMenu = moreActions.length ? (
+          <Menu
+            onClickMenuItem={(key) => {
+              moreActions.find((item) => item.key === key)?.onClick();
+            }}
+          >
+            {moreActions.map((item) => (
+              <Menu.Item
+                key={item.key}
+                className={item.danger ? styles['danger-menu-item'] : undefined}
+              >
+                {item.icon}
+                {item.label}
+              </Menu.Item>
+            ))}
+          </Menu>
+        ) : null;
+
         return (
           <Space className={styles.operations} size={10} wrap>
-            <Button
-              type="text"
-              size="small"
-              className={!isDisabled ? styles['stop-menu-button'] : undefined}
-              status={isDisabled ? 'success' : undefined}
-              icon={isDisabled ? <IconPlayArrow /> : <IconStop />}
-              onClick={() => updateElementActiveStatus(record)}
-            >
-              {isDisabled ? '启用' : '停用'}
-            </Button>
-            <Button
-              type="text"
-              size="small"
-              icon={<IconEye />}
-              onClick={() => setViewElement(record)}
-            >
-              查看
-            </Button>
-            <Button
-              type="text"
-              size="small"
-              icon={<IconEdit />}
-              onClick={() => openEditElement(record)}
-            >
-              修改
-            </Button>
-            <Button
-              type="text"
-              status="danger"
-              size="small"
-              icon={<IconDelete />}
-              onClick={() =>
-                Modal.confirm({
-                  title: '删除页面元素',
-                  content: `确认删除 ${
-                    record.elementName || record.elementCode
-                  }？`,
-                  onOk: async () => {
-                    await deletePageElement(record.id);
-                    Message.success('页面元素已删除');
-                    await loadPageElements();
-                  },
-                })
-              }
-            >
-              删除
-            </Button>
+            {primaryActions.map((item) => (
+              <Button
+                key={item.key}
+                type="text"
+                size="small"
+                className={item.className}
+                status={item.status || (item.danger ? 'danger' : undefined)}
+                icon={item.icon}
+                onClick={item.onClick}
+              >
+                {item.label}
+              </Button>
+            ))}
+            {moreMenu ? (
+              <Dropdown droplist={moreMenu} position="br">
+                <Button type="text" size="small" icon={<IconMore />}>
+                  更多
+                </Button>
+              </Dropdown>
+            ) : null}
           </Space>
         );
       },
@@ -810,6 +874,8 @@ export default function MenuManagePage() {
             blockNode
             treeData={toTreeData(allTree)}
             selectedKeys={selectedId ? [String(selectedId)] : []}
+            expandedKeys={expandedKeys}
+            onExpand={(keys) => setExpandedKeys(keys.map(String))}
             onSelect={(keys) =>
               setSelectedId(keys[0] ? Number(keys[0]) : undefined)
             }
@@ -893,20 +959,54 @@ export default function MenuManagePage() {
                 <Form.Item label="元素编码" field="elementCode">
                   <Input allowClear placeholder="请输入元素编码" />
                 </Form.Item>
-                <Form.Item label="元素类型" field="elementType">
-                  <Select
-                    allowClear
-                    options={elementTypeOptions}
-                    placeholder="请选择元素类型"
-                  />
-                </Form.Item>
-                <Form.Item label="启用状态" field="activeStatus">
-                  <Select
-                    allowClear
-                    options={statusOptions}
-                    placeholder="请选择启用状态"
-                  />
-                </Form.Item>
+                <div className={styles['element-search-select-field']}>
+                  <label
+                    id={ELEMENT_SEARCH_TYPE_LABEL_ID}
+                    className={styles['element-search-select-label']}
+                    htmlFor={arcoSelectPrimaryInputId(ELEMENT_SEARCH_TYPE_BASE)}
+                  >
+                    元素类型
+                  </label>
+                  <div className={styles['element-search-select-control']}>
+                    <Form.Item field="elementType" noStyle>
+                      <ArcoSelectInputIds
+                        baseId={ELEMENT_SEARCH_TYPE_BASE}
+                        ariaLabelledBy={ELEMENT_SEARCH_TYPE_LABEL_ID}
+                      >
+                        <Select
+                          allowClear
+                          options={elementTypeOptions}
+                          placeholder="请选择元素类型"
+                        />
+                      </ArcoSelectInputIds>
+                    </Form.Item>
+                  </div>
+                </div>
+                <div className={styles['element-search-select-field']}>
+                  <label
+                    id={ELEMENT_SEARCH_STATUS_LABEL_ID}
+                    className={styles['element-search-select-label']}
+                    htmlFor={arcoSelectPrimaryInputId(
+                      ELEMENT_SEARCH_STATUS_BASE
+                    )}
+                  >
+                    启用状态
+                  </label>
+                  <div className={styles['element-search-select-control']}>
+                    <Form.Item field="activeStatus" noStyle>
+                      <ArcoSelectInputIds
+                        baseId={ELEMENT_SEARCH_STATUS_BASE}
+                        ariaLabelledBy={ELEMENT_SEARCH_STATUS_LABEL_ID}
+                      >
+                        <Select
+                          allowClear
+                          options={statusOptions}
+                          placeholder="请选择启用状态"
+                        />
+                      </ArcoSelectInputIds>
+                    </Form.Item>
+                  </div>
+                </div>
                 <Form.Item className={styles['element-search-actions']}>
                   <Space>
                     <Button
@@ -949,7 +1049,7 @@ export default function MenuManagePage() {
         onOk={submitMenu}
         onCancel={() => setMenuVisible(false)}
         unmountOnExit
-        style={{ width: 880 }}
+        style={{ width: 'min(880px, calc(100vw - 32px))' }}
         className={styles['menu-modal']}
       >
         <Form
@@ -1075,7 +1175,7 @@ export default function MenuManagePage() {
           setMovingMenu(null);
         }}
         unmountOnExit
-        style={{ width: 560 }}
+        style={{ width: 'min(560px, calc(100vw - 32px))' }}
       >
         <Form
           form={moveForm}

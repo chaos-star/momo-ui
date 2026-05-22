@@ -53,7 +53,7 @@ export interface TenantListParams {
   pageSize?: number;
   tenantName?: string;
   tenantCode?: string;
-  businessType?: number;
+  businessType?: string;
   status?: number;
 }
 
@@ -68,8 +68,9 @@ export function fetchTenantPage(params: TenantListParams) {
 export function createTenant(data: {
   tenantName: string;
   tenantCode: string;
-  businessType: number;
+  businessType: string;
   tenantZone: string;
+  config?: string;
   eventSecret?: string;
   expireAt?: number;
 }) {
@@ -83,8 +84,10 @@ export function createTenant(data: {
 export function updateTenant(data: {
   id: number;
   tenantName?: string;
-  businessType?: number;
+  tenantCode?: string;
+  businessType?: string;
   tenantZone?: string;
+  config?: string;
   eventSecret?: string | null;
   expireAt?: number;
 }) {

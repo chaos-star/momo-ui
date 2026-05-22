@@ -551,7 +551,7 @@ export default function PermissionPackageGrantDrawer({
     <Drawer
       title={`维护权限：${record?.packageName || ''}`}
       visible={visible}
-      width={920}
+      width="min(920px, 100vw)"
       onCancel={onClose}
       onOk={handleOk}
       confirmLoading={saving}

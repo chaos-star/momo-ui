@@ -49,7 +49,7 @@ export default function PermissionPackageModal({
         await onSubmit(values);
       }}
       unmountOnExit
-      style={{ width: 560 }}
+      style={{ width: 'min(560px, calc(100vw - 32px))' }}
     >
       <Form
         form={form}

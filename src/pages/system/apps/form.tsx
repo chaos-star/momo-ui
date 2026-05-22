@@ -69,7 +69,7 @@ function SearchForm(props: {
       >
         <Row gutter={24}>
           {props.showTenantFilter ? (
-            <Col span={colSpan}>
+            <Col xs={24} sm={24} md={12} lg={colSpan}>
               <div className={styles.formLikeField}>
                 <label
                   id={`${SEARCH_TENANT_BASE}-label`}
@@ -98,7 +98,7 @@ function SearchForm(props: {
               </div>
             </Col>
           ) : null}
-          <Col span={colSpan}>
+          <Col xs={24} sm={24} md={12} lg={colSpan}>
             <Form.Item label={t['appSearch.columns.appCode']} field="appCode">
               <Input
                 allowClear
@@ -106,7 +106,7 @@ function SearchForm(props: {
               />
             </Form.Item>
           </Col>
-          <Col span={colSpan}>
+          <Col xs={24} sm={24} md={12} lg={colSpan}>
             <Form.Item label={t['appSearch.columns.pkgName']} field="pkgName">
               <Input
                 allowClear
@@ -114,7 +114,7 @@ function SearchForm(props: {
               />
             </Form.Item>
           </Col>
-          <Col span={colSpan}>
+          <Col xs={24} sm={24} md={12} lg={colSpan}>
             <div className={styles.formLikeField}>
               <label
                 id={`${SEARCH_OS_BASE}-label`}
@@ -142,7 +142,7 @@ function SearchForm(props: {
               </div>
             </div>
           </Col>
-          <Col span={colSpan}>
+          <Col xs={24} sm={24} md={12} lg={colSpan}>
             <div className={styles.formLikeField}>
               <label
                 id={`${SEARCH_ACTIVE_BASE}-label`}
@@ -176,7 +176,7 @@ function SearchForm(props: {
               </div>
             </div>
           </Col>
-          <Col span={colSpan}>
+          <Col xs={24} sm={24} md={12} lg={colSpan}>
             <div className={styles.formLikeField}>
               <label
                 id={`${SEARCH_STATUS_BASE}-label`}

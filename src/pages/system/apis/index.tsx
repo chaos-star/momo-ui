@@ -400,7 +400,7 @@ export default function ApiManagePage() {
           wrapperCol={{ span: 19 }}
         >
           <Row gutter={24}>
-            <Col span={8}>
+            <Col xs={24} sm={24} md={12} lg={8}>
               <Form.Item label={t['apiSearch.columns.apiCode']} field="apiCode">
                 <Input
                   allowClear
@@ -408,7 +408,7 @@ export default function ApiManagePage() {
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col xs={24} sm={24} md={12} lg={8}>
               <Form.Item label={t['apiSearch.columns.apiName']} field="apiName">
                 <Input
                   allowClear
@@ -416,7 +416,7 @@ export default function ApiManagePage() {
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col xs={24} sm={24} md={12} lg={8}>
               <Form.Item
                 label={t['apiSearch.columns.apiGroup']}
                 field="apiGroup"
@@ -429,7 +429,7 @@ export default function ApiManagePage() {
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col xs={24} sm={24} md={12} lg={8}>
               <Form.Item
                 label={t['apiSearch.columns.httpMethod']}
                 field="httpMethod"
@@ -441,7 +441,7 @@ export default function ApiManagePage() {
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col xs={24} sm={24} md={12} lg={8}>
               <Form.Item
                 label={t['apiSearch.columns.pathPattern']}
                 field="pathPattern"
@@ -452,7 +452,7 @@ export default function ApiManagePage() {
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col xs={24} sm={24} md={12} lg={8}>
               <Form.Item
                 label={t['apiSearch.columns.accessLevel']}
                 field="accessLevel"
@@ -506,7 +506,7 @@ export default function ApiManagePage() {
         onCancel={() => setVisible(false)}
         unmountOnExit
         className={apiStyles['api-modal']}
-        style={{ width: 880 }}
+        style={{ width: 'min(880px, calc(100vw - 32px))' }}
       >
         <Form
           form={modalForm}
@@ -517,7 +517,7 @@ export default function ApiManagePage() {
           className={`${styles['search-form']} ${apiStyles['modal-form']}`}
         >
           <Row gutter={24}>
-            <Col span={12}>
+            <Col xs={24} md={12}>
               <Form.Item
                 label={t['apiSearch.columns.apiGroup']}
                 field="apiGroup"
@@ -537,7 +537,7 @@ export default function ApiManagePage() {
                 />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col xs={24} md={12}>
               <Form.Item
                 label={t['apiSearch.columns.apiCode']}
                 field="apiCodeSuffix"
@@ -559,7 +559,7 @@ export default function ApiManagePage() {
                 />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col xs={24} md={12}>
               <Form.Item
                 label={t['apiSearch.columns.apiName']}
                 field="apiName"
@@ -573,7 +573,7 @@ export default function ApiManagePage() {
                 <Input placeholder={t['apiSearch.placeholder.apiName']} />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col xs={24} md={12}>
               <Form.Item
                 label={t['apiSearch.columns.httpMethod']}
                 field="httpMethod"
@@ -581,7 +581,7 @@ export default function ApiManagePage() {
                 <Select options={httpMethodOptions} />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col xs={24} md={12}>
               <Form.Item
                 label={t['apiSearch.columns.pathPattern']}
                 field="pathPattern"
@@ -595,7 +595,7 @@ export default function ApiManagePage() {
                 <Input placeholder={t['apiSearch.placeholder.pathPattern']} />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col xs={24} md={12}>
               <Form.Item
                 label={t['apiSearch.columns.accessLevel']}
                 field="accessLevel"

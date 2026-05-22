@@ -26,12 +26,12 @@ function SearchForm(props: { onSearch: (values: RoleSearchValues) => void }) {
         wrapperCol={{ span: 19 }}
       >
         <Row gutter={24}>
-          <Col span={colSpan}>
+          <Col xs={24} sm={24} md={12} lg={colSpan}>
             <Form.Item label="角色编码" field="roleCode">
               <Input allowClear placeholder="请输入角色编码" />
             </Form.Item>
           </Col>
-          <Col span={colSpan}>
+          <Col xs={24} sm={24} md={12} lg={colSpan}>
             <Form.Item label="角色名称" field="roleName">
               <Input allowClear placeholder="请输入角色名称" />
             </Form.Item>

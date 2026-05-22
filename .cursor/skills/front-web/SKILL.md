@@ -86,6 +86,7 @@ Page-specific LESS should only add deltas (e.g. tip text, modal tweaks). **Do no
 
 - **Input / Radio** in search grid: normal `<Form.Item label="..." field="...">`.
 - **Select** in search grid: use **`formLikeField`** + native `<label className={styles.formLikeFieldLabel}>` + `<Form.Item field="..." noStyle>` + control in `formLikeFieldControl`. For accessibility on tenant-style Selects, reuse `ArcoSelectInputIds` from `tenants/ArcoSelectInputIds.tsx` when adding new search Selects on critical pages.
+- **Accessibility for Arco Select labels (mandatory):** when a Select uses a native `<label htmlFor=...>` or a custom form-like label, wrap the Select with `ArcoSelectInputIds` and set `htmlFor={arcoSelectPrimaryInputId(baseId)}` plus `ariaLabelledBy`. This prevents audit errors such as `Incorrect use of <label for=FORM_ELEMENT>` and `A form field element should have an id or name attribute` caused by Arco's internal `.arco-select-view-input` lacking stable `id` / `name`.
 - Right column buttons: primary **查询** (`IconSearch`) + **重置** (`IconRefresh`).
 
 ### Toolbar
@@ -104,6 +105,19 @@ Page-specific LESS should only add deltas (e.g. tip text, modal tweaks). **Do no
 ```
 
 Use normal `div` elements only — **never** typo `motion.div` as a tag name (breaks the page).
+
+### Responsive layout
+
++- All new or modified pages must remain usable at desktop, tablet, and narrow mobile widths.
++- Prefer Arco Grid responsive props instead of fixed-only spans in search forms and modal grids: `xs={24} sm={24} md={12} lg={8}` for three-column search fields, `xs={24} sm={24} md={12}` for two-column modal fields, and `xs={24}` for full-width fields.
++- Management-page search areas using `search-form-wrapper` must collapse vertically on small screens; the right-side query/reset buttons should wrap horizontally and must not squeeze the form controls.
++- Toolbars such as `button-group` must support wrapping with `gap` so primary actions and refresh buttons do not overflow on narrow screens.
++- Tables with multiple columns should set horizontal scroll, e.g. `scroll={{ x: 1000 }}` or a page-specific width that matches the columns.
++- Standard modals should use responsive widths such as `style={{ width: 'min(560px, calc(100vw - 32px))' }}`; wide modals should use the same pattern with their target width. Drawers should use `width="min(920px, 100vw)"` or an equivalent responsive width.
++- Fixed two-column or side-panel layouts must collapse to a single column at small breakpoints (`max-width: 768px`) unless there is a stronger product reason not to.
++- Avoid introducing fixed pixel widths without `max-width`, `min-width: 0`, wrapping, or horizontal scroll safeguards.
+
+-
 
 ### Table
 
@@ -127,6 +141,7 @@ Use normal `div` elements only — **never** typo `motion.div` as a tag name (br
 - List refresh: `listTick` / `tick` counter incremented after mutations (avoid ad-hoc refetch logic scattered in handlers).
 - Columns: extract to `constants.tsx` when the table is non-trivial; actions via callbacks object (tenant pattern).
 - Operation column: `width` + `fixed: 'right'`, `Space` with `className={styles.operations}` and `size={10}` + `wrap`, text buttons with `IconEdit` / `IconDelete` where appropriate. When a page owns its own LESS instead of importing tenant styles, copy the tenant `operations` rules for compact text-button padding and icon-text spacing so the 10px action-button gap is visually effective.
+- Operation overflow rule: when a row has more than 4 possible operations, build an ordered `actions` array first, filter by permission/status with `actions.filter((item) => item.visible !== false)`, then render `visibleActions.slice(0, 3)` as direct buttons and put `visibleActions.slice(3)` into a `Dropdown` named "更多". Do not hard-code the first 3 buttons separately from the dropdown; this ensures hidden operations are dynamically backfilled from "更多".
 
 ### Create / edit modals
 

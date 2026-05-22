@@ -225,17 +225,17 @@ export default function PermissionManagePage() {
           wrapperCol={{ span: 19 }}
         >
           <Row gutter={24}>
-            <Col span={8}>
+            <Col xs={24} sm={24} md={12} lg={8}>
               <Form.Item label="权限编码" field="permissionCode">
                 <Input allowClear placeholder="请输入权限编码" />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col xs={24} sm={24} md={12} lg={8}>
               <Form.Item label="权限名称" field="permissionName">
                 <Input allowClear placeholder="请输入权限名称" />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col xs={24} sm={24} md={12} lg={8}>
               <Form.Item label="权限类型" field="permissionType">
                 <Select
                   allowClear
@@ -244,7 +244,7 @@ export default function PermissionManagePage() {
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col xs={24} sm={24} md={12} lg={8}>
               <Form.Item label="对象类型" field="objectType">
                 <Select
                   allowClear
@@ -290,7 +290,7 @@ export default function PermissionManagePage() {
         onOk={submit}
         onCancel={() => setVisible(false)}
         unmountOnExit
-        style={{ width: 560 }}
+        style={{ width: 'min(560px, calc(100vw - 32px))' }}
       >
         <Form
           form={modalForm}

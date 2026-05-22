@@ -85,12 +85,12 @@ function SearchForm(props: {
         wrapperCol={{ span: 19 }}
       >
         <Row gutter={24}>
-          <Col span={8}>
+          <Col xs={24} sm={24} md={12} lg={8}>
             <Form.Item label="分组编码" field="groupCode">
               <Input allowClear placeholder="请输入分组编码" />
             </Form.Item>
           </Col>
-          <Col span={8}>
+          <Col xs={24} sm={24} md={12} lg={8}>
             <Form.Item label="分组名称" field="groupName">
               <Input allowClear placeholder="请输入分组名称" />
             </Form.Item>

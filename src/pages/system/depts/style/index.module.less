@@ -82,6 +82,8 @@
 
 .button-group {
   display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   justify-content: space-between;
   margin-bottom: 16px;
 }
@@ -205,4 +207,22 @@
   color: var(--color-text-2);
   font-size: 12px;
   line-height: 20px;
+}
+
+@media (max-width: 768px) {
+  .page-layout {
+    flex-direction: column;
+  }
+
+  .tree-panel {
+    width: 100%;
+    flex: none;
+    min-height: 360px;
+  }
+
+  .button-group,
+  .role-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
 }

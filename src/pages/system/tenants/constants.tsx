@@ -1,11 +1,20 @@
 import React from 'react';
-import { Badge, Button, Space, Typography } from '@arco-design/web-react';
+import {
+  Badge,
+  Button,
+  Dropdown,
+  Menu,
+  Space,
+  Tooltip,
+  Typography,
+} from '@arco-design/web-react';
 import {
   IconDelete,
   IconEdit,
   IconEye,
   IconSafe,
   IconLock,
+  IconMore,
   IconUnlock,
 } from '@arco-design/web-react/icon';
 import type { ColumnProps } from '@arco-design/web-react/es/Table';
@@ -28,6 +37,16 @@ export type TenantColumnCallbacks = {
   onDelete: (record: TenantRecord) => void;
   onEnable: (record: TenantRecord) => void;
   onDisable: (record: TenantRecord) => void;
+};
+
+type TenantActionItem = {
+  key: string;
+  label: string;
+  icon: React.ReactNode;
+  danger?: boolean;
+  disabled?: boolean;
+  visible?: boolean;
+  onClick: () => void;
 };
 
 export function getColumns(
@@ -61,7 +80,15 @@ export function getColumns(
     {
       title: t['tenantSearch.columns.tenantZone'],
       dataIndex: 'tenantZone',
-      width: 140,
+      width: 160,
+      render: (value: string) => {
+        const text = value || '—';
+        return (
+          <Tooltip content={text} disabled={!value}>
+            <div className={styles.tableCellEllipsis}>{text}</div>
+          </Tooltip>
+        );
+      },
     },
     {
       title: t['tenantSearch.columns.eventSecret'],
@@ -115,77 +142,109 @@ export function getColumns(
     {
       title: t['tenantSearch.columns.operations'],
       dataIndex: 'operations',
-      width: 306,
+      width: 260,
       fixed: 'right',
       headerCellStyle: { paddingLeft: '12px' },
       render: (_, record) => {
         const deleted = record.status === 2;
         const platformTenant =
-          tenantTypeToBusinessType(record.tenantType) === 1;
+          tenantTypeToBusinessType(record.tenantType) === 'PLATFORM';
         const canToggleActive = !deleted;
         const canOpenBoundary = !deleted && !platformTenant;
-        const showEnable = record.activeStatus !== 1;
-        const showDisable = record.activeStatus === 1;
+        const actionItems: TenantActionItem[] = [
+          {
+            key: 'view',
+            label: t['tenantSearch.columns.operations.view'],
+            icon: <IconEye />,
+            onClick: () => callbacks.onView(record),
+          },
+          {
+            key: 'edit',
+            label: t['tenantSearch.columns.operations.edit'],
+            icon: <IconEdit />,
+            disabled: deleted,
+            onClick: () => callbacks.onEdit(record),
+          },
+          {
+            key: 'boundary',
+            label: t['tenantSearch.columns.operations.boundary'],
+            icon: <IconSafe />,
+            disabled: !canOpenBoundary,
+            onClick: () => callbacks.onBoundary(record),
+          },
+          {
+            key: 'enable',
+            label: t['tenantSearch.columns.operations.enable'],
+            icon: <IconUnlock />,
+            disabled: !canToggleActive,
+            visible: record.activeStatus !== 1,
+            onClick: () => callbacks.onEnable(record),
+          },
+          {
+            key: 'disable',
+            label: t['tenantSearch.columns.operations.disable'],
+            icon: <IconLock />,
+            disabled: !canToggleActive,
+            visible: record.activeStatus === 1,
+            onClick: () => callbacks.onDisable(record),
+          },
+          {
+            key: 'delete',
+            label: t['tenantSearch.columns.operations.delete'],
+            icon: <IconDelete />,
+            danger: true,
+            disabled: deleted,
+            onClick: () => callbacks.onDelete(record),
+          },
+        ];
+        const actions = actionItems.filter((item) => item.visible !== false);
+        const primaryActions =
+          actions.length > 4 ? actions.slice(0, 3) : actions;
+        const moreActions = actions.length > 4 ? actions.slice(3) : [];
+        const moreMenu = moreActions.length ? (
+          <Menu
+            onClickMenuItem={(key) => {
+              const action = moreActions.find((item) => item.key === key);
+              if (!action?.disabled) {
+                action?.onClick();
+              }
+            }}
+          >
+            {moreActions.map((item) => (
+              <Menu.Item
+                key={item.key}
+                disabled={item.disabled}
+                className={item.danger ? styles['danger-menu-item'] : undefined}
+              >
+                {item.icon}
+                {item.label}
+              </Menu.Item>
+            ))}
+          </Menu>
+        ) : null;
+
         return (
           <Space className={styles.operations} size={10} wrap>
-            <Button
-              type="text"
-              size="small"
-              icon={<IconEye />}
-              onClick={() => callbacks.onView(record)}
-            >
-              {t['tenantSearch.columns.operations.view']}
-            </Button>
-            <Button
-              type="text"
-              size="small"
-              icon={<IconEdit />}
-              disabled={deleted}
-              onClick={() => callbacks.onEdit(record)}
-            >
-              {t['tenantSearch.columns.operations.edit']}
-            </Button>
-            <Button
-              type="text"
-              size="small"
-              icon={<IconSafe />}
-              disabled={!canOpenBoundary}
-              onClick={() => callbacks.onBoundary(record)}
-            >
-              {t['tenantSearch.columns.operations.boundary']}
-            </Button>
-            {showEnable ? (
+            {primaryActions.map((item) => (
               <Button
+                key={item.key}
                 type="text"
                 size="small"
-                icon={<IconUnlock />}
-                disabled={!canToggleActive}
-                onClick={() => callbacks.onEnable(record)}
+                icon={item.icon}
+                status={item.danger ? 'danger' : undefined}
+                disabled={item.disabled}
+                onClick={item.onClick}
               >
-                {t['tenantSearch.columns.operations.enable']}
+                {item.label}
               </Button>
+            ))}
+            {moreMenu ? (
+              <Dropdown droplist={moreMenu} position="br">
+                <Button type="text" size="small" icon={<IconMore />}>
+                  更多
+                </Button>
+              </Dropdown>
             ) : null}
-            {showDisable ? (
-              <Button
-                type="text"
-                size="small"
-                icon={<IconLock />}
-                disabled={!canToggleActive}
-                onClick={() => callbacks.onDisable(record)}
-              >
-                {t['tenantSearch.columns.operations.disable']}
-              </Button>
-            ) : null}
-            <Button
-              type="text"
-              size="small"
-              icon={<IconDelete />}
-              status="danger"
-              disabled={deleted}
-              onClick={() => callbacks.onDelete(record)}
-            >
-              {t['tenantSearch.columns.operations.delete']}
-            </Button>
           </Space>
         );
       },

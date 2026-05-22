@@ -283,7 +283,7 @@ export default function PermissionRelationPage() {
           wrapperCol={{ span: 19 }}
         >
           <Row gutter={24}>
-            <Col span={8}>
+            <Col xs={24} sm={24} md={12} lg={8}>
               <div className={styles.formLikeField}>
                 <label className={styles.formLikeFieldLabel}>父权限</label>
                 <div className={styles.formLikeFieldControl}>
@@ -299,7 +299,7 @@ export default function PermissionRelationPage() {
                 </div>
               </div>
             </Col>
-            <Col span={8}>
+            <Col xs={24} sm={24} md={12} lg={8}>
               <div className={styles.formLikeField}>
                 <label className={styles.formLikeFieldLabel}>子分组</label>
                 <div className={styles.formLikeFieldControl}>
@@ -349,7 +349,7 @@ export default function PermissionRelationPage() {
         onOk={submit}
         onCancel={() => setVisible(false)}
         unmountOnExit
-        style={{ width: 560 }}
+        style={{ width: 'min(560px, calc(100vw - 32px))' }}
       >
         <Form
           form={modalForm}

@@ -1,5 +1,7 @@
 .button-group {
   display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   justify-content: space-between;
   margin-bottom: 20px;
 }
@@ -28,9 +30,23 @@
 
 .operations {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   row-gap: 4px;
+  white-space: nowrap;
+
+  :global(.arco-btn-size-small.arco-btn-text) {
+    padding-left: 2px;
+    padding-right: 2px;
+  }
+
+  :global(.arco-btn-size-small.arco-btn-text > svg + span) {
+    margin-left: 2px;
+  }
+}
+
+.danger-menu-item {
+  color: rgb(var(--danger-6));
 }
 
 .drawer-section {
@@ -46,8 +62,57 @@
   overflow: auto;
 }
 
+.table-cell-ellipsis {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .tag-list {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 6px;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+
+  :global(.arco-tag) {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 768px) {
+  .button-group {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .search-form-wrapper {
+    flex-direction: column;
+
+    .right-button {
+      flex-direction: row;
+      justify-content: flex-start;
+      gap: 8px;
+      padding-left: 0;
+      margin-bottom: 20px;
+      border-left: 0;
+    }
+  }
+
+  .search-form {
+    padding-right: 0;
+  }
+
+  .operations,
+  .tag-list {
+    flex-wrap: wrap;
+    white-space: normal;
+  }
 }

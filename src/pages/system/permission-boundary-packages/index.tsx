@@ -211,6 +211,7 @@ export default function PermissionBoundaryPackagePage() {
         columns={columns}
         data={data}
         border
+        scroll={{ x: 1100 }}
         onChange={(pag) => {
           setCurrent((c) => pag.current ?? c);
           setPageSize((s) => (pag.pageSize != null ? Number(pag.pageSize) : s));

@@ -20,7 +20,7 @@ const SEARCH_STATUS_LABEL_ID = `${SEARCH_STATUS_BASE}-field-label`;
 export type TenantSearchValues = {
   tenantName?: string;
   tenantCode?: string;
-  businessType?: number;
+  businessType?: string;
   status?: number;
 };
 
@@ -60,7 +60,7 @@ function SearchForm(props: { onSearch: (values: TenantSearchValues) => void }) {
         wrapperCol={{ span: 19 }}
       >
         <Row gutter={24}>
-          <Col span={colSpan}>
+          <Col xs={24} sm={24} md={12} lg={colSpan}>
             <Form.Item
               label={t['tenantSearch.columns.tenantName']}
               field="tenantName"
@@ -71,7 +71,7 @@ function SearchForm(props: { onSearch: (values: TenantSearchValues) => void }) {
               />
             </Form.Item>
           </Col>
-          <Col span={colSpan}>
+          <Col xs={24} sm={24} md={12} lg={colSpan}>
             <Form.Item
               label={t['tenantSearch.columns.tenantCode']}
               field="tenantCode"
@@ -82,7 +82,7 @@ function SearchForm(props: { onSearch: (values: TenantSearchValues) => void }) {
               />
             </Form.Item>
           </Col>
-          <Col span={colSpan}>
+          <Col xs={24} sm={24} md={12} lg={colSpan}>
             <div className={styles.formLikeField}>
               <label
                 id={SEARCH_BUSINESS_TYPE_LABEL_ID}
@@ -102,12 +102,12 @@ function SearchForm(props: { onSearch: (values: TenantSearchValues) => void }) {
                       allowClear
                       options={[
                         {
-                          label: t['tenantSearch.businessType.system'],
-                          value: 1,
+                          label: t['tenantSearch.businessType.business'],
+                          value: 'NORMAL',
                         },
                         {
-                          label: t['tenantSearch.businessType.ops'],
-                          value: 2,
+                          label: t['tenantSearch.businessType.system'],
+                          value: 'PLATFORM',
                         },
                       ]}
                     />
@@ -116,7 +116,7 @@ function SearchForm(props: { onSearch: (values: TenantSearchValues) => void }) {
               </div>
             </div>
           </Col>
-          <Col span={colSpan}>
+          <Col xs={24} sm={24} md={12} lg={colSpan}>
             <div className={styles.formLikeField}>
               <label
                 id={SEARCH_STATUS_LABEL_ID}

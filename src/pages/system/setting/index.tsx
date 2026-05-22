@@ -593,7 +593,7 @@ function SystemConfigPage() {
         initialValues={profileToFormValues(profile)}
       >
         <Row gutter={20}>
-          <Col span={16}>
+          <Col xs={24} lg={16}>
             <Card
               title={text.brandInfo}
               bordered={false}
@@ -616,7 +616,7 @@ function SystemConfigPage() {
                       {text.languageLabels[item.key]}
                     </div>
                     <Row gutter={16}>
-                      <Col span={12}>
+                      <Col xs={24} md={12}>
                         <Form.Item
                           label={text.systemName}
                           field={systemNameField}
@@ -634,7 +634,7 @@ function SystemConfigPage() {
                           />
                         </Form.Item>
                       </Col>
-                      <Col span={12}>
+                      <Col xs={24} md={12}>
                         <Form.Item
                           label={text.companyName}
                           field={companyNameField}
@@ -677,7 +677,7 @@ function SystemConfigPage() {
             </Card>
           </Col>
 
-          <Col span={8}>
+          <Col xs={24} lg={8}>
             <Card
               title={text.logoUpload}
               bordered={false}

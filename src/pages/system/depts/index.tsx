@@ -635,7 +635,7 @@ export default function DeptManagePage() {
         onOk={submit}
         onCancel={() => setVisible(false)}
         unmountOnExit
-        style={{ width: 560 }}
+        style={{ width: 'min(560px, calc(100vw - 32px))' }}
       >
         <Form
           form={deptForm}
@@ -677,7 +677,7 @@ export default function DeptManagePage() {
           setMovingDept(null);
         }}
         unmountOnExit
-        style={{ width: 560 }}
+        style={{ width: 'min(560px, calc(100vw - 32px))' }}
       >
         <Form
           form={moveForm}
@@ -725,7 +725,7 @@ export default function DeptManagePage() {
         }}
         onCancel={() => setRolesVisible(false)}
         unmountOnExit
-        style={{ width: 560 }}
+        style={{ width: 'min(560px, calc(100vw - 32px))' }}
       >
         <div className={styles['role-bind-select']}>
           <Select
