@@ -3,15 +3,16 @@ import {
   Badge,
   Button,
   Card,
-  Checkbox,
   Descriptions,
   Empty,
   Form,
   Input,
   Message,
   Modal,
+  Select,
   Space,
   Table,
+  Tag,
   Tree,
   TreeSelect,
   Typography,
@@ -33,6 +34,7 @@ import {
   createDept,
   deleteDept,
   DeptRecord,
+  DeptRoleRecord,
   fetchDeptRoles,
   fetchDeptTree,
   fetchRolePageForDept,
@@ -41,12 +43,9 @@ import {
   saveDeptRoles,
   toggleDeptActiveStatus,
   updateDept,
+  updateDeptRoleActiveStatus,
 } from '@/api/access-dept';
-import {
-  deleteRole,
-  updateRole,
-  updateRoleActiveStatus,
-} from '@/api/access-role';
+import { formatTime } from '@/utils/accessControl';
 import styles from './style/index.module.less';
 
 const { Text, Title } = Typography;
@@ -114,6 +113,29 @@ function getParentFieldValue(parentId?: number | null) {
   return String(parentId ?? ROOT_PARENT_ID);
 }
 
+function getDeptNameWithId(record?: DeptRecord | null) {
+  if (!record) return '';
+  return `${record.deptName || record.deptCode || record.id}（ID：${
+    record.id
+  }）`;
+}
+
+function getParentDeptDisplay(nodes: DeptRecord[], parentId?: number | null) {
+  const normalizedParentId = normalizeParentId(parentId);
+  if (normalizedParentId === ROOT_PARENT_ID)
+    return `根部门（ID：${ROOT_PARENT_ID}）`;
+  const parent = findDept(nodes, normalizedParentId);
+  return parent
+    ? getDeptNameWithId(parent)
+    : `未找到父部门（ID：${normalizedParentId}）`;
+}
+
+function getRoleDisplayName(role: RoleRecord) {
+  return `${role.roleName || role.roleCode || role.id}${
+    role.roleCode ? `（${role.roleCode}）` : ''
+  }`;
+}
+
 function getDeptSort(record?: DeptRecord | null) {
   const value = record as
     | (DeptRecord & { deptSort?: number })
@@ -131,20 +153,18 @@ function renderActiveStatus(value?: number) {
 export default function DeptManagePage() {
   const [deptForm] = Form.useForm();
   const [moveForm] = Form.useForm();
-  const [roleForm] = Form.useForm();
   const [tree, setTree] = useState<DeptRecord[]>([]);
   const [selectedId, setSelectedId] = useState<number>();
+  const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
   const [visible, setVisible] = useState(false);
   const [moveVisible, setMoveVisible] = useState(false);
   const [movingDept, setMovingDept] = useState<DeptRecord | null>(null);
   const [rolesVisible, setRolesVisible] = useState(false);
-  const [roleVisible, setRoleVisible] = useState(false);
   const [mode, setMode] = useState<'create' | 'edit'>('create');
   const [roleOptions, setRoleOptions] = useState<RoleRecord[]>([]);
-  const [deptRoles, setDeptRoles] = useState<RoleRecord[]>([]);
+  const [deptRoles, setDeptRoles] = useState<DeptRoleRecord[]>([]);
   const [checkedRoles, setCheckedRoles] = useState<number[]>([]);
   const [rolesLoading, setRolesLoading] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<RoleRecord | null>(null);
 
   const selected = useMemo(
     () => findDept(tree, selectedId),
@@ -173,13 +193,28 @@ export default function DeptManagePage() {
     () => toParentTreeData(tree, disabledMoveParentIds),
     [tree, disabledMoveParentIds]
   );
+  const selectedDeptRoleIds = useMemo(
+    () => new Set(deptRoles.map((role) => Number(role.roleId || role.id))),
+    [deptRoles]
+  );
+  const availableRoleOptions = useMemo(
+    () =>
+      roleOptions.filter((role) => !selectedDeptRoleIds.has(Number(role.id))),
+    [roleOptions, selectedDeptRoleIds]
+  );
+  const selectedRoleOptions = useMemo(
+    () => availableRoleOptions.filter((role) => checkedRoles.includes(role.id)),
+    [availableRoleOptions, checkedRoles]
+  );
 
   const loadTree = useCallback(async (autoSelectFirst = false) => {
     const data = await fetchDeptTree();
     const nextTree = data || [];
     setTree(nextTree);
     if (autoSelectFirst) {
-      setSelectedId(findFirstDept(nextTree)?.id);
+      const firstDept = findFirstDept(nextTree);
+      setSelectedId(firstDept?.id);
+      setExpandedKeys(firstDept ? [String(firstDept.id)] : []);
     }
   }, []);
 
@@ -312,47 +347,50 @@ export default function DeptManagePage() {
       fetchDeptRoles(selected.id),
     ]);
     setRoleOptions(roles.list || []);
-    setCheckedRoles(
-      (ownRoles || [])
-        .map((item) => Number(item.roleId || item.id))
-        .filter(Boolean)
-    );
+    setDeptRoles(ownRoles || []);
+    setCheckedRoles([]);
     setRolesVisible(true);
   };
 
-  const openRoleEdit = useCallback(
-    (record: RoleRecord) => {
-      setSelectedRole(record);
-      roleForm.setFieldsValue(record);
-      setRoleVisible(true);
-    },
-    [roleForm]
-  );
-
-  const submitRole = async () => {
-    if (!selectedRole) return;
-    const values = await roleForm.validate();
-    await updateRole({ ...values, id: selectedRole.id });
-    Message.success('角色已更新');
-    setRoleVisible(false);
-    await loadDeptRoles(selectedId);
-  };
-
-  const deleteDeptRole = useCallback(
-    (record: RoleRecord) => {
+  const updateDeptRoleStatus = useCallback(
+    (record: DeptRoleRecord) => {
+      const isEnabled = record.activeStatus === 1;
+      const actionText = isEnabled ? '停用' : '启用';
       Modal.confirm({
-        title: '删除角色',
-        content:
-          `确认删除角色 ${record.roleName}？删除后将同时解除该角色与用户、部门的绑定关系，` +
-          '已绑定用户和部门将不再具备此角色授予的权限。',
+        title: `${actionText}角色绑定`,
+        content: `确认${actionText}角色绑定 ${
+          record.roleName || record.roleId
+        }？`,
         onOk: async () => {
-          await deleteRole(record.id);
-          Message.success('角色已删除');
+          await updateDeptRoleActiveStatus({
+            id: record.id,
+            activeStatus: isEnabled ? 2 : 1,
+          });
+          Message.success(`角色绑定已${actionText}`);
           await loadDeptRoles(selectedId);
         },
       });
     },
     [loadDeptRoles, selectedId]
+  );
+
+  const deleteDeptRole = useCallback(
+    (record: DeptRoleRecord) => {
+      if (!selected) return;
+      Modal.confirm({
+        title: '删除角色绑定',
+        content: `确认删除角色绑定 ${record.roleName || record.roleId}？`,
+        onOk: async () => {
+          const nextRoleIds = deptRoles
+            .map((item) => Number(item.roleId))
+            .filter((roleId) => roleId && roleId !== Number(record.roleId));
+          await saveDeptRoles({ deptId: selected.id, roleIds: nextRoleIds });
+          Message.success('角色绑定已删除');
+          await loadDeptRoles(selected.id);
+        },
+      });
+    },
+    [deptRoles, loadDeptRoles, selected]
   );
 
   const renderTreeTitle = (item: DeptRecord) => {
@@ -435,18 +473,18 @@ export default function DeptManagePage() {
       children: toTreeData(item.children || []),
     }));
 
-  const roleColumns = useMemo<ColumnProps<RoleRecord>[]>(
+  const roleColumns = useMemo<ColumnProps<DeptRoleRecord>[]>(
     () => [
       {
         title: '角色名称',
         dataIndex: 'roleName',
         width: 150,
-        render: (value) => value || '—',
+        render: (value, record) => value || `角色ID：${record.roleId}`,
       },
       {
         title: '角色编码',
         dataIndex: 'roleCode',
-        width: 220,
+        width: 280,
         render: (value) => (value ? <Text copyable>{value}</Text> : '—'),
       },
       {
@@ -456,15 +494,21 @@ export default function DeptManagePage() {
         render: renderActiveStatus,
       },
       {
-        title: '描述',
-        dataIndex: 'description',
-        width: 220,
-        render: (value) => value || '—',
+        title: '操作人',
+        dataIndex: 'operatorUsername',
+        width: 120,
+        render: (value, record) => value || record.operator || '—',
+      },
+      {
+        title: '更新时间',
+        dataIndex: 'updatedAt',
+        width: 180,
+        render: formatTime,
       },
       {
         title: '操作',
         dataIndex: 'operations',
-        width: 260,
+        width: 180,
         fixed: 'right',
         render: (_, record) => {
           const isEnabled = record.activeStatus === 1;
@@ -474,29 +518,8 @@ export default function DeptManagePage() {
               <Button
                 type="text"
                 size="small"
-                icon={<IconEdit />}
-                onClick={() => openRoleEdit(record)}
-              >
-                编辑
-              </Button>
-              <Button
-                type="text"
-                size="small"
                 icon={isEnabled ? <IconLock /> : <IconUnlock />}
-                onClick={() =>
-                  Modal.confirm({
-                    title: `${actionText}角色`,
-                    content: `确认${actionText}角色 ${record.roleName}？`,
-                    onOk: async () => {
-                      await updateRoleActiveStatus({
-                        id: record.id,
-                        activeStatus: isEnabled ? 2 : 1,
-                      });
-                      Message.success(`角色已${actionText}`);
-                      await loadDeptRoles(selectedId);
-                    },
-                  })
-                }
+                onClick={() => updateDeptRoleStatus(record)}
               >
                 {actionText}
               </Button>
@@ -514,7 +537,7 @@ export default function DeptManagePage() {
         },
       },
     ],
-    [deleteDeptRole, loadDeptRoles, openRoleEdit, selectedId]
+    [deleteDeptRole, updateDeptRoleStatus]
   );
 
   return (
@@ -537,6 +560,8 @@ export default function DeptManagePage() {
             blockNode
             treeData={toTreeData(tree)}
             selectedKeys={selectedId ? [String(selectedId)] : []}
+            expandedKeys={expandedKeys}
+            onExpand={(keys) => setExpandedKeys(keys.map(String))}
             onSelect={(keys) =>
               setSelectedId(keys[0] ? Number(keys[0]) : undefined)
             }
@@ -570,7 +595,10 @@ export default function DeptManagePage() {
                   column={2}
                   data={[
                     { label: '部门 ID', value: selected.id },
-                    { label: '父部门', value: selected.parentId || 0 },
+                    {
+                      label: '父部门',
+                      value: getParentDeptDisplay(tree, selected.parentId),
+                    },
                     { label: '部门类型', value: selected.deptType || '—' },
                     { label: '排序', value: getDeptSort(selected) },
                     { label: '部门路径', value: selected.deptPath || '—' },
@@ -600,7 +628,7 @@ export default function DeptManagePage() {
               columns={roleColumns}
               data={deptRoles}
               pagination={false}
-              scroll={{ x: 960 }}
+              scroll={{ x: 950 }}
             />
           </Card>
         </div>
@@ -687,57 +715,39 @@ export default function DeptManagePage() {
         title={`部门绑定角色：${selected?.deptName || ''}`}
         visible={rolesVisible}
         onOk={async () => {
-          if (selected) {
-            await saveDeptRoles({ deptId: selected.id, roleIds: checkedRoles });
-            Message.success('部门角色已保存');
-            setRolesVisible(false);
-            await loadDeptRoles(selected.id);
+          if (!selected) return;
+          if (!checkedRoles.length) {
+            Message.warning('请选择要绑定的角色');
+            return false;
           }
+          await saveDeptRoles({
+            deptId: selected.id,
+            roleIds: [...selectedDeptRoleIds, ...checkedRoles],
+          });
+          Message.success('部门角色已保存');
+          setRolesVisible(false);
+          await loadDeptRoles(selected.id);
         }}
         onCancel={() => setRolesVisible(false)}
         unmountOnExit
         style={{ width: 560 }}
       >
-        <Checkbox.Group
-          value={checkedRoles}
-          onChange={(v) => setCheckedRoles(v as number[])}
-        >
-          <Space direction="vertical">
-            {roleOptions.map((role) => (
-              <Checkbox key={role.id} value={role.id}>
-                {role.roleName}（{role.roleCode}）
-              </Checkbox>
-            ))}
-          </Space>
-        </Checkbox.Group>
-      </Modal>
-
-      <Modal
-        title={`编辑角色：${selectedRole?.roleName || ''}`}
-        visible={roleVisible}
-        onOk={submitRole}
-        onCancel={() => setRoleVisible(false)}
-        unmountOnExit
-        style={{ width: 560 }}
-      >
-        <Form
-          form={roleForm}
-          layout="horizontal"
-          labelAlign="left"
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 19 }}
-        >
-          <Form.Item
-            label="角色名称"
-            field="roleName"
-            rules={[{ required: true }]}
+        <div className={styles['role-bind-select']}>
+          <Select
+            mode="multiple"
+            value={checkedRoles}
+            placeholder="请选择要绑定的角色"
+            allowClear
+            showSearch
+            onChange={(value) => setCheckedRoles(value as number[])}
           >
-            <Input />
-          </Form.Item>
-          <Form.Item label="角色描述" field="description">
-            <Input.TextArea rows={4} />
-          </Form.Item>
-        </Form>
+            {availableRoleOptions.map((role) => (
+              <Select.Option key={role.id} value={role.id}>
+                {getRoleDisplayName(role)}
+              </Select.Option>
+            ))}
+          </Select>
+        </div>
       </Modal>
     </Card>
   );

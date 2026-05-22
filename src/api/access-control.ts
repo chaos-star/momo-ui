@@ -31,6 +31,18 @@ export interface RoleRecord extends BaseEntity {
   operatorUsername?: string;
 }
 
+export interface DeptRoleRecord extends BaseEntity {
+  tenantId?: number;
+  deptId?: number;
+  roleId: number;
+  roleCode?: string;
+  roleName?: string;
+  grantType?: string;
+  expireAt?: number;
+  operator?: number;
+  operatorUsername?: string;
+}
+
 export interface DeptRecord extends BaseEntity {
   parentId?: number;
   deptCode?: string;

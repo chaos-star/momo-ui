@@ -5,6 +5,7 @@ import {
   put,
   del,
   DeptRecord,
+  DeptRoleRecord,
   RoleRecord,
   AccessListParams,
 } from './access-control';
@@ -38,7 +39,7 @@ export function deleteDept(id: number) {
 }
 
 export function fetchDeptRoles(deptId: number, tenantId?: number) {
-  return get<RoleRecord[]>('/api/system/depts/roles', { deptId, tenantId });
+  return get<DeptRoleRecord[]>('/api/system/depts/roles', { deptId, tenantId });
 }
 
 export function saveDeptRoles(data: {
@@ -57,4 +58,11 @@ export function fetchRolePageForDept(params?: AccessListParams) {
   });
 }
 
-export type { DeptRecord, RoleRecord };
+export function updateDeptRoleActiveStatus(data: {
+  id: number;
+  activeStatus: number;
+}) {
+  return put('/api/system/depts/roles/active-status', data);
+}
+
+export type { DeptRecord, DeptRoleRecord, RoleRecord };
