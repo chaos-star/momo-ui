@@ -101,7 +101,10 @@ export default function PermissionRelationPage() {
     const [menuPerms, apiPerms, elementPerms] = await Promise.all([
       fetchPermissionOptions({ objectType: 'MENU', permissionType: 'MENU' }),
       fetchPermissionOptions({ objectType: 'API', permissionType: 'API' }),
-      fetchPermissionOptions({ objectType: 'ELEMENT' }),
+      fetchPermissionOptions({
+        objectTypes: ['BUTTON', 'FORM', 'TAB'],
+        permissionType: 'PAGE',
+      }),
     ]);
     setMenuPermissionOptions(toPermissionOptions(menuPerms));
     setApiPermissionOptions(toPermissionOptions(apiPerms));

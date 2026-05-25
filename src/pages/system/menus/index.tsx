@@ -81,7 +81,6 @@ const elementTypeOptions = [
   { label: '按钮', value: 'BUTTON' },
   { label: '交互组件', value: 'FORM' },
   { label: '标签页', value: 'TAB' },
-  { label: '数据列', value: 'COLUMN' },
 ];
 
 const statusOptions = [

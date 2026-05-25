@@ -23,6 +23,8 @@ export interface PermissionRecord {
   description?: string;
   activeStatus?: number;
   status?: number;
+  operator?: number;
+  operatorUsername?: string;
   createdAt?: number;
   updatedAt?: number;
 }
@@ -156,6 +158,7 @@ export interface PermissionOptionRecord {
 
 export function fetchPermissionOptions(params?: {
   objectType?: string;
+  objectTypes?: string[];
   permissionType?: string;
 }) {
   return get<PermissionOptionRecord[]>(
